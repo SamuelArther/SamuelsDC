@@ -4,322 +4,395 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Crescent Dispatch</title>
-<meta name="description" content="The working board for Washington at Christmas — rank it, place it, and watch the week balance itself.">
+<meta name="description" content="The working board for Washington at Christmas — four plans, one week, and the arithmetic to settle it.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..900&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..800;1,9..144,400&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* ── Tokens ─────────────────────────────────────────────────────────── */
+/* ── Tokens ─────────────────────────────────────────────────────────────
+   Warm ivory, evergreen and brass. A cousin of the family site, not a copy:
+   its navy-and-red goes green-and-gold, and its Caslon goes Fraunces.
+   ─────────────────────────────────────────────────────────────────────── */
 :root{
-  --ink:#0F1720; --ink-2:#3D4B5A; --ink-3:#6B7C8D;
-  --paper:#E6ECF0; --surface:#FFFFFF; --surface-2:#F1F5F8; --plate:#101B27;
-  --plate-ink:#DCE7EE; --plate-dim:#7E93A4; --plate-line:#24333F;
-  --line:#C6D2DB; --line-soft:#DFE7EC;
-  --rail:#0D6A4E; --rail-ink:#0D6A4E; --rail-soft:#D5EBE1; --on-rail:#FFFFFF;
-  --lamp:#A76F10; --lamp-ink:#8A5B0B; --lamp-soft:#F7E9CB;
-  --stop:#A5322A; --stop-ink:#A5322A; --stop-soft:#F7DFDB;
-  --shadow:0 1px 2px rgba(15,23,32,.06), 0 8px 24px -14px rgba(15,23,32,.28);
-  --f-disp:"Archivo","Helvetica Neue",Arial,sans-serif;
-  --f-body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --paper:#F6F2E9; --surface:#FFFDF8; --surface-2:#F1ECE0;
+  --ink:#1E241F; --ink-2:#4C554E; --ink-3:#818A80;
+  --rule:#DED6C4; --rule-soft:#EAE3D4;
+  --green:#1E5140; --green-ink:#1E5140; --green-soft:#E2EDE6; --on-green:#FFFDF8;
+  --brass:#9A7B1F; --brass-ink:#836717; --brass-soft:#F3EAD0;
+  --claret:#8E322A; --claret-ink:#8E322A; --claret-soft:#F4E2DD;
+  --p-bart:#2F5E7A; --p-jess:#7A3F63; --p-sam:#9A6218; --p-nanny:#3E6B37;
+  --lift:0 1px 1px rgba(30,36,31,.04);
+  --f-disp:"Fraunces",Georgia,"Times New Roman",serif;
+  --f-body:"Newsreader",Georgia,"Times New Roman",serif;
   --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Consolas,monospace;
-  --r:4px;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --ink:#DDE6ED; --ink-2:#A2B2C0; --ink-3:#77899A;
-    --paper:#0A1017; --surface:#141D27; --surface-2:#1B2732; --plate:#050B12;
-    --plate-ink:#CFDEE8; --plate-dim:#71879A; --plate-line:#1D2A35;
-    --line:#2A3843; --line-soft:#1F2B36;
-    --rail:#4BC99C; --rail-ink:#4BC99C; --rail-soft:#0E3227; --on-rail:#04140E;
-    --lamp:#E5B559; --lamp-ink:#E5B559; --lamp-soft:#332714;
-    --stop:#E4796A; --stop-ink:#E4796A; --stop-soft:#341A17;
-    --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 28px -16px rgba(0,0,0,.8);
+    --paper:#14130E; --surface:#1C1B15; --surface-2:#232219;
+    --ink:#EBE6D8; --ink-2:#B3AC9A; --ink-3:#857F70;
+    --rule:#35322A; --rule-soft:#2A2821;
+    --green:#6FBF9E; --green-ink:#6FBF9E; --green-soft:#14312A; --on-green:#0B1A15;
+    --brass:#D6AE55; --brass-ink:#D6AE55; --brass-soft:#33290F;
+    --claret:#D9776B; --claret-ink:#D9776B; --claret-soft:#331915;
+    --p-bart:#7FB2CE; --p-jess:#C98EB2; --p-sam:#DCA84F; --p-nanny:#87BD7B;
+    --lift:0 1px 2px rgba(0,0,0,.5);
   }
 }
 :root[data-theme="dark"]{
-  --ink:#DDE6ED; --ink-2:#A2B2C0; --ink-3:#77899A;
-  --paper:#0A1017; --surface:#141D27; --surface-2:#1B2732; --plate:#050B12;
-  --plate-ink:#CFDEE8; --plate-dim:#71879A; --plate-line:#1D2A35;
-  --line:#2A3843; --line-soft:#1F2B36;
-  --rail:#4BC99C; --rail-ink:#4BC99C; --rail-soft:#0E3227; --on-rail:#04140E;
-  --lamp:#E5B559; --lamp-ink:#E5B559; --lamp-soft:#332714;
-  --stop:#E4796A; --stop-ink:#E4796A; --stop-soft:#341A17;
-  --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 28px -16px rgba(0,0,0,.8);
+  --paper:#14130E; --surface:#1C1B15; --surface-2:#232219;
+  --ink:#EBE6D8; --ink-2:#B3AC9A; --ink-3:#857F70;
+  --rule:#35322A; --rule-soft:#2A2821;
+  --green:#6FBF9E; --green-ink:#6FBF9E; --green-soft:#14312A; --on-green:#0B1A15;
+  --brass:#D6AE55; --brass-ink:#D6AE55; --brass-soft:#33290F;
+  --claret:#D9776B; --claret-ink:#D9776B; --claret-soft:#331915;
+  --p-bart:#7FB2CE; --p-jess:#C98EB2; --p-sam:#DCA84F; --p-nanny:#87BD7B;
+  --lift:0 1px 2px rgba(0,0,0,.5);
 }
 
 /* ── Base ───────────────────────────────────────────────────────────── */
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
-body{background:var(--paper);color:var(--ink);font-family:var(--f-body);
-  font-size:15.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body{background:var(--paper);color:var(--ink);
+  font-family:var(--f-body);font-size:17px;line-height:1.6;
+  font-optical-sizing:auto;-webkit-font-smoothing:antialiased}
 img{max-width:100%}
-h1,h2,h3,h4{font-family:var(--f-disp);margin:0;text-wrap:balance;line-height:1.1}
+h1,h2,h3,h4{font-family:var(--f-disp);margin:0;text-wrap:balance;line-height:1.14;
+  font-optical-sizing:auto}
 p{margin:0}
 button,input,select{font:inherit;color:inherit}
-a{color:var(--rail-ink)}
-:focus-visible{outline:2px solid var(--rail);outline-offset:2px;border-radius:2px}
-.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
-.eyebrow{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--ink-3)}
+a{color:var(--green-ink)}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 26px}
+.label{font-family:var(--f-mono);font-size:10px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ink-3);font-weight:400}
+.mark{color:var(--brass-ink);font-size:.8em;vertical-align:.12em;letter-spacing:.4em}
 
-/* ── Nameboard ──────────────────────────────────────────────────────── */
-.board-head{background:var(--plate);border-bottom:3px solid var(--rail)}
-.board-head .wrap{padding-top:20px;padding-bottom:18px}
-.nameplate{display:flex;flex-wrap:wrap;align-items:center;gap:7px 13px;
-  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.19em;
-  text-transform:uppercase;color:var(--plate-dim)}
-.nameplate .num{background:var(--rail);color:var(--on-rail);padding:2px 7px;
-  font-weight:600;letter-spacing:.12em;border-radius:2px}
-h1.title{font-family:var(--f-disp);font-variation-settings:"wdth" 118;
-  font-weight:800;font-size:clamp(34px,6.3vw,60px);letter-spacing:-.008em;
-  text-transform:uppercase;margin:11px 0 5px;color:#F4F9FC}
-.subtitle{font-family:var(--f-body);font-size:15.5px;color:#9BAEBD;max-width:62ch}
-.subtitle em{color:var(--rail);font-style:normal;font-weight:600}
-.clock{display:flex;margin-top:19px;border:1px solid var(--plate-line);
-  border-radius:var(--r);overflow:hidden;width:max-content;max-width:100%;
-  background:rgba(255,255,255,.03);flex-wrap:wrap}
-.clock div{padding:8px 15px;border-right:1px solid var(--plate-line);text-align:center;min-width:68px}
-.clock div:last-child{border-right:0;text-align:left}
-.clock b{display:block;font-family:var(--f-mono);font-size:21px;font-weight:600;
-  color:var(--lamp);line-height:1.25;font-variant-numeric:tabular-nums}
-.clock span{font-family:var(--f-mono);font-size:9px;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--plate-dim)}
-.clock .depart b{font-size:13px;color:var(--plate-ink);padding-top:5px}
+/* ── Masthead ───────────────────────────────────────────────────────── */
+.mast{border-bottom:1px solid var(--rule);background:var(--surface)}
+.mast .wrap{padding-top:40px;padding-bottom:32px;text-align:center}
+.mast .route{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--ink-3)}
+h1.title{font-family:var(--f-disp);font-weight:700;font-variation-settings:"SOFT" 0,"WONK" 1;
+  font-size:clamp(40px,7vw,74px);letter-spacing:-.02em;margin:14px 0 0;color:var(--ink)}
+h1.title em{font-style:italic;font-weight:400;color:var(--green-ink)}
+.deck{font-size:18px;color:var(--ink-2);max-width:60ch;margin:16px auto 0;line-height:1.55}
+.rules-row{display:flex;align-items:center;justify-content:center;gap:14px;margin:26px 0 0}
+.rules-row hr{flex:1;max-width:160px;border:0;border-top:1px solid var(--rule)}
+.clock{display:flex;justify-content:center;flex-wrap:wrap;gap:0;margin:22px auto 0;
+  width:max-content;max-width:100%;border:1px solid var(--rule);background:var(--paper)}
+.clock div{padding:10px 18px;border-right:1px solid var(--rule);text-align:center;min-width:74px}
+.clock div:last-child{border-right:0}
+.clock b{display:block;font-family:var(--f-disp);font-weight:600;font-size:26px;
+  color:var(--green-ink);line-height:1.1;font-variant-numeric:tabular-nums}
+.clock span{font-family:var(--f-mono);font-size:9px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-3)}
+.clock .depart b{font-size:15px;color:var(--ink);padding-top:6px;font-weight:500}
 
 /* ── Crew bar ───────────────────────────────────────────────────────── */
-.crewbar{background:var(--surface);border-bottom:1px solid var(--line);
+.crewbar{background:var(--paper);border-bottom:1px solid var(--rule);
   position:sticky;top:0;z-index:40}
-.crewbar .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:9px 16px;
-  padding-top:9px;padding-bottom:9px}
+.crewbar .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;
+  padding-top:10px;padding-bottom:10px}
 .crew{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-.crew button{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;
-  text-transform:uppercase;padding:5px 11px;border:1px solid var(--line);
-  background:transparent;color:var(--ink-2);border-radius:99px;cursor:pointer}
+.crew button{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;
+  text-transform:uppercase;padding:5px 12px;border:1px solid var(--rule);
+  background:transparent;color:var(--ink-2);border-radius:2px;cursor:pointer}
 .crew button:hover{border-color:var(--ink-3)}
-.crew button[aria-pressed="true"]{background:var(--rail);border-color:var(--rail);
-  color:var(--on-rail)}
-.role{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;
+.crew button[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:var(--on-green)}
+.role{font-family:var(--f-mono);font-size:10px;letter-spacing:.13em;
   text-transform:uppercase;color:var(--ink-3)}
-.sync{margin-left:auto;display:flex;align-items:center;gap:7px;
-  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;
+.sync{margin-left:auto;display:flex;align-items:center;gap:8px;
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.13em;
   text-transform:uppercase;color:var(--ink-3)}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--ink-3);flex:none}
-.dot.live{background:var(--rail);box-shadow:0 0 0 3px var(--rail-soft)}
-.dot.local{background:var(--lamp);box-shadow:0 0 0 3px var(--lamp-soft)}
+.dot.live{background:var(--green)}
+.dot.local{background:var(--brass)}
 
 /* ── Tabs ───────────────────────────────────────────────────────────── */
-.tabs{background:var(--surface);border-bottom:1px solid var(--line)}
-.tabs .wrap{display:flex;gap:2px;overflow-x:auto}
+.tabs{background:var(--surface);border-bottom:1px solid var(--rule)}
+.tabs .wrap{display:flex;gap:0;overflow-x:auto}
 .tabs button{background:none;border:0;border-bottom:2px solid transparent;
-  padding:11px 14px;cursor:pointer;font-family:var(--f-disp);font-weight:700;
-  font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);
-  white-space:nowrap}
+  padding:13px 18px 12px;cursor:pointer;font-family:var(--f-disp);font-weight:600;
+  font-size:15px;letter-spacing:-.005em;color:var(--ink-3);white-space:nowrap}
 .tabs button:hover{color:var(--ink)}
-.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--rail)}
-.tabs .count{font-family:var(--f-mono);font-size:10px;color:var(--stop-ink);margin-left:5px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--green)}
+.tabs .count{font-family:var(--f-mono);font-size:10px;color:var(--claret-ink);margin-left:6px}
 
-main{padding:22px 0 40px}
+main{padding:30px 0 50px}
 .panel[hidden]{display:none}
+.secthead{margin-bottom:18px}
+.secthead h2{font-family:var(--f-disp);font-weight:600;font-size:27px;letter-spacing:-.015em}
+.secthead p{color:var(--ink-2);font-size:16px;max-width:64ch;margin-top:5px}
+
+/* ── Whose plan ─────────────────────────────────────────────────────── */
+.whosplan{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-bottom:18px;
+  padding-bottom:14px;border-bottom:1px solid var(--rule)}
+.planpick{display:flex;gap:6px;flex-wrap:wrap}
+.planpick button{font-family:var(--f-disp);font-weight:600;font-size:14px;
+  padding:6px 13px;border-radius:2px;border:1px solid var(--rule);background:transparent;
+  color:var(--ink-2);cursor:pointer;display:flex;align-items:center;gap:7px}
+.planpick button:hover{border-color:var(--ink-3);color:var(--ink)}
+.planpick button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.planpick .swatch{width:8px;height:8px;border-radius:50%;flex:none}
+.planpick button[data-who="family"] .swatch{background:var(--green)}
+.planpick button[data-who="bart"]  .swatch{background:var(--p-bart)}
+.planpick button[data-who="jess"]  .swatch{background:var(--p-jess)}
+.planpick button[data-who="sam"]   .swatch{background:var(--p-sam)}
+.planpick button[data-who="nanny"] .swatch{background:var(--p-nanny)}
+.planpick .empty{opacity:.5}
+.whosplan .acts{margin-left:auto;display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.ro{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--brass-ink);border:1px solid var(--brass);padding:3px 9px;border-radius:2px}
 
 /* ── Board ──────────────────────────────────────────────────────────── */
-.board{display:grid;grid-template-columns:minmax(0,1fr) 326px;gap:20px;align-items:start}
-@media (max-width:1000px){.board{grid-template-columns:1fr}}
-.ladder{display:flex;flex-direction:column;gap:10px}
-.day{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
-  box-shadow:var(--shadow);display:grid;grid-template-columns:126px minmax(0,1fr);overflow:hidden}
-@media (max-width:640px){.day{grid-template-columns:1fr}}
-.day-rail{background:var(--surface-2);border-right:1px solid var(--line-soft);
-  padding:12px;display:flex;flex-direction:column;gap:2px}
-@media (max-width:640px){.day-rail{border-right:0;border-bottom:1px solid var(--line-soft);
-  flex-direction:row;align-items:center;gap:11px}}
-.day-dow{font-family:var(--f-disp);font-variation-settings:"wdth" 112;font-weight:800;
-  font-size:12.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
-.day-date{font-family:var(--f-disp);font-variation-settings:"wdth" 112;font-weight:800;
-  font-size:24px;letter-spacing:-.015em;line-height:1.05}
-.day-tag{font-family:var(--f-mono);font-size:9px;letter-spacing:.11em;
-  text-transform:uppercase;color:var(--lamp-ink);margin-top:3px}
-.wx{display:flex;gap:3px;margin-top:9px}
+.board{display:grid;grid-template-columns:minmax(0,1fr) 318px;gap:28px;align-items:start}
+@media (max-width:1020px){.board{grid-template-columns:1fr}}
+.ladder{display:flex;flex-direction:column}
+.day{display:grid;grid-template-columns:132px minmax(0,1fr);
+  border-top:1px solid var(--rule);padding:16px 0}
+.day:last-child{border-bottom:1px solid var(--rule)}
+@media (max-width:640px){.day{grid-template-columns:1fr;gap:10px}}
+.day-rail{padding-right:18px;display:flex;flex-direction:column;gap:1px}
+@media (max-width:640px){.day-rail{flex-direction:row;align-items:baseline;gap:12px;padding:0}}
+.day-dow{font-family:var(--f-mono);font-size:10px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ink-3)}
+.day-date{font-family:var(--f-disp);font-weight:600;font-size:28px;letter-spacing:-.02em;line-height:1.05}
+.day-tag{font-family:var(--f-mono);font-size:9px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--brass-ink);margin-top:3px}
+.wx{display:flex;gap:4px;margin-top:11px}
 @media (max-width:640px){.wx{margin:0}}
-.wx button{font-family:var(--f-mono);font-size:9.5px;width:21px;height:21px;padding:0;
-  border:1px solid var(--line);background:var(--surface);color:var(--ink-3);
-  border-radius:3px;cursor:pointer;line-height:1}
-.wx button[aria-pressed="true"]{background:var(--ink-3);border-color:var(--ink-3);color:var(--surface)}
-.battery{margin-top:auto;display:flex;gap:2px;padding-top:9px}
-@media (max-width:640px){.battery{margin:0 0 0 auto;padding-top:0}}
-.battery i{height:5px;width:16px;border-radius:1px;background:var(--line);display:block}
-.battery i.on{background:var(--rail)}
-.battery i.over{background:var(--stop)}
-.slots{display:grid;grid-template-columns:1fr 1fr}
-@media (max-width:640px){.slots{grid-template-columns:1fr}}
-.slot{padding:11px 12px 13px;min-height:118px;border-right:1px solid var(--line-soft);
-  display:flex;flex-direction:column;gap:7px}
-.slot:last-child{border-right:0}
-@media (max-width:640px){.slot{border-right:0;border-bottom:1px solid var(--line-soft)}
-  .slot:last-child{border-bottom:0}}
-.slot-label{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--ink-3);display:flex;gap:7px;align-items:center}
-.slot-label .hrs{margin-left:auto;color:var(--ink-3);letter-spacing:.04em}
-.slot.drop{background:var(--rail-soft);outline:2px dashed var(--rail);outline-offset:-4px}
-.slot.armed{background:var(--surface-2)}
-.slot.armed .place{display:block}
-.place{display:none;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--rail-ink);border:1px dashed var(--rail);
-  border-radius:var(--r);padding:9px;text-align:center;background:none;cursor:copy;width:100%}
-.slot-empty{font-family:var(--f-mono);font-size:11px;color:var(--ink-3);
-  border:1px dashed var(--line);border-radius:var(--r);padding:13px;text-align:center}
+.wx button{font-family:var(--f-mono);font-size:9.5px;width:22px;height:22px;padding:0;
+  border:1px solid var(--rule);background:transparent;color:var(--ink-3);
+  border-radius:2px;cursor:pointer;line-height:1}
+.wx button[aria-pressed="true"]{background:var(--ink-2);border-color:var(--ink-2);color:var(--surface)}
+.walk{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.05em;color:var(--ink-3);margin-top:9px}
+.battery{margin-top:auto;display:flex;gap:3px;padding-top:12px}
+@media (max-width:640px){.battery{margin:0 0 0 auto;padding-top:0;align-self:center}}
+.battery i{height:4px;width:17px;background:var(--rule);display:block}
+.battery i.on{background:var(--green)}
+.battery i.over{background:var(--claret)}
+.slots{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:640px){.slots{grid-template-columns:1fr;gap:12px}}
+.slot{display:flex;flex-direction:column;gap:8px;min-height:104px}
+.slot-label{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-3);display:flex;gap:8px;align-items:baseline;
+  border-bottom:1px solid var(--rule-soft);padding-bottom:5px}
+.slot-label .hrs{margin-left:auto;letter-spacing:.05em}
+.slot.drop{outline:1px dashed var(--green);outline-offset:6px}
+.place{font-family:var(--f-mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--green-ink);border:1px dashed var(--green);padding:11px;text-align:center;
+  background:none;cursor:copy;width:100%;border-radius:2px}
+.slot-empty{font-family:var(--f-body);font-style:italic;font-size:14.5px;color:var(--ink-3);
+  padding:10px 0}
 
 /* ── Chips ──────────────────────────────────────────────────────────── */
-.chip{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--ink-3);
-  border-radius:var(--r);padding:8px 10px;cursor:grab;position:relative}
-.chip.dragging{opacity:.4}
-.chip.sel{outline:2px solid var(--rail);outline-offset:1px}
-.chip.hi{border-left-color:var(--stop)}
-.chip.mid{border-left-color:var(--lamp)}
-.chip.lo{border-left-color:var(--rail)}
-.chip.fixed{cursor:default;border-left-color:var(--line);background:var(--surface-2)}
-.chip h4{font-family:var(--f-disp);font-weight:700;font-size:14.5px;letter-spacing:-.008em;
-  padding-right:18px}
-.chip .meta{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.09em;
-  text-transform:uppercase;color:var(--ink-3);margin-top:4px;display:flex;flex-wrap:wrap;gap:3px 10px}
-.chip .why{font-size:12.5px;color:var(--ink-2);margin-top:5px;line-height:1.4}
-.chip .rmv{position:absolute;top:4px;right:4px;border:0;background:none;color:var(--ink-3);
-  cursor:pointer;font-family:var(--f-mono);font-size:14px;line-height:1;padding:3px 6px;border-radius:3px}
-.chip .rmv:hover{color:var(--stop-ink);background:var(--stop-soft)}
-.flags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
-.flag{font-family:var(--f-mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;
-  padding:2px 5px;border-radius:2px;background:var(--stop-soft);color:var(--stop-ink)}
-.flag.warn{background:var(--lamp-soft);color:var(--lamp-ink)}
-.flag.ok{background:var(--rail-soft);color:var(--rail-ink)}
+.chip{background:var(--surface);border:1px solid var(--rule);border-left:2px solid var(--ink-3);
+  padding:10px 12px;cursor:grab;position:relative;border-radius:2px;box-shadow:var(--lift)}
+.chip.ro{cursor:default}
+.chip.dragging{opacity:.35}
+.chip.sel{border-color:var(--green);border-left-color:var(--green);
+  box-shadow:0 0 0 2px var(--green-soft)}
+.chip.hi{border-left-color:var(--claret)}
+.chip.mid{border-left-color:var(--brass)}
+.chip.lo{border-left-color:var(--green)}
+.chip.fixed{cursor:default;border-left-color:var(--rule);background:var(--surface-2);
+  box-shadow:none}
+.chip h4{font-family:var(--f-disp);font-weight:600;font-size:17px;letter-spacing:-.015em;
+  padding-right:16px;line-height:1.2}
+.chip .meta{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--ink-3);margin-top:5px;display:flex;flex-wrap:wrap;gap:3px 11px}
+.chip .why{font-size:14.5px;color:var(--ink-2);margin-top:7px;line-height:1.45}
+.chip .rmv{position:absolute;top:5px;right:5px;border:0;background:none;color:var(--ink-3);
+  cursor:pointer;font-family:var(--f-mono);font-size:15px;line-height:1;padding:2px 5px;border-radius:2px}
+.chip .rmv:hover{color:var(--claret-ink);background:var(--claret-soft)}
+.flags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.flag{font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  padding:2px 6px;border-radius:2px;background:var(--claret-soft);color:var(--claret-ink)}
+.flag.warn{background:var(--brass-soft);color:var(--brass-ink)}
+.flag.ok{background:var(--green-soft);color:var(--green-ink)}
+.flag.must{background:var(--ink);color:var(--surface)}
 
-/* ── Cards / side ───────────────────────────────────────────────────── */
-.side{display:flex;flex-direction:column;gap:14px;position:sticky;top:53px}
-@media (max-width:1000px){.side{position:static}}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
-  box-shadow:var(--shadow)}
-.card > header{padding:10px 13px;border-bottom:1px solid var(--line-soft);
-  display:flex;align-items:baseline;gap:8px}
-.card > header h3{font-family:var(--f-disp);font-weight:800;font-size:11.5px;
-  letter-spacing:.14em;text-transform:uppercase}
-.card > header .n{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
-.card .body{padding:12px 13px}
-.bench{display:flex;flex-direction:column;gap:7px;max-height:min(50vh,500px);
-  overflow-y:auto;padding:12px 13px}
-.checks{display:flex;flex-direction:column}
-.check{display:flex;gap:9px;padding:9px 13px;border-bottom:1px solid var(--line-soft);
-  font-size:13px;line-height:1.42}
+/* ── Side ───────────────────────────────────────────────────────────── */
+.side{display:flex;flex-direction:column;gap:22px;position:sticky;top:56px}
+@media (max-width:1020px){.side{position:static}}
+.card > header{padding-bottom:8px;border-bottom:1px solid var(--ink);
+  display:flex;align-items:baseline;gap:8px;margin-bottom:12px}
+.card > header h3{font-family:var(--f-mono);font-weight:500;font-size:10px;
+  letter-spacing:.2em;text-transform:uppercase}
+.card > header .n{margin-left:auto;font-family:var(--f-mono);font-size:10px;color:var(--ink-3)}
+.bench{display:flex;flex-direction:column;gap:9px;max-height:min(52vh,540px);overflow-y:auto}
+.checks{display:flex;flex-direction:column;gap:0}
+.check{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid var(--rule-soft);
+  font-size:14.5px;line-height:1.45}
 .check:last-child{border-bottom:0}
-.check .bar{width:3px;border-radius:2px;flex:none;background:var(--lamp)}
-.check.stop .bar{background:var(--stop)}
-.check.ok .bar{background:var(--rail)}
-.check b{font-family:var(--f-disp);font-weight:700;display:block;font-size:13px}
+.check .bar{width:2px;flex:none;background:var(--brass)}
+.check.stop .bar{background:var(--claret)}
+.check.ok .bar{background:var(--green)}
+.check b{font-family:var(--f-disp);font-weight:600;display:block;font-size:15px;letter-spacing:-.01em}
 .check span{color:var(--ink-2)}
 .btnrow{display:flex;flex-wrap:wrap;gap:7px}
-.btn{font-family:var(--f-disp);font-weight:700;font-size:11.5px;letter-spacing:.09em;
-  text-transform:uppercase;padding:8px 12px;border-radius:var(--r);cursor:pointer;
-  border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.btn{font-family:var(--f-disp);font-weight:600;font-size:13.5px;padding:7px 13px;
+  border-radius:2px;cursor:pointer;border:1px solid var(--rule);background:var(--surface);color:var(--ink)}
 .btn:hover{border-color:var(--ink-3)}
-.btn.primary{background:var(--rail);border-color:var(--rail);color:var(--on-rail)}
-.btn.primary:hover{filter:brightness(1.08)}
-.btn.ghost{border-style:dashed}
-.btn[disabled]{opacity:.45;cursor:not-allowed}
-.hint{font-size:12.5px;color:var(--ink-3);line-height:1.45}
-.nights{display:flex;align-items:center;gap:9px;margin-top:11px;
-  font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
-  color:var(--ink-3)}
-.nights input{flex:1;accent-color:var(--rail)}
-.nights b{color:var(--ink);font-size:13px}
+.btn.primary{background:var(--green);border-color:var(--green);color:var(--on-green)}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.ghost{border-style:dashed;background:transparent}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.hint{font-size:14px;color:var(--ink-3);line-height:1.5}
+.nights{display:flex;align-items:center;gap:10px;margin-top:14px;
+  font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.nights input{flex:1;accent-color:var(--green)}
+.nights b{color:var(--ink);font-size:15px;font-family:var(--f-disp)}
+
+/* ── Compare ────────────────────────────────────────────────────────── */
+.cmpwrap{overflow-x:auto;border:1px solid var(--rule);background:var(--surface)}
+table.cmp{width:100%;border-collapse:collapse;min-width:850px}
+table.cmp th{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-3);text-align:left;padding:11px 13px;
+  border-bottom:1px solid var(--ink);font-weight:400;background:var(--surface);
+  position:sticky;top:0;z-index:2}
+table.cmp th.who-bart{color:var(--p-bart)} table.cmp th.who-jess{color:var(--p-jess)}
+table.cmp th.who-sam{color:var(--p-sam)}   table.cmp th.who-nanny{color:var(--p-nanny)}
+table.cmp th.who-family{color:var(--green-ink)}
+table.cmp td{padding:10px 13px;border-bottom:1px solid var(--rule-soft);vertical-align:top;
+  font-size:14.5px;line-height:1.35}
+table.cmp td.daycell{font-family:var(--f-disp);font-weight:600;font-size:15px;
+  white-space:nowrap;background:var(--surface-2);border-right:1px solid var(--rule-soft)}
+table.cmp td.daycell small{display:block;font-family:var(--f-mono);font-weight:400;
+  font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin-top:2px}
+table.cmp td.slotcell{font-family:var(--f-mono);font-size:9px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink-3);background:var(--surface-2);
+  border-right:1px solid var(--rule-soft);white-space:nowrap}
+table.cmp td.none{color:var(--ink-3);font-style:italic}
+table.cmp tr.agreed td:not(.daycell):not(.slotcell){background:var(--green-soft)}
+.cmplegend{display:flex;flex-wrap:wrap;gap:18px;margin-top:14px;font-family:var(--f-mono);
+  font-size:10px;letter-spacing:.08em;color:var(--ink-3);align-items:center;text-transform:uppercase}
+.cmplegend i{width:10px;height:10px;display:inline-block;margin-right:6px;vertical-align:-1px}
+
+/* ── Map ────────────────────────────────────────────────────────────── */
+.maplayout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:28px;align-items:start}
+@media (max-width:940px){.maplayout{grid-template-columns:1fr}}
+.mapcard{background:var(--surface);border:1px solid var(--rule);padding:18px}
+.daypick{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.daypick button{font-family:var(--f-mono);font-size:10px;letter-spacing:.08em;
+  padding:6px 10px;border:1px solid var(--rule);background:transparent;color:var(--ink-2);
+  border-radius:2px;cursor:pointer;text-transform:uppercase}
+.daypick button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.mapsvg{width:100%;height:auto;display:block}
+.mapsvg .grid{stroke:var(--rule-soft);stroke-width:1}
+.mapsvg .mall{stroke:var(--rule);stroke-width:7;stroke-linecap:round}
+.mapsvg .route{stroke:var(--green);stroke-width:1.6;stroke-dasharray:6 4;fill:none}
+.mapsvg .dot{fill:var(--rule)}
+.mapsvg .dot.on{fill:var(--ink-3)}
+.mapsvg .dot.hot{fill:var(--green)}
+.mapsvg .base{fill:var(--brass)}
+.mapsvg text{font-family:var(--f-mono);font-size:9px;fill:var(--ink-3);letter-spacing:.05em}
+.mapsvg text.hot{fill:var(--ink)}
+.mapsvg .scalebar{stroke:var(--ink-3);stroke-width:1.2}
 
 /* ── Ranking ────────────────────────────────────────────────────────── */
-.rank-grid{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:20px;align-items:start}
+.rank-grid{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:28px;align-items:start}
 @media (max-width:900px){.rank-grid{grid-template-columns:1fr}}
-.ranklist{display:flex;flex-direction:column;gap:5px;padding:12px 13px}
-.rankrow{display:grid;grid-template-columns:24px 1fr auto;align-items:center;gap:9px;
-  padding:7px 9px;border:1px solid var(--line-soft);border-radius:var(--r);
-  background:var(--surface);cursor:grab}
-.rankrow.dragging{opacity:.4}
-.rankrow.over{border-color:var(--rail);background:var(--rail-soft)}
-.rankrow.top13{border-left:3px solid var(--rail)}
-.rankrow.top4{border-left:3px solid var(--lamp)}
-.rankrow .pos{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--ink-3);text-align:right}
-.rankrow .nm{font-family:var(--f-disp);font-weight:600;font-size:14px;line-height:1.2}
+.ranklist{display:flex;flex-direction:column;gap:0;margin-top:12px}
+.rankrow{display:grid;grid-template-columns:26px 1fr auto auto;align-items:center;gap:9px;
+  padding:8px 4px;border-bottom:1px solid var(--rule-soft);background:var(--paper);cursor:grab}
+.rankrow.dragging{opacity:.35}
+.rankrow.over{background:var(--green-soft)}
+.rankrow.top13{box-shadow:inset 2px 0 0 var(--green)}
+.rankrow.top4{box-shadow:inset 2px 0 0 var(--brass)}
+.rankrow .pos{font-family:var(--f-mono);font-size:11px;color:var(--ink-3);text-align:right}
+.rankrow .nm{font-family:var(--f-disp);font-weight:500;font-size:15.5px;line-height:1.25;letter-spacing:-.01em}
 .rankrow .arrows{display:flex;gap:3px}
-.rankrow .arrows button{border:1px solid var(--line);background:var(--surface);width:23px;
-  height:23px;border-radius:3px;cursor:pointer;font-size:10px;line-height:1;color:var(--ink-2);padding:0}
-.rankrow .arrows button:hover{border-color:var(--ink-3)}
-table.tally{width:100%;border-collapse:collapse}
-table.tally th{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.11em;
-  text-transform:uppercase;color:var(--ink-3);text-align:right;padding:8px 9px;
-  border-bottom:1px solid var(--line);font-weight:500;white-space:nowrap}
+.rankrow .arrows button,.starbtn{border:1px solid var(--rule);background:var(--surface);width:23px;
+  height:23px;border-radius:2px;cursor:pointer;font-size:10px;line-height:1;color:var(--ink-3);padding:0}
+.rankrow .arrows button:hover,.starbtn:hover{border-color:var(--ink-3);color:var(--ink)}
+.starbtn[aria-pressed="true"]{background:var(--brass);border-color:var(--brass);color:#FFFDF8}
+table.tally{width:100%;border-collapse:collapse;margin-top:12px}
+table.tally th{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink-3);text-align:right;padding:9px;
+  border-bottom:1px solid var(--ink);font-weight:400;white-space:nowrap}
 table.tally th.nm,table.tally td.nm{text-align:left}
-table.tally td{padding:7px 9px;border-bottom:1px solid var(--line-soft);text-align:right;
-  font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:12.5px;color:var(--ink-2)}
-table.tally td.nm{font-family:var(--f-disp);font-weight:600;font-size:14px;color:var(--ink)}
-table.tally td.pts{font-weight:600;color:var(--ink)}
-table.tally tr.split td{background:var(--lamp-soft)}
+table.tally th.who-bart{color:var(--p-bart)} table.tally th.who-jess{color:var(--p-jess)}
+table.tally th.who-sam{color:var(--p-sam)}   table.tally th.who-nanny{color:var(--p-nanny)}
+table.tally td{padding:8px 9px;border-bottom:1px solid var(--rule-soft);text-align:right;
+  font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:12px;color:var(--ink-2)}
+table.tally td.nm{font-family:var(--f-disp);font-weight:500;font-size:15px;color:var(--ink);
+  letter-spacing:-.01em}
+table.tally td.pts{color:var(--ink)}
+table.tally tr.split td{background:var(--brass-soft)}
 .tablewrap{overflow-x:auto}
 
 /* ── Roster ─────────────────────────────────────────────────────────── */
-.roster{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
-.vcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
-  padding:13px 14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px}
-.vhead{display:flex;align-items:baseline;gap:8px}
-.vcard h4{font-family:var(--f-disp);font-weight:700;font-size:16px;letter-spacing:-.012em;flex:1}
-.seedno{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);border:1px solid var(--line);
-  border-radius:2px;padding:1px 5px;flex:none}
-.vcard .why{font-size:13.5px;color:var(--ink-2);line-height:1.45}
-.vcard dl{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:0}
+.roster{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:0 30px}
+.vcard{padding:18px 0;border-top:1px solid var(--rule);display:flex;flex-direction:column;gap:9px}
+.vhead{display:flex;align-items:baseline;gap:9px}
+.vcard h4{font-family:var(--f-disp);font-weight:600;font-size:20px;letter-spacing:-.018em;flex:1}
+.seedno{font-family:var(--f-mono);font-size:10px;color:var(--ink-3);flex:none;letter-spacing:.06em}
+.vcard .why{font-size:15px;color:var(--ink-2);line-height:1.5}
+.vcard dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0}
 .vcard dt{font-family:var(--f-mono);color:var(--ink-3);text-transform:uppercase;
-  font-size:9px;letter-spacing:.11em;padding-top:2px}
+  font-size:9px;letter-spacing:.13em;padding-top:3px}
 .vcard dd{margin:0;color:var(--ink-2);font-family:var(--f-mono);font-size:11px}
 
 /* ── Logistics ──────────────────────────────────────────────────────── */
-.logi{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;align-items:start}
-table.tt{width:100%;border-collapse:collapse;font-size:13.5px}
-table.tt th{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;
-  color:var(--ink-3);text-align:left;padding:8px 11px;border-bottom:1px solid var(--line);font-weight:500}
-table.tt td{padding:9px 11px;border-bottom:1px solid var(--line-soft);vertical-align:top}
-table.tt td.m{font-family:var(--f-mono);font-size:11.5px;white-space:nowrap;color:var(--ink-2)}
+.logi{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:34px;align-items:start}
+table.tt{width:100%;border-collapse:collapse;font-size:15px}
+table.tt th{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);text-align:left;padding:9px 11px 9px 0;border-bottom:1px solid var(--ink);font-weight:400}
+table.tt td{padding:10px 11px 10px 0;border-bottom:1px solid var(--rule-soft);vertical-align:top}
+table.tt td.m{font-family:var(--f-mono);font-size:11.5px;color:var(--ink-2)}
 table.tt tr:last-child td{border-bottom:0}
-.resv{display:flex;align-items:flex-start;gap:10px;padding:9px 13px;border-bottom:1px solid var(--line-soft)}
+.resv{display:flex;align-items:flex-start;gap:11px;padding:10px 0;border-bottom:1px solid var(--rule-soft)}
 .resv:last-child{border-bottom:0}
-.resv input[type=checkbox]{margin-top:4px;width:15px;height:15px;accent-color:var(--rail);flex:none}
+.resv input[type=checkbox]{margin-top:5px;width:15px;height:15px;accent-color:var(--green);flex:none}
 .resv .t{flex:1;min-width:0}
-.resv .t b{font-family:var(--f-disp);font-weight:700;font-size:14px;display:block}
-.resv .t span{font-size:12.5px;color:var(--ink-2)}
+.resv .t b{font-family:var(--f-disp);font-weight:600;font-size:16px;display:block;letter-spacing:-.012em}
+.resv .t span{font-size:14px;color:var(--ink-2)}
 .resv.done .t b{text-decoration:line-through;color:var(--ink-3)}
 .rules{display:flex;flex-direction:column}
-.rule{padding:11px 13px;border-bottom:1px solid var(--line-soft)}
+.rule{padding:13px 0;border-bottom:1px solid var(--rule-soft)}
 .rule:last-child{border-bottom:0}
-.rule .art{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
-  color:var(--rail-ink)}
-.rule b{font-family:var(--f-disp);font-weight:700;font-size:15px;display:block;margin:2px 0 3px}
-.rule p{font-size:13.5px;color:var(--ink-2);line-height:1.45}
+.rule .art{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--brass-ink)}
+.rule b{font-family:var(--f-disp);font-weight:600;font-size:18px;display:block;margin:3px 0 4px;
+  letter-spacing:-.015em}
+.rule p{font-size:15px;color:var(--ink-2);line-height:1.5}
 
-footer{border-top:1px solid var(--line);margin-top:36px;padding:20px 0 40px;
-  font-family:var(--f-mono);font-size:11px;color:var(--ink-3);letter-spacing:.05em}
-footer .wrap{display:flex;flex-wrap:wrap;gap:6px 20px;align-items:baseline}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:22px;z-index:99;
-  background:var(--plate);color:var(--plate-ink);font-family:var(--f-mono);font-size:12px;
-  padding:9px 16px;border-radius:99px;box-shadow:var(--shadow);opacity:0;transition:opacity .18s;
-  pointer-events:none;border:1px solid var(--rail);max-width:90vw;text-align:center}
+footer{border-top:1px solid var(--rule);margin-top:48px;padding:26px 0 46px;background:var(--surface)}
+footer .wrap{text-align:center}
+footer .fmark{color:var(--brass-ink);letter-spacing:.5em;font-size:12px}
+footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-spacing:.1em;
+  text-transform:uppercase;margin-top:12px;line-height:2}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:24px;z-index:99;
+  background:var(--ink);color:var(--paper);font-family:var(--f-mono);font-size:12px;
+  padding:10px 18px;border-radius:2px;opacity:0;transition:opacity .2s;
+  pointer-events:none;max-width:90vw;text-align:center}
 .toast.on{opacity:1}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ── Print: the fridge copy ─────────────────────────────────────────── */
+@media print{
+  .mast .clock,.crewbar,.tabs,.side,.whosplan,footer,.toast,.wx,.daypick{display:none!important}
+  body{background:#fff;color:#000;font-size:11pt}
+  .mast{border-bottom:2px solid #000}
+  .board{grid-template-columns:1fr}
+  .day{break-inside:avoid}
+  .chip{box-shadow:none;border:1px solid #bbb}
+  .chip .rmv{display:none}
+  main{padding:0}
+}
 </style>
 </head>
 <body>
 
-<header class="board-head">
+<header class="mast">
   <div class="wrap">
-    <div class="nameplate">
-      <span class="num">20 &middot; 19</span>
-      <span>Amtrak Crescent</span>
-      <span>Anniston AL &nbsp;&#8646;&nbsp; Washington Union</span>
-      <span>Two sleeper rooms</span>
-    </div>
-    <h1 class="title">Crescent Dispatch</h1>
-    <p class="subtitle">The working board for Washington at Christmas. Four people, eight days,
-      eighteen outings and room for about half of them. Everybody ranks, the board balances the
-      load against closures and cold, and <em>everyone sees the same plan the second it changes.</em></p>
+    <p class="route">Amtrak Crescent 20 &amp; 19 &nbsp;&middot;&nbsp; Anniston, Alabama &#8646; Washington Union</p>
+    <h1 class="title">Crescent <em>Dispatch</em></h1>
+    <p class="deck">Washington at Christmas, planned four ways. Everyone builds their own week,
+      the plans sit side by side so you can see exactly where you disagree, and the arithmetic
+      settles what dinner arguments can't.</p>
+    <div class="rules-row"><hr><span class="mark">&#9670;</span><hr></div>
     <div class="clock" aria-label="Time until boarding">
       <div><b id="cd-d">&mdash;</b><span>days</span></div>
       <div><b id="cd-h">&mdash;</b><span>hrs</span></div>
@@ -332,7 +405,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:6px 20px;align-items:baseline}
 
 <div class="crewbar">
   <div class="wrap">
-    <span class="eyebrow">On the board as</span>
+    <span class="label">On the board as</span>
     <div class="crew" id="crew" role="group" aria-label="Who are you"></div>
     <span class="role" id="rolelabel"></span>
     <div class="sync"><span class="dot" id="syncdot"></span><span id="syncmsg">connecting</span></div>
@@ -342,6 +415,8 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:6px 20px;align-items:baseline}
 <nav class="tabs">
   <div class="wrap" role="tablist" id="tablist">
     <button role="tab" data-tab="board" aria-selected="true">The board <span class="count" id="tabwarn"></span></button>
+    <button role="tab" data-tab="compare" aria-selected="false">Compare</button>
+    <button role="tab" data-tab="map" aria-selected="false">Map</button>
     <button role="tab" data-tab="rank" aria-selected="false">Ranking</button>
     <button role="tab" data-tab="roster" aria-selected="false">Roster</button>
     <button role="tab" data-tab="logi" aria-selected="false">Logistics</button>
@@ -352,25 +427,30 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:6px 20px;align-items:baseline}
   <div class="wrap">
 
     <section class="panel" id="p-board">
+      <div class="whosplan">
+        <span class="label">Whose plan</span>
+        <div class="planpick" id="planpick" role="group" aria-label="Whose plan to view"></div>
+        <div class="acts" id="planacts"></div>
+      </div>
       <div class="board">
         <div class="ladder" id="ladder"></div>
         <aside class="side">
           <div class="card">
             <header><h3>Plan the week</h3></header>
-            <div class="body">
-              <div class="btnrow">
-                <button class="btn primary" id="autofill">Auto-fill</button>
-                <button class="btn ghost" id="clearboard">Clear</button>
-                <button class="btn" id="ics">Export .ics</button>
-              </div>
-              <p class="hint" style="margin-top:10px" id="planhint"></p>
-              <div class="nights">
-                <span>Nights</span>
-                <input type="range" id="nights" min="3" max="10" step="1" value="7">
-                <b id="nightsn">7</b>
-              </div>
-              <p class="hint" id="nightshint" style="margin-top:5px"></p>
+            <div class="btnrow">
+              <button class="btn primary" id="autofill">Auto-fill</button>
+              <button class="btn ghost" id="clearboard">Clear</button>
+              <button class="btn" id="share">Copy share link</button>
+              <button class="btn" id="ics">Export .ics</button>
+              <button class="btn" id="printbtn">Print</button>
             </div>
+            <p class="hint" style="margin-top:11px" id="planhint"></p>
+            <div class="nights">
+              <span>Nights</span>
+              <input type="range" id="nights" min="3" max="10" step="1" value="7">
+              <b id="nightsn">7</b>
+            </div>
+            <p class="hint" id="nightshint" style="margin-top:6px"></p>
           </div>
           <div class="card">
             <header><h3>The bench</h3><span class="n" id="benchn"></span></header>
@@ -384,37 +464,76 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:6px 20px;align-items:baseline}
       </div>
     </section>
 
+    <section class="panel" id="p-compare" hidden>
+      <div class="secthead">
+        <h2>Every plan, side by side</h2>
+        <p>Each column is one person's week. Green rows are the slots you already agree on &mdash;
+          everything else is a conversation someone still has to have.</p>
+      </div>
+      <div class="cmpwrap"><table class="cmp" id="cmp"></table></div>
+      <div class="cmplegend" id="cmplegend"></div>
+    </section>
+
+    <section class="panel" id="p-map" hidden>
+      <div class="secthead">
+        <h2>Where the day actually takes you</h2>
+        <p>Every venue plotted to scale, with the selected day's route from the hotel and back.
+          This is the tab that decides whether you walk or spend the twenty bucks.</p>
+      </div>
+      <div class="maplayout">
+        <div class="mapcard">
+          <div class="daypick" id="daypick" role="group" aria-label="Which day to draw"></div>
+          <div id="mapholder"></div>
+        </div>
+        <aside class="side">
+          <div class="card">
+            <header><h3>That day on foot</h3></header>
+            <div id="walkinfo"></div>
+          </div>
+          <div class="card">
+            <header><h3>How the distances work</h3></header>
+            <p class="hint">Straight-line miles from the L'Enfant Plaza base, which is why the Mall
+              museums are a walk and the Cathedral is not. The scheduler adds a bonus for keeping a
+              day's daytime and evening outings near each other, and Checks flags any day that puts
+              more than two and a half miles between them.</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
     <section class="panel" id="p-rank" hidden>
       <div class="rank-grid">
         <div class="card">
           <header><h3>Your ballot</h3><span class="n" id="rankwho"></span></header>
-          <div class="body" style="padding-bottom:2px">
-            <p class="hint">Drag to reorder, or use the arrows. Your top four are what a shortened
-              trip keeps; your top thirteen are what the board protects. Nobody reads your list as a
-              list &mdash; only the tally, and only once you submit it.</p>
-            <div class="btnrow" style="margin-top:10px">
-              <button class="btn primary" id="submitballot">Submit ballot</button>
-              <button class="btn ghost" id="resetballot">Reset to seeded order</button>
-            </div>
+          <p class="hint">Drag to reorder, or use the arrows. Your top four are what a shortened trip
+            keeps; your top thirteen are what the board protects. The star is your one must-do &mdash;
+            whatever you star gets placed before anything else, even if the rest of the family
+            outvotes you.</p>
+          <div class="btnrow" style="margin-top:11px">
+            <button class="btn primary" id="submitballot">Submit ballot</button>
+            <button class="btn ghost" id="resetballot">Reset to seeded order</button>
           </div>
           <div class="ranklist" id="ranklist"></div>
         </div>
         <div class="card">
           <header><h3>The tally</h3><span class="n" id="tallyn"></span></header>
           <div class="tablewrap"><table class="tally" id="tally"></table></div>
-          <div class="body">
-            <p class="hint">Points are Borda: first place on a ballot is worth 18, last is worth 1.
-              Highlighted rows are the ones the family splits hardest on &mdash; those are the
-              conversations worth having at dinner, not on the board.</p>
-            <div class="btnrow" style="margin-top:10px">
-              <button class="btn" id="useconsensus">Plan from the tally</button>
-            </div>
+          <p class="hint" style="margin-top:12px">Points are Borda: first place on a ballot is worth
+            18, last is worth 1. Highlighted rows are the ones the family splits hardest on &mdash;
+            those are the conversations worth having at dinner, not on the board.</p>
+          <div class="btnrow" style="margin-top:11px">
+            <button class="btn" id="useconsensus">Plan from the tally</button>
           </div>
         </div>
       </div>
     </section>
 
     <section class="panel" id="p-roster" hidden>
+      <div class="secthead">
+        <h2>Everything on the table</h2>
+        <p>Twenty-five places, with the facts that actually decide a schedule rather than the ones
+          that sell a brochure.</p>
+      </div>
       <div class="roster" id="roster"></div>
     </section>
 
@@ -426,76 +545,79 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:6px 20px;align-items:baseline}
 </main>
 
 <footer><div class="wrap">
-  <span>Bart &middot; Jess &middot; Sam &middot; Nanny</span>
-  <span>Crescent 20 north &middot; Crescent 19 south</span>
-  <span>dc.sambonius.net</span>
+  <div class="fmark">&#9670;&#9670;&#9670;</div>
+  <p>Bart &middot; Jess &middot; Sam &middot; Nanny<br>
+     Anniston to Washington and back on the Crescent<br>
+     dc.sambonius.net</p>
 </div></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 "use strict";
 /* ═══════════════════════════════════════════════════════════════════════
-   Crescent Dispatch — a shared planning board for one specific trip.
-   Venue attributes below are planning facts, not opinions: how much of a
-   day something eats, what weather ruins it, and when it is closed.
+   Crescent Dispatch — a planning board for one specific trip.
+
+   Everyone keeps their own plan. The family board is the one that wins.
+   Venue attributes are planning facts, not opinions: how much of a day
+   something eats, what weather ruins it, where it is, and when it shuts.
    ═══════════════════════════════════════════════════════════════════════ */
 
 var IN   = {rain:"excellent", cold:"excellent", wind:"excellent", heat:"excellent"};
-var MEM  = {rain:"poor",      cold:"acceptable", wind:"poor",     heat:"good"};
+var MEM  = {rain:"poor",      cold:"acceptable", wind:"poor",      heat:"good"};
 var OUT  = {rain:"poor",      cold:"good",       wind:"acceptable", heat:"good"};
-var FED  = {wd:[0], hol:["thanksgiving","christmas","newyear"]};   // closed Sundays
+var FED  = {wd:[0], hol:["thanksgiving","christmas","newyear"]};
 var SMI  = {wd:[],  hol:["christmas"]};
 
 var VENUES = [
- {id:"us-capitol",name:"U.S. Capitol",seed:1,tier:"protected",period:"day",load:"hi",env:"mixed",min:2.5,ideal:4,resv:"recommended",w:{rain:"good",cold:"good",wind:"good",heat:"good"},bundle:"capitol-hill",closed:FED,
+ {id:"us-capitol",name:"U.S. Capitol",seed:1,tier:"protected",period:"day",load:"hi",env:"mixed",min:2.5,ideal:4,resv:"recommended",w:{rain:"good",cold:"good",wind:"good",heat:"good"},bundle:"capitol-hill",closed:FED,ll:[38.8899,-77.0091],
   why:"Inside, under the dome, on a real tour. Book through a member of Congress or the visitor center."},
- {id:"national-archives",name:"National Archives",seed:2,tier:"protected",period:"day",load:"lo",env:"indoor",min:1.5,ideal:2.5,resv:"recommended",w:IN,bundle:null,closed:{wd:[],hol:["thanksgiving","christmas"]},
+ {id:"national-archives",name:"National Archives",seed:2,tier:"protected",period:"day",load:"lo",env:"indoor",min:1.5,ideal:2.5,resv:"recommended",w:IN,bundle:null,closed:{wd:[],hol:["thanksgiving","christmas"]},ll:[38.8929,-77.0229],
   why:"The Declaration, the Constitution, the Bill of Rights. The actual paper in the actual room."},
- {id:"lincoln-memorial",name:"Lincoln Memorial",seed:3,tier:"protected",period:"night",load:"hi",env:"outdoor",min:.5,ideal:1,resv:"none",w:MEM,bundle:"main-memorial-loop",
+ {id:"lincoln-memorial",name:"Lincoln Memorial",seed:3,tier:"protected",period:"night",load:"hi",env:"outdoor",min:.5,ideal:1,resv:"none",w:MEM,bundle:"main-memorial-loop",ll:[38.8893,-77.0502],
   why:"Nineteen feet of Lincoln, lit from below, at the top of the steps."},
- {id:"library-of-congress",name:"Library of Congress",seed:4,tier:"protected",period:"day",load:"hi",env:"indoor",min:1.5,ideal:2.5,resv:"required",w:IN,bundle:"capitol-hill",closed:FED,
+ {id:"library-of-congress",name:"Library of Congress",seed:4,tier:"protected",period:"day",load:"hi",env:"indoor",min:1.5,ideal:2.5,resv:"required",w:IN,bundle:"capitol-hill",closed:FED,ll:[38.8887,-77.0047],
   why:"The Great Hall of the Jefferson Building. Free timed passes, and they go fast."},
- {id:"vietnam-memorial",name:"Vietnam Veterans Memorial",seed:5,tier:"protected",period:"night",load:"hi",env:"outdoor",min:.5,ideal:.75,resv:"none",w:MEM,bundle:"main-memorial-loop",
-  why:"Arrive at dusk while the names still read. Then let it go dark."},
- {id:"air-space",name:"National Air and Space Museum",seed:6,tier:"high",period:"day",load:"hi",env:"indoor",min:2.5,ideal:5,resv:"required",w:IN,bundle:null,closed:SMI,
+ {id:"vietnam-memorial",name:"Vietnam Veterans Memorial",seed:5,tier:"protected",period:"night",load:"hi",env:"outdoor",min:.5,ideal:.75,resv:"none",w:MEM,bundle:"main-memorial-loop",ll:[38.8913,-77.0477],
+  why:"Arrive at dusk while the names still read. Then let it get dark."},
+ {id:"air-space",name:"National Air and Space Museum",seed:6,tier:"high",period:"day",load:"hi",env:"indoor",min:2.5,ideal:5,resv:"required",w:IN,bundle:null,closed:SMI,ll:[38.8882,-77.0199],
   why:"The Wright Flyer, the Spirit of St. Louis, an Apollo capsule. Free timed passes required."},
- {id:"arlington",name:"Arlington National Cemetery",seed:7,tier:"high",period:"day",load:"hi",env:"outdoor",min:3,ideal:5,resv:"none",w:{rain:"poor",cold:"acceptable",wind:"poor",heat:"acceptable"},bundle:null,
+ {id:"arlington",name:"Arlington National Cemetery",seed:7,tier:"high",period:"day",load:"hi",env:"outdoor",min:3,ideal:5,resv:"none",w:{rain:"poor",cold:"acceptable",wind:"poor",heat:"acceptable"},bundle:null,ll:[38.8783,-77.0687],
   why:"Changing of the Guard on the hour. Build the day around it and dress for a cold hill."},
- {id:"wwii-memorial",name:"World War II Memorial",seed:8,tier:"protected",period:"night",load:"hi",env:"outdoor",min:.5,ideal:.75,resv:"none",w:MEM,bundle:"main-memorial-loop",
+ {id:"wwii-memorial",name:"World War II Memorial",seed:8,tier:"protected",period:"night",load:"hi",env:"outdoor",min:.5,ideal:.75,resv:"none",w:MEM,bundle:"main-memorial-loop",ll:[38.8894,-77.0405],
   why:"The fountain lit, the two arches, and a short walk on to Lincoln."},
- {id:"korean-memorial",name:"Korean War Veterans Memorial",seed:9,tier:"protected",period:"night",load:"hi",env:"outdoor",min:.5,ideal:.75,resv:"none",w:MEM,bundle:"main-memorial-loop",
+ {id:"korean-memorial",name:"Korean War Veterans Memorial",seed:9,tier:"protected",period:"night",load:"hi",env:"outdoor",min:.5,ideal:.75,resv:"none",w:MEM,bundle:"main-memorial-loop",ll:[38.8877,-77.0475],
   why:"Nineteen statues under lights, in the cold. Nobody forgets this one."},
- {id:"white-house",name:"White House Exterior",seed:10,tier:"protected",period:"night",load:"mid",env:"outdoor",min:.5,ideal:1,resv:"none",w:OUT,bundle:"christmas-washington",
+ {id:"white-house",name:"White House Exterior",seed:10,tier:"protected",period:"night",load:"mid",env:"outdoor",min:.5,ideal:1,resv:"none",w:OUT,bundle:"christmas-washington",ll:[38.8977,-77.0365],
   why:"From the fence on the Ellipse side. Ten minutes, and better after dark."},
- {id:"national-christmas-tree",name:"National Christmas Tree",seed:11,tier:"protected",period:"night",load:"mid",env:"outdoor",min:.5,ideal:1,resv:"none",w:OUT,bundle:"christmas-washington",
+ {id:"national-christmas-tree",name:"National Christmas Tree",seed:11,tier:"protected",period:"night",load:"mid",env:"outdoor",min:.5,ideal:1,resv:"none",w:OUT,bundle:"christmas-washington",ll:[38.8946,-77.0365],
   why:"The tree on the Ellipse, with the state and territory trees ringed around it."},
- {id:"natural-history",name:"National Museum of Natural History",seed:12,tier:"medium",period:"day",load:"hi",env:"indoor",min:2.5,ideal:5,resv:"none",w:IN,bundle:null,closed:SMI,
+ {id:"natural-history",name:"National Museum of Natural History",seed:12,tier:"medium",period:"day",load:"hi",env:"indoor",min:2.5,ideal:5,resv:"none",w:IN,bundle:null,closed:SMI,ll:[38.8913,-77.0261],
   why:"Dinosaurs, the Hope Diamond, the elephant, the whale. Sam's day."},
- {id:"american-history",name:"National Museum of American History",seed:13,tier:"medium",period:"day",load:"hi",env:"indoor",min:2,ideal:4.5,resv:"none",w:IN,bundle:null,closed:SMI,
+ {id:"american-history",name:"National Museum of American History",seed:13,tier:"medium",period:"day",load:"hi",env:"indoor",min:2,ideal:4.5,resv:"none",w:IN,bundle:null,closed:SMI,ll:[38.8911,-77.0300],
   why:"The Star-Spangled Banner — the flag from the song — plus the presidents and the trains."},
- {id:"african-american-history",name:"African American History & Culture",seed:14,tier:"medium",period:"day",load:"hi",env:"indoor",min:3,ideal:5,resv:"recommended",w:IN,bundle:null,closed:SMI,
+ {id:"african-american-history",name:"African American History & Culture",seed:14,tier:"medium",period:"day",load:"hi",env:"indoor",min:3,ideal:5,resv:"recommended",w:IN,bundle:null,closed:SMI,ll:[38.8911,-77.0327],
   why:"Start underground in the history galleries and climb toward culture. Big, and heavy in places."},
- {id:"washington-monument",name:"Washington Monument",seed:15,tier:"medium",period:"day",load:"mid",env:"mixed",min:1,ideal:2,resv:"required",w:{rain:"poor",cold:"good",wind:"poor",heat:"acceptable"},bundle:null,closed:{wd:[],hol:["christmas"]},
+ {id:"washington-monument",name:"Washington Monument",seed:15,tier:"medium",period:"day",load:"mid",env:"mixed",min:1,ideal:2,resv:"required",w:{rain:"poor",cold:"good",wind:"poor",heat:"acceptable"},bundle:null,closed:{wd:[],hol:["christmas"]},ll:[38.8895,-77.0353],
   why:"Timed tickets drop 30 days out at 10 am sharp. The view is the whole trip at once."},
- {id:"jefferson-memorial",name:"Jefferson Memorial",seed:16,tier:"medium",period:"night",load:"mid",env:"outdoor",min:.5,ideal:1,resv:"none",w:MEM,bundle:"tidal-basin-loop",
+ {id:"jefferson-memorial",name:"Jefferson Memorial",seed:16,tier:"medium",period:"night",load:"mid",env:"outdoor",min:.5,ideal:1,resv:"none",w:MEM,bundle:"tidal-basin-loop",ll:[38.8814,-77.0365],
   why:"Across the water, quiet, and the best-lit dome on the basin."},
- {id:"mlk-memorial",name:"Martin Luther King Jr. Memorial",seed:17,tier:"medium",period:"night",load:"mid",env:"outdoor",min:.5,ideal:.75,resv:"none",w:MEM,bundle:"tidal-basin-loop",
+ {id:"mlk-memorial",name:"Martin Luther King Jr. Memorial",seed:17,tier:"medium",period:"night",load:"mid",env:"outdoor",min:.5,ideal:.75,resv:"none",w:MEM,bundle:"tidal-basin-loop",ll:[38.8863,-77.0444],
   why:"The Stone of Hope cut out of the mountain of despair, facing the water."},
- {id:"fdr-memorial",name:"Franklin Delano Roosevelt Memorial",seed:18,tier:"medium",period:"night",load:"mid",env:"outdoor",min:.75,ideal:1.25,resv:"none",w:MEM,bundle:"tidal-basin-loop",
+ {id:"fdr-memorial",name:"Franklin Delano Roosevelt Memorial",seed:18,tier:"medium",period:"night",load:"mid",env:"outdoor",min:.75,ideal:1.25,resv:"none",w:MEM,bundle:"tidal-basin-loop",ll:[38.8834,-77.0424],
   why:"Four outdoor rooms, waterfalls, and the only memorial on the Mall with a dog in it."},
- {id:"national-gallery",name:"National Gallery of Art",seed:19,tier:"bonus",period:"day",load:"hi",env:"indoor",min:2,ideal:4,resv:"none",w:IN,bundle:null,closed:{wd:[],hol:["christmas","newyear"]},
+ {id:"national-gallery",name:"National Gallery of Art",seed:19,tier:"bonus",period:"day",load:"hi",env:"indoor",min:2,ideal:4,resv:"none",w:IN,bundle:null,closed:{wd:[],hol:["christmas","newyear"]},ll:[38.8913,-77.0197],
   why:"West building for the old masters, East for the strange ones, tunnel in between."},
- {id:"georgetown",name:"Georgetown",seed:20,tier:"bonus",period:"day",load:"mid",env:"mixed",min:2,ideal:4,resv:"none",w:{rain:"poor",cold:"good",wind:"acceptable",heat:"acceptable"},bundle:null,
+ {id:"georgetown",name:"Georgetown",seed:20,tier:"bonus",period:"day",load:"mid",env:"mixed",min:2,ideal:4,resv:"none",w:{rain:"poor",cold:"good",wind:"acceptable",heat:"acceptable"},bundle:null,ll:[38.9048,-77.0625],
   why:"Brick streets, the canal, the shops, lunch somewhere warm. Not a museum, on purpose."},
- {id:"national-cathedral",name:"Washington National Cathedral",seed:21,tier:"bonus",period:"day",load:"mid",env:"indoor",min:1.5,ideal:3,resv:"recommended",w:IN,bundle:null,
+ {id:"national-cathedral",name:"Washington National Cathedral",seed:21,tier:"bonus",period:"day",load:"mid",env:"indoor",min:1.5,ideal:3,resv:"recommended",w:IN,bundle:null,ll:[38.9305,-77.0708],
   why:"Stained glass, gargoyles, and the Darth Vader grotesque if you can spot it from the ground."},
- {id:"fords-theatre",name:"Ford's Theatre",seed:22,tier:"bonus",period:"day",load:"lo",env:"indoor",min:1,ideal:2,resv:"recommended",w:IN,bundle:null,closed:{wd:[],hol:["thanksgiving","christmas"]},
+ {id:"fords-theatre",name:"Ford's Theatre",seed:22,tier:"bonus",period:"day",load:"lo",env:"indoor",min:1,ideal:2,resv:"recommended",w:IN,bundle:null,closed:{wd:[],hol:["thanksgiving","christmas"]},ll:[38.8967,-77.0257],
   why:"The theatre and the Petersen house across the street. Lands harder than you expect."},
- {id:"zoolights",name:"ZooLights",seed:23,tier:"bonus",period:"night",load:"mid",env:"outdoor",min:1.5,ideal:2.5,resv:"recommended",w:OUT,bundle:null,
+ {id:"zoolights",name:"ZooLights",seed:23,tier:"bonus",period:"night",load:"mid",env:"outdoor",min:1.5,ideal:2.5,resv:"recommended",w:OUT,bundle:null,ll:[38.9296,-77.0497],
   why:"The whole zoo strung with lights. Downhill going in, uphill coming back out."},
- {id:"holiday-market",name:"DowntownDC Holiday Market",seed:24,tier:"bonus",period:"day",load:"lo",env:"outdoor",min:1,ideal:2,resv:"none",w:OUT,bundle:null,
+ {id:"holiday-market",name:"DowntownDC Holiday Market",seed:24,tier:"bonus",period:"day",load:"lo",env:"outdoor",min:1,ideal:2,resv:"none",w:OUT,bundle:null,ll:[38.8977,-77.0231],
   why:"Stalls, cocoa, and one hour of the trip spent not being in a museum."},
- {id:"spy-museum",name:"International Spy Museum",seed:25,tier:"bonus",period:"day",load:"mid",env:"indoor",min:2,ideal:3,resv:"recommended",w:IN,bundle:null,
+ {id:"spy-museum",name:"International Spy Museum",seed:25,tier:"bonus",period:"day",load:"mid",env:"indoor",min:2,ideal:3,resv:"recommended",w:IN,bundle:null,ll:[38.8837,-77.0250],
   why:"Paid, off the Mall, and the one Sam will still be talking about in January."}
 ];
 
@@ -516,11 +638,11 @@ var CREW = [
  {id:"sam",   name:"Sam",   role:"Full stakeholder"},
  {id:"nanny", name:"Nanny", role:"Full stakeholder"}
 ];
+var BOARD_KEYS = ["family","bart","jess","sam","nanny"];
+var BASE = {name:"L'Enfant Plaza base", ll:[38.8845,-77.0255]};
+var TRIP = {start:"2026-11-29", nights:7, board:"2026-11-28T20:04:00-06:00", backAtWork:"2026-12-10"};
 
-var TRIP = {start:"2026-11-29", nights:7, board:"2026-11-28T20:04:00-06:00",
-            backAtWork:"2026-12-10"};
-
-/* ── Units: what the board actually places ──────────────────────────── */
+/* ── Units ──────────────────────────────────────────────────────────── */
 var LOADN = {lo:0, mid:1, hi:2};
 var TIERN = {protected:0, high:1, medium:2, bonus:3};
 var FITN  = {poor:0, acceptable:1, good:2, excellent:3};
@@ -538,6 +660,21 @@ function worstWeather(vs){
   });
   return out;
 }
+function centroid(ids){
+  var la = 0, lo = 0;
+  ids.forEach(function(i){ la += byId[i].ll[0]; lo += byId[i].ll[1]; });
+  return [la/ids.length, lo/ids.length];
+}
+/* Straight-line miles. Honest about being straight-line: DC is a grid and the
+   Mall is flat, so it is close enough to decide "walk or call a car". */
+function distMi(a, b){
+  var R = 3958.8, t = Math.PI/180;
+  var dLa = (b[0]-a[0])*t, dLo = (b[1]-a[1])*t;
+  var s = Math.sin(dLa/2)*Math.sin(dLa/2) +
+          Math.cos(a[0]*t)*Math.cos(b[0]*t)*Math.sin(dLo/2)*Math.sin(dLo/2);
+  return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1-s));
+}
+function walkMin(mi){ return Math.round(mi / 2.8 * 60); }
 
 var UNITS = (function(){
   var out = [], seen = {};
@@ -555,21 +692,21 @@ var UNITS = (function(){
       ideal:ms.reduce(function(s,v){ return s + v.ideal; }, 0),
       resv:ms.reduce(function(r,v){ return v.resv === "required" ? "required" :
             (r === "required" ? r : (v.resv === "recommended" ? "recommended" : r)); }, "none"),
-      w:worstWeather(ms), preferDow:b.preferDow
+      w:worstWeather(ms), preferDow:b.preferDow, ll:centroid(b.core)
     });
   });
   VENUES.forEach(function(v){
     if (seen[v.id]) return;
     out.push({id:v.id, name:v.name, why:v.why, members:[v.id], bundle:false,
       seed:v.seed, tier:v.tier, period:v.period, load:v.load, env:v.env,
-      min:v.min, ideal:v.ideal, resv:v.resv, w:v.w});
+      min:v.min, ideal:v.ideal, resv:v.resv, w:v.w, ll:v.ll});
   });
   out.sort(function(a,b){ return a.seed - b.seed; });
   return out;
 })();
 var unitById = {}; UNITS.forEach(function(u){ unitById[u.id] = u; });
 var SEEDED = UNITS.map(function(u){ return u.id; });
-var MUST_SEE = 13, FINAL_FOUR = 4;
+var MUST_SEE = 13, FINAL_FOUR = 4, FAR_MI = 2.5;
 
 /* ── Dates ──────────────────────────────────────────────────────────── */
 var DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -584,8 +721,8 @@ function holidayOf(d){
   if (m === 11 && d.getDay() === 4 && day >= 22 && day <= 28) return "thanksgiving";
   return null;
 }
-function frameDays(){
-  var s = parseISO(state.config.start), n = state.config.nights, out = [];
+function frameDays(nights){
+  var s = parseISO(state.config.start), n = nights == null ? state.config.nights : nights, out = [];
   for (var i = 0; i <= n; i++){
     var d = addDays(s,i);
     out.push({i:i, date:d, iso:iso(d), dow:d.getDay(),
@@ -593,13 +730,14 @@ function frameDays(){
   }
   return out;
 }
+function fmt(day){ var d = day.date; return DOW[d.getDay()] + " " + MON[d.getMonth()] + " " + d.getDate(); }
 function closedOn(u, day){
   for (var i = 0; i < u.members.length; i++){
-    var c = byId[u.members[i]].closed;
+    var v = byId[u.members[i]], c = v.closed;
     if (!c) continue;
-    if (c.wd && c.wd.indexOf(day.dow) > -1) return byId[u.members[i]].name + " is closed Sundays";
+    if (c.wd && c.wd.indexOf(day.dow) > -1) return v.name + " is closed Sundays";
     var h = holidayOf(day.date);
-    if (h && c.hol && c.hol.indexOf(h) > -1) return byId[u.members[i]].name + " is closed for the holiday";
+    if (h && c.hol && c.hol.indexOf(h) > -1) return v.name + " is closed for the holiday";
   }
   return null;
 }
@@ -607,70 +745,83 @@ function closedOn(u, day){
 /* ── State ──────────────────────────────────────────────────────────── */
 var state = {
   config:{start:TRIP.start, nights:TRIP.nights},
-  placements:{},          // unitId -> {d, slot}
-  wx:{},                  // isoDate -> {cold,wind,rain}
-  resv:{},                // venueId -> true
-  ballots:{},             // person -> [unitId,...]
-  planFrom:"seed"         // "seed" | "tally"
+  boards:{family:{}, bart:{}, jess:{}, sam:{}, nanny:{}},
+  wx:{}, resv:{}, ballots:{}, musts:{}, planFrom:"seed"
 };
 var me = localStorage.getItem("cd.me") || "sam";
-var draft = null;         // the ballot being edited on the ranking tab
-var picked = null;        // unit id armed for click-to-place
-var db = null, remote = false;
+var viewing = "family";
+var draft = null, picked = null, mapDay = 1;
+var db = null;
 
-function role(){ var c = CREW.filter(function(p){ return p.id === me; })[0]; return c ? c.role : ""; }
+function crewOf(id){ return CREW.filter(function(p){ return p.id === id; })[0]; }
+function role(){ var c = crewOf(me); return c ? c.role : ""; }
 function isDispatcher(){ return me === "bart"; }
+function boardName(k){ return k === "family" ? "The family plan" : crewOf(k).name + "'s plan"; }
+function pl(k){ if (!state.boards[k]) state.boards[k] = {}; return state.boards[k]; }
+function cur(){ return pl(viewing); }
+function canEdit(){ return viewing === "family" || viewing === me; }
 function wxFor(d){ return state.wx[d.iso] || {cold:true, wind:false, rain:false}; }
 
 /* ── Persistence ────────────────────────────────────────────────────── */
 var saveTimer = null;
+function noop(){}
 function localSave(){ try{ localStorage.setItem("cd.state", JSON.stringify(state)); }catch(e){} }
 function localLoad(){
   try{
     var raw = localStorage.getItem("cd.state");
     if (raw){ var s = JSON.parse(raw); for (var k in s) if (s[k] != null) state[k] = s[k]; }
+    if (!state.boards) state.boards = {family:{}, bart:{}, jess:{}, sam:{}, nanny:{}};
+    if (!state.musts) state.musts = {};
   }catch(e){}
 }
-function save(){
+function save(which){
   localSave();
   if (!db) return;
+  var key = which || viewing;
   clearTimeout(saveTimer);
   saveTimer = setTimeout(function(){
-    db.doc("trip/board").set({
-      config:state.config, placements:state.placements, wx:state.wx,
-      resv:state.resv, planFrom:state.planFrom, by:me, at:Date.now()
-    }).catch(function(){ setSync("local","saved on this device"); });
+    db.doc("boards/" + key).set({placements:pl(key), by:me, at:Date.now()}).catch(noop);
+    db.doc("trip/shared").set({config:state.config, wx:state.wx, resv:state.resv,
+      planFrom:state.planFrom, at:Date.now()}).catch(noop);
   }, 350);
 }
 function saveBallot(){
   localSave();
   if (!db) return;
-  db.doc("votes/" + me).set({order:draft.slice(), at:Date.now()})
-    .catch(function(){ setSync("local","saved on this device"); });
+  db.doc("votes/" + me).set({order:draft ? draft.slice() : (state.ballots[me] || SEEDED).slice(),
+    must:state.musts[me] || null, at:Date.now()}).catch(noop);
 }
 function setSync(kind, msg){
-  var dot = document.getElementById("syncdot");
-  dot.className = "dot" + (kind ? " " + kind : "");
+  var d = document.getElementById("syncdot");
+  d.className = "dot" + (kind ? " " + kind : "");
   document.getElementById("syncmsg").textContent = msg;
 }
 
-/* ── The scheduler ──────────────────────────────────────────────────── */
+/* ── Scheduler ──────────────────────────────────────────────────────── */
 function planningOrder(){
+  var base;
   if (state.planFrom === "tally"){
     var t = tally();
-    if (t.voters > 0) return t.rows.map(function(r){ return r.id; });
-  }
-  return SEEDED.slice();
+    base = t.voters > 0 ? t.rows.map(function(r){ return r.id; }) : SEEDED.slice();
+  } else base = SEEDED.slice();
+  /* A starred must-do outranks the tally. That is the whole point of a veto. */
+  var starred = [];
+  CREW.forEach(function(p){
+    var m = state.musts[p.id];
+    if (m && unitById[m] && starred.indexOf(m) < 0) starred.push(m);
+  });
+  if (!starred.length) return base;
+  return starred.concat(base.filter(function(id){ return starred.indexOf(id) < 0; }));
 }
 function pairScore(a, b){
   if (b == null) return 1;
   var x = LOADN[a], y = LOADN[b];
-  if (x === 2 && y === 2) return -12;   // never two Bigs in one day
+  if (x === 2 && y === 2) return -12;
   if (x === 2 && y === 1) return -3;
-  if (x === 2 && y === 0) return 2;     // a Big day earns an Easy night
+  if (x === 2 && y === 0) return 2;
   if (x === 1 && y === 1) return 0;
   if (x === 1 && y === 0) return 1;
-  return -1;                            // two Easies wastes a day
+  return -1;
 }
 function weatherFit(u, cond){
   var active = ["rain","cold","wind","heat"].filter(function(k){ return cond[k]; });
@@ -681,79 +832,97 @@ function weatherFit(u, cond){
 }
 function structuralAt(day, slot){
   if (day.kind === "arrival") return slot === "day"
-    ? {name:"Arrive, hotel, food", load:"lo", note:"Union Station about 2:12 pm"}
-    : {name:"The Capitol, illuminated", load:"mid", note:"Three blocks from the station"};
+    ? {name:"Arrive, hotel, food", load:"lo", note:"Union Station about 2:12 pm", ll:BASE.ll}
+    : {name:"The Capitol, illuminated", load:"mid", note:"Three blocks from the station", ll:[38.8899,-77.0091]};
   if (day.kind === "departure" && slot === "night")
-    return {name:"Southbound sleeper", load:"lo", note:"Crescent 19 departs 6:30 pm"};
+    return {name:"Southbound sleeper", load:"lo", note:"Crescent 19 departs 6:30 pm", ll:[38.8977,-77.0064]};
   return null;
 }
-function occupantAt(days, day, slot){
-  if (structuralAt(day, slot)) return structuralAt(day, slot);
-  for (var id in state.placements){
-    var p = state.placements[id];
-    if (p.d === day.i && p.slot === slot) return unitById[id];
+function occupantAt(board, day, slot){
+  var s = structuralAt(day, slot);
+  if (s) return s;
+  for (var id in board){
+    var p = board[id];
+    if (p.d === day.i && p.slot === slot && unitById[id]) return unitById[id];
   }
   return null;
 }
-function autoFill(){
-  state.placements = {};
-  var days = frameDays(), order = planningOrder();
+function autoFillInto(board, nights){
+  var days = frameDays(nights), order = planningOrder();
+  for (var k in board) delete board[k];
   order.forEach(function(uid){
     var u = unitById[uid];
     if (!u) return;
     var best = null, bestScore = -1e9;
     days.forEach(function(day){
       if (structuralAt(day, u.period)) return;
-      if (occupantAt(days, day, u.period)) return;
+      if (occupantAt(board, day, u.period)) return;
       if (closedOn(u, day)) return;
-      if (day.kind === "departure" && u.period === "day"){
-        if (u.load === "hi" || u.env === "outdoor") return;   // getting-on-a-train morning
-      }
-      var sc = 0;
-      sc += weatherFit(u, wxFor(day));
-      var other = occupantAt(days, day, u.period === "day" ? "night" : "day");
+      if (day.kind === "departure" && u.period === "day" && (u.load === "hi" || u.env === "outdoor")) return;
+      var sc = weatherFit(u, wxFor(day));
+      var other = occupantAt(board, day, u.period === "day" ? "night" : "day");
       sc += pairScore(u.load, other ? other.load : null);
+      if (other && other.ll){                     /* keep a day's two outings near each other */
+        var mi = distMi(u.ll, other.ll);
+        sc += mi < 0.8 ? 2 : mi < FAR_MI ? 0 : -4;
+      }
       if (u.preferDow != null && day.dow === u.preferDow) sc += 3;
       if (day.kind === "core") sc += 1;
-      sc -= day.i * 0.05;                                     // earlier is safer
+      sc -= day.i * 0.05;
       if (sc > bestScore){ bestScore = sc; best = day; }
     });
-    if (best) state.placements[u.id] = {d:best.i, slot:u.period};
+    if (best) board[u.id] = {d:best.i, slot:u.period};
   });
-  save();
-  renderAll();
-  toast("Board filled from " + (state.planFrom === "tally" ? "the family tally" : "the seeded order") + ".");
+  return board;
+}
+function autoFill(){
+  if (!canEdit()) return;
+  autoFillInto(cur());
+  save(); renderAll();
+  toast(boardName(viewing) + " filled from " + (state.planFrom === "tally" ? "the family tally" : "the seeded order") + ".");
 }
 
 /* ── Checks ─────────────────────────────────────────────────────────── */
 function checks(){
-  var days = frameDays(), out = [], order = planningOrder();
+  var days = frameDays(), board = cur(), out = [], order = planningOrder();
   var must = order.slice(0, MUST_SEE);
 
   days.forEach(function(day){
     ["day","night"].forEach(function(slot){
-      var o = occupantAt(days, day, slot);
+      var o = occupantAt(board, day, slot);
       if (!o || !o.members) return;
       var cl = closedOn(o, day);
       if (cl) out.push({level:"stop", t:o.name + " on " + fmt(day),
-        s:cl + ". Move it or the day is wasted at the door."});
-      var fit = weatherFit(o, wxFor(day));
-      if (fit <= -6) out.push({level:"warn", t:o.name + " in this weather",
+        s:cl + ". Move it, or the day is wasted at the door."});
+      if (weatherFit(o, wxFor(day)) <= -6) out.push({level:"warn", t:o.name + " in this weather",
         s:"Rated poor for the conditions set on " + fmt(day) + ". Fine to keep — just have the warm plan ready."});
     });
-    var d1 = occupantAt(days, day, "day"), n1 = occupantAt(days, day, "night");
+    var d1 = occupantAt(board, day, "day"), n1 = occupantAt(board, day, "night");
     if (d1 && n1 && d1.load === "hi" && n1.load === "hi")
       out.push({level:"stop", t:"Two Bigs on " + fmt(day),
         s:d1.name + " and " + n1.name + " in one day is the death march the house rules ban."});
+    if (d1 && n1 && d1.ll && n1.ll){
+      var mi = distMi(d1.ll, n1.ll);
+      if (mi > FAR_MI) out.push({level:"warn", t:"A long hop on " + fmt(day),
+        s:d1.name + " to " + n1.name + " is " + mi.toFixed(1) + " miles. Budget a car, not a walk."});
+    }
   });
 
-  var unplacedMust = must.filter(function(id){ return !state.placements[id]; });
-  if (unplacedMust.length)
-    out.push({level:"stop", t:unplacedMust.length + " must-see " + (unplacedMust.length === 1 ? "thing is" : "things are") + " on the bench",
-      s:unplacedMust.map(function(i){ return unitById[i].name; }).join(", ") + ". Add a night or cut something below it."});
+  var unplaced = must.filter(function(id){ return !board[id]; });
+  if (unplaced.length)
+    out.push({level:"stop", t:unplaced.length + " must-see " + (unplaced.length === 1 ? "thing is" : "things are") + " on the bench",
+      s:unplaced.map(function(i){ return unitById[i].name; }).join(", ") + ". Add a night, or cut something below it."});
+
+  CREW.forEach(function(p){
+    var m = state.musts[p.id];
+    if (m && unitById[m] && !board[m])
+      out.push({level:"stop", t:p.name + "'s must-do is not on this plan",
+        s:unitById[m].name + " was starred as a must-do. A plan without it is not going to survive dinner."});
+  });
 
   var needs = [];
-  Object.keys(state.placements).forEach(function(uid){
+  Object.keys(board).forEach(function(uid){
+    if (!unitById[uid]) return;
     unitById[uid].members.forEach(function(vid){
       var v = byId[vid];
       if (v.resv !== "none" && !state.resv[vid]) needs.push(v.name);
@@ -770,11 +939,10 @@ function checks(){
   else if (buffer === 1) out.push({level:"warn", t:"One day of slack before work",
     s:"Home " + fmt({date:home}) + ", Bart is back on the clock Thu Dec 10. Any delay eats it."});
 
-  if (!out.length) out.push({level:"ok", t:"The week holds",
-    s:"No closures, no double-Bigs, every must-see thing placed, every booking accounted for."});
+  if (!out.length) out.push({level:"ok", t:"This plan holds",
+    s:"No closures, no double-Bigs, no long hops, every must-see thing placed, every booking accounted for."});
   return out;
 }
-function fmt(day){ var d = day.date; return DOW[d.getDay()] + " " + MON[d.getMonth()] + " " + d.getDate(); }
 
 /* ── Tally ──────────────────────────────────────────────────────────── */
 function tally(){
@@ -797,18 +965,26 @@ function tally(){
   return {rows:rows, voters:voters, N:N};
 }
 
-/* ── Rendering ──────────────────────────────────────────────────────── */
+/* ── DOM helpers ────────────────────────────────────────────────────── */
 function el(tag, cls, txt){ var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+function svgEl(tag, attrs){
+  var e = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (var k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
 function loadWord(l){ return l === "hi" ? "Big" : l === "mid" ? "Real" : "Easy"; }
 function hrs(n){ return (Math.round(n*10)/10) + " hr"; }
 
 function chip(u, opts){
   opts = opts || {};
-  var c = el("div", "chip " + u.load + (picked === u.id ? " sel" : ""));
-  c.setAttribute("draggable","true");
+  var editable = opts.editable !== false;
+  var c = el("div", "chip " + u.load + (picked === u.id ? " sel" : "") + (editable ? "" : " ro"));
+  if (editable){
+    c.setAttribute("draggable","true");
+    c.setAttribute("role","button");
+    c.setAttribute("tabindex","0");
+  }
   c.dataset.unit = u.id;
-  c.setAttribute("role","button");
-  c.setAttribute("tabindex","0");
   c.setAttribute("aria-label", u.name + ", " + loadWord(u.load) + ", " + u.period);
   c.appendChild(el("h4", null, u.name));
   var m = el("div","meta");
@@ -823,26 +999,28 @@ function chip(u, opts){
     opts.flags.forEach(function(fl){ f.appendChild(el("span","flag " + (fl.k||""), fl.t)); });
     c.appendChild(f);
   }
-  if (opts.remove){
+  if (opts.remove && editable){
     var r = el("button","rmv","×");
     r.title = "Back to the bench";
-    r.setAttribute("aria-label","Remove " + u.name + " from the board");
+    r.setAttribute("aria-label","Remove " + u.name + " from this plan");
     r.addEventListener("click", function(ev){
       ev.stopPropagation();
-      delete state.placements[u.id]; save(); renderAll();
+      delete cur()[u.id]; save(); renderAll();
     });
     c.appendChild(r);
   }
-  c.addEventListener("dragstart", function(ev){
-    ev.dataTransfer.setData("text/plain", u.id);
-    ev.dataTransfer.effectAllowed = "move";
-    c.classList.add("dragging");
-  });
-  c.addEventListener("dragend", function(){ c.classList.remove("dragging"); });
-  c.addEventListener("click", function(){ picked = (picked === u.id ? null : u.id); renderBoard(); });
-  c.addEventListener("keydown", function(ev){
-    if (ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); picked = (picked === u.id ? null : u.id); renderBoard(); }
-  });
+  if (editable){
+    c.addEventListener("dragstart", function(ev){
+      ev.dataTransfer.setData("text/plain", u.id);
+      ev.dataTransfer.effectAllowed = "move";
+      c.classList.add("dragging");
+    });
+    c.addEventListener("dragend", function(){ c.classList.remove("dragging"); });
+    c.addEventListener("click", function(){ picked = (picked === u.id ? null : u.id); renderBoard(); });
+    c.addEventListener("keydown", function(ev){
+      if (ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); picked = (picked === u.id ? null : u.id); renderBoard(); }
+    });
+  }
   return c;
 }
 function fixedChip(s){
@@ -856,9 +1034,56 @@ function fixedChip(s){
   return c;
 }
 
+/* ── Whose plan ─────────────────────────────────────────────────────── */
+function renderPlanPick(){
+  var box = document.getElementById("planpick");
+  box.textContent = "";
+  BOARD_KEYS.forEach(function(k){
+    var n = Object.keys(pl(k)).length;
+    var b = el("button", n ? "" : "empty");
+    b.dataset.who = k;
+    b.setAttribute("aria-pressed", k === viewing ? "true" : "false");
+    b.appendChild(el("span","swatch"));
+    b.appendChild(el("span", null, k === "family" ? "Family" : crewOf(k).name + (k === me ? " (you)" : "")));
+    b.title = n ? n + " outings placed" : "Nothing placed yet";
+    b.addEventListener("click", function(){ viewing = k; picked = null; renderAll(); });
+    box.appendChild(b);
+  });
+
+  var acts = document.getElementById("planacts");
+  acts.textContent = "";
+  if (!canEdit()) acts.appendChild(el("span","ro","Read only"));
+  if (viewing !== me){
+    var copy = el("button","btn","Copy to my plan");
+    copy.addEventListener("click", function(){
+      var src = cur(), dst = pl(me), k;
+      for (k in dst) delete dst[k];
+      for (k in src) dst[k] = {d:src[k].d, slot:src[k].slot};
+      viewing = me; save(me); renderAll();
+      toast("Copied into your plan. It is yours to change now.");
+    });
+    acts.appendChild(copy);
+  }
+  if (viewing !== "family"){
+    var adopt = el("button","btn primary","Adopt as the family plan");
+    adopt.addEventListener("click", function(){
+      var src = cur(), dst = pl("family"), k;
+      for (k in dst) delete dst[k];
+      for (k in src) dst[k] = {d:src[k].d, slot:src[k].slot};
+      var was = viewing; viewing = "family"; save("family"); renderAll();
+      toast(boardName(was) + " is now the family plan.");
+    });
+    acts.appendChild(adopt);
+  }
+}
+
+/* ── Board ──────────────────────────────────────────────────────────── */
 function renderBoard(){
-  var days = frameDays(), ladder = document.getElementById("ladder");
+  renderPlanPick();
+  var days = frameDays(), board = cur(), editable = canEdit();
+  var ladder = document.getElementById("ladder");
   ladder.textContent = "";
+
   days.forEach(function(day){
     var card = el("div","day");
     var rail = el("div","day-rail");
@@ -866,6 +1091,7 @@ function renderBoard(){
     rail.appendChild(el("div","day-date", MON[day.date.getMonth()] + " " + day.date.getDate()));
     if (day.kind !== "core")
       rail.appendChild(el("div","day-tag", day.kind === "arrival" ? "Arrival" : "Departure"));
+
     var wxb = el("div","wx");
     [["cold","C","Cold"],["wind","W","Wind"],["rain","R","Rain"]].forEach(function(k){
       var b = el("button", null, k[1]);
@@ -881,8 +1107,14 @@ function renderBoard(){
     });
     rail.appendChild(wxb);
 
+    var dU = occupantAt(board, day, "day"), nU = occupantAt(board, day, "night");
+    if (dU && nU && dU.ll && nU.ll){
+      var mi = distMi(dU.ll, nU.ll);
+      rail.appendChild(el("div","walk", mi.toFixed(1) + " mi · " + walkMin(mi) + " min walk"));
+    }
+
     var bat = el("div","battery"), total = 0;
-    ["day","night"].forEach(function(s){ var o = occupantAt(days, day, s); if (o) total += LOADN[o.load] + 1; });
+    [dU, nU].forEach(function(o){ if (o) total += LOADN[o.load] + 1; });
     for (var i = 0; i < 4; i++){
       var pip = el("i");
       if (i < total) pip.className = total > 4 ? "over" : "on";
@@ -895,72 +1127,66 @@ function renderBoard(){
     var slots = el("div","slots");
     ["day","night"].forEach(function(slot){
       var box = el("div","slot");
-      box.dataset.day = day.i; box.dataset.slot = slot;
       var lab = el("div","slot-label");
       lab.appendChild(el("span", null, slot === "day" ? "Daytime" : "After dark"));
-      var o = occupantAt(days, day, slot);
-      if (o && o.ideal) { var h = el("span","hrs", hrs(o.ideal)); lab.appendChild(h); }
+      var o = occupantAt(board, day, slot);
+      if (o && o.ideal) lab.appendChild(el("span","hrs", hrs(o.ideal)));
       box.appendChild(lab);
 
       var fixed = structuralAt(day, slot);
-      if (fixed){ box.appendChild(fixedChip(fixed)); }
+      if (fixed) box.appendChild(fixedChip(fixed));
       else if (o){
         var flags = [];
-        var cl = closedOn(o, day);
-        if (cl) flags.push({k:"", t:"closed"});
+        if (closedOn(o, day)) flags.push({k:"", t:"closed"});
         if (weatherFit(o, wxFor(day)) <= -6) flags.push({k:"warn", t:"weather"});
-        var open = o.members.filter(function(v){ return byId[v].resv !== "none" && !state.resv[v]; });
-        if (open.length) flags.push({k:"warn", t:"needs booking"});
+        if (o.members.filter(function(v){ return byId[v].resv !== "none" && !state.resv[v]; }).length)
+          flags.push({k:"warn", t:"needs booking"});
+        CREW.forEach(function(p){ if (state.musts[p.id] === o.id) flags.push({k:"must", t:p.name + "'s must-do"}); });
         if (!flags.length) flags.push({k:"ok", t:"clear"});
-        box.appendChild(chip(o, {remove:true, flags:flags}));
+        box.appendChild(chip(o, {remove:true, flags:flags, editable:editable}));
+      } else if (editable && picked && unitById[picked] && unitById[picked].period === slot){
+        var pb = el("button","place","Place " + unitById[picked].name + " here");
+        pb.addEventListener("click", function(){ place(picked, day.i, slot); });
+        box.appendChild(pb);
       } else {
-        if (picked && unitById[picked] && unitById[picked].period === slot){
-          box.classList.add("armed");
-          var pb = el("button","place","Place " + unitById[picked].name + " here");
-          pb.addEventListener("click", function(){ place(picked, day.i, slot); });
-          box.appendChild(pb);
-        } else {
-          box.appendChild(el("div","slot-empty", slot === "day" ? "Open — nothing scheduled" : "Dinner, nothing scheduled"));
-        }
+        box.appendChild(el("div","slot-empty", slot === "day" ? "Open — nothing scheduled" : "Dinner, nothing scheduled"));
       }
-      box.addEventListener("dragover", function(ev){
-        var id = dragId; if (!id) return;
-        var u = unitById[id];
-        if (!u || u.period !== slot || structuralAt(day, slot)) return;
-        ev.preventDefault(); ev.dataTransfer.dropEffect = "move";
-        box.classList.add("drop");
-      });
-      box.addEventListener("dragleave", function(){ box.classList.remove("drop"); });
-      box.addEventListener("drop", function(ev){
-        ev.preventDefault(); box.classList.remove("drop");
-        var id = ev.dataTransfer.getData("text/plain");
-        place(id, day.i, slot);
-      });
+
+      if (editable){
+        box.addEventListener("dragover", function(ev){
+          var u = dragId && unitById[dragId];
+          if (!u || u.period !== slot || structuralAt(day, slot)) return;
+          ev.preventDefault(); ev.dataTransfer.dropEffect = "move";
+          box.classList.add("drop");
+        });
+        box.addEventListener("dragleave", function(){ box.classList.remove("drop"); });
+        box.addEventListener("drop", function(ev){
+          ev.preventDefault(); box.classList.remove("drop");
+          place(ev.dataTransfer.getData("text/plain"), day.i, slot);
+        });
+      }
       slots.appendChild(box);
     });
     card.appendChild(slots);
     ladder.appendChild(card);
   });
 
-  // bench
   var bench = document.getElementById("bench");
   bench.textContent = "";
   var order = planningOrder(), must = order.slice(0, MUST_SEE);
-  var benched = order.filter(function(id){ return !state.placements[id]; });
+  var benched = order.filter(function(id){ return !board[id]; });
   benched.forEach(function(id){
-    var u = unitById[id];
-    var flags = [];
-    var rank = order.indexOf(id) + 1;
+    var flags = [], rank = order.indexOf(id) + 1;
+    CREW.forEach(function(p){ if (state.musts[p.id] === id) flags.push({k:"must", t:p.name + "'s must-do"}); });
     if (must.indexOf(id) > -1) flags.push({k:"", t:"must-see #" + rank});
     else flags.push({k:"warn", t:"#" + rank + " overall"});
-    bench.appendChild(chip(u, {why:true, flags:flags}));
+    bench.appendChild(chip(unitById[id], {why:true, flags:flags, editable:editable}));
   });
-  if (!benched.length) bench.appendChild(el("p","hint","Everything is on the board. That has never once happened on a first pass."));
+  if (!benched.length) bench.appendChild(el("p","hint","Everything is on this plan. That has never once happened on a first pass."));
   document.getElementById("benchn").textContent = benched.length + " left over";
 
-  // checks
-  var cs = checks(), box = document.getElementById("checks");
-  box.textContent = "";
+  var cs = checks(), cbox = document.getElementById("checks");
+  cbox.textContent = "";
   cs.forEach(function(c){
     var row = el("div","check " + c.level);
     row.appendChild(el("div","bar"));
@@ -968,38 +1194,222 @@ function renderBoard(){
     t.appendChild(el("b", null, c.t));
     t.appendChild(el("span", null, c.s));
     row.appendChild(t);
-    box.appendChild(row);
+    cbox.appendChild(row);
   });
   var stops = cs.filter(function(c){ return c.level === "stop"; }).length;
   document.getElementById("checkn").textContent = stops ? stops + " blocking" : "all clear";
   document.getElementById("tabwarn").textContent = stops ? "● " + stops : "";
 
-  var placed = Object.keys(state.placements).length;
   document.getElementById("planhint").textContent =
-    placed + " of " + UNITS.length + " outings placed, planning from " +
-    (state.planFrom === "tally" ? "the family tally" : "the seeded order") +
-    ". Drag a chip, or tap it and tap a slot.";
+    boardName(viewing) + " — " + Object.keys(board).length + " of " + UNITS.length +
+    " outings placed, planning from " + (state.planFrom === "tally" ? "the family tally" : "the seeded order") +
+    (editable ? ". Drag a chip, or tap it and tap a slot." : ". Read only — copy it to your own plan to change it.");
+
+  document.getElementById("autofill").disabled = !editable;
+  document.getElementById("clearboard").disabled = !editable;
   document.getElementById("nightsn").textContent = state.config.nights;
   document.getElementById("nights").value = state.config.nights;
   document.getElementById("nights").disabled = !isDispatcher();
   document.getElementById("nightshint").textContent = isDispatcher()
-    ? "Nights are yours to set. Shortening the trip cuts from the bottom of the order first."
+    ? nightsPreview(state.config.nights)
     : "Dates and nights are Bart's. Everything else on this page is yours.";
 }
 
+/* What a shorter trip would actually cost, named, before it happens. */
+function nightsPreview(n){
+  var trial = autoFillInto({}, n);
+  var must = planningOrder().slice(0, MUST_SEE);
+  var cut = must.filter(function(id){ return !trial[id]; });
+  if (!cut.length) return n + " nights fits all thirteen must-see things.";
+  return n + " nights cuts " + cut.map(function(i){ return unitById[i].name; }).join(", ") + ".";
+}
+
+/* ── Compare ────────────────────────────────────────────────────────── */
+function renderCompare(){
+  var days = frameDays(), tbl = document.getElementById("cmp");
+  tbl.textContent = "";
+  var thead = el("thead"), hr = el("tr");
+  hr.appendChild(el("th", null, "Day"));
+  hr.appendChild(el("th", null, "Slot"));
+  BOARD_KEYS.forEach(function(k){
+    hr.appendChild(el("th","who-" + k, k === "family" ? "Family" : crewOf(k).name));
+  });
+  thead.appendChild(hr); tbl.appendChild(thead);
+
+  var tb = el("tbody"), agreed = 0, comparable = 0;
+  days.forEach(function(day){
+    ["day","night"].forEach(function(slot, si){
+      var tr = el("tr");
+      if (si === 0){
+        var dc = el("td","daycell");
+        dc.appendChild(document.createTextNode(DOW[day.dow] + " " + MON[day.date.getMonth()] + " " + day.date.getDate()));
+        if (day.kind !== "core") dc.appendChild(el("small", null, day.kind));
+        dc.rowSpan = 2;
+        tr.appendChild(dc);
+      }
+      tr.appendChild(el("td","slotcell", slot === "day" ? "Day" : "Night"));
+      var names = [];
+      BOARD_KEYS.forEach(function(k){
+        var o = occupantAt(pl(k), day, slot);
+        tr.appendChild(el("td", o ? "" : "none", o ? o.name : "—"));
+        if (k !== "family") names.push(o ? o.name : "—");
+      });
+      var peopled = names.filter(function(n){ return n !== "—"; });
+      if (peopled.length >= 2 && !structuralAt(day, slot)){
+        comparable++;
+        if (names.every(function(n){ return n === names[0]; })){ tr.className = "agreed"; agreed++; }
+      }
+      tb.appendChild(tr);
+    });
+  });
+  tbl.appendChild(tb);
+
+  var lg = document.getElementById("cmplegend");
+  lg.textContent = "";
+  var sw = el("span");
+  var i = el("i"); i.style.background = "var(--green-soft)"; i.style.border = "1px solid var(--green)";
+  sw.appendChild(i); sw.appendChild(document.createTextNode("Everyone put the same thing here"));
+  lg.appendChild(sw);
+  lg.appendChild(el("span", null, comparable
+    ? agreed + " of " + comparable + " contested slots already agree"
+    : "Fill in at least two plans to compare them"));
+  var filled = BOARD_KEYS.filter(function(k){ return Object.keys(pl(k)).length; }).length;
+  lg.appendChild(el("span", null, filled + " of 5 plans started"));
+}
+
+/* ── Map ────────────────────────────────────────────────────────────── */
+function renderMap(){
+  var days = frameDays();
+  if (mapDay > days.length - 1) mapDay = days.length - 1;
+  var pick = document.getElementById("daypick");
+  pick.textContent = "";
+  days.forEach(function(day){
+    var b = el("button", null, DOW[day.dow] + " " + day.date.getDate());
+    b.setAttribute("aria-pressed", day.i === mapDay ? "true" : "false");
+    b.addEventListener("click", function(){ mapDay = day.i; renderMap(); });
+    pick.appendChild(b);
+  });
+
+  var day = days[mapDay], board = cur();
+  var dU = occupantAt(board, day, "day"), nU = occupantAt(board, day, "night");
+  var hot = {};
+  [dU, nU].forEach(function(o){ if (o && o.members) o.members.forEach(function(m){ hot[m] = true; }); });
+
+  /* Project lat/lng to metres so the drawing keeps its real aspect ratio. */
+  var k = Math.cos(38.8845 * Math.PI/180);
+  function mx(ll){ return ll[1] * 111320 * k; }
+  function my(ll){ return -ll[0] * 110540; }
+  var pts = VENUES.map(function(v){ return v.ll; }).concat([BASE.ll]);
+  var xs = pts.map(mx), ys = pts.map(my);
+  var minX = Math.min.apply(null, xs) - 950, maxX = Math.max.apply(null, xs) + 950;
+  var minY = Math.min.apply(null, ys) - 700, maxY = Math.max.apply(null, ys) + 700;
+  var W = 900, H = Math.round(W * (maxY - minY) / (maxX - minX));
+  function px(ll){ return (mx(ll) - minX) / (maxX - minX) * W; }
+  function py(ll){ return (my(ll) - minY) / (maxY - minY) * H; }
+
+  var s = svgEl("svg", {viewBox:"0 0 " + W + " " + H, "class":"mapsvg",
+    role:"img", "aria-label":"Map of the trip's venues for " + fmt(day)});
+  var gx, gy;
+  for (gx = 0; gx <= W + 1; gx += W/6) s.appendChild(svgEl("line", {"class":"grid", x1:gx, y1:0, x2:gx, y2:H}));
+  for (gy = 0; gy <= H + 1; gy += H/5) s.appendChild(svgEl("line", {"class":"grid", x1:0, y1:gy, x2:W, y2:gy}));
+
+  /* The Mall: Capitol to Lincoln, the axis everything else hangs off. */
+  s.appendChild(svgEl("line", {"class":"mall",
+    x1:px(byId["us-capitol"].ll), y1:py(byId["us-capitol"].ll),
+    x2:px(byId["lincoln-memorial"].ll), y2:py(byId["lincoln-memorial"].ll)}));
+
+  var stops = [BASE.ll];
+  if (dU) stops.push(dU.ll);
+  if (nU) stops.push(nU.ll);
+  stops.push(BASE.ll);
+  if (stops.length > 2){
+    var d = "M " + stops.map(function(ll){ return px(ll).toFixed(1) + " " + py(ll).toFixed(1); }).join(" L ");
+    s.appendChild(svgEl("path", {"class":"route", d:d}));
+  }
+
+  VENUES.forEach(function(v){
+    var onPlan = Object.keys(board).some(function(uid){
+      return unitById[uid] && unitById[uid].members.indexOf(v.id) > -1;
+    });
+    s.appendChild(svgEl("circle", {"class":hot[v.id] ? "dot hot" : onPlan ? "dot on" : "dot",
+      cx:px(v.ll), cy:py(v.ll), r:hot[v.id] ? 7 : 4.5}));
+    if (hot[v.id]){
+      var t = svgEl("text", {x:px(v.ll) + 11, y:py(v.ll) + 3.5, "class":"hot"});
+      t.textContent = v.name.length > 30 ? v.name.slice(0,28) + "…" : v.name;
+      s.appendChild(t);
+    }
+  });
+  s.appendChild(svgEl("circle", {"class":"base", cx:px(BASE.ll), cy:py(BASE.ll), r:6}));
+  var bt = svgEl("text", {x:px(BASE.ll) + 11, y:py(BASE.ll) + 3.5});
+  bt.textContent = "Base — L'Enfant Plaza";
+  s.appendChild(bt);
+
+  var halfMi = 804.7 / (maxX - minX) * W, sy = H - 22, sx = 26;
+  s.appendChild(svgEl("line", {"class":"scalebar", x1:sx, y1:sy, x2:sx + halfMi, y2:sy}));
+  s.appendChild(svgEl("line", {"class":"scalebar", x1:sx, y1:sy-4, x2:sx, y2:sy+4}));
+  s.appendChild(svgEl("line", {"class":"scalebar", x1:sx+halfMi, y1:sy-4, x2:sx+halfMi, y2:sy+4}));
+  var st = svgEl("text", {x:sx, y:sy - 9});
+  st.textContent = "0.5 mile";
+  s.appendChild(st);
+
+  var holder = document.getElementById("mapholder");
+  holder.textContent = "";
+  holder.appendChild(s);
+
+  var info = document.getElementById("walkinfo");
+  info.textContent = "";
+  info.appendChild(el("p","hint", boardName(viewing) + " · " + fmt(day)));
+  if (!dU && !nU){
+    info.appendChild(el("p","hint","Nothing scheduled that day on this plan."));
+    return;
+  }
+  var total = 0, i2;
+  for (i2 = 0; i2 < stops.length - 1; i2++) total += distMi(stops[i2], stops[i2+1]);
+  var t2 = el("table","tt"), tb2 = el("tbody");
+  function leg(labelText, name, mi){
+    var tr = el("tr");
+    tr.appendChild(el("td","m", labelText));
+    tr.appendChild(el("td", null, name));
+    tr.appendChild(el("td","m", mi.toFixed(1) + " mi · " + walkMin(mi) + " min"));
+    tb2.appendChild(tr);
+  }
+  if (dU) leg("Daytime", dU.name, distMi(BASE.ll, dU.ll));
+  if (nU) leg("Evening", nU.name, distMi(dU ? dU.ll : BASE.ll, nU.ll));
+  leg("Round trip", "Including the walk home", total);
+  t2.appendChild(tb2);
+  var w2 = el("div","tablewrap"); w2.appendChild(t2);
+  info.appendChild(w2);
+  if (total > 5) info.appendChild(el("p","hint","That is a long day on foot in December. Spend the twenty bucks."));
+}
+
+/* ── Ranking ────────────────────────────────────────────────────────── */
 function renderRank(){
-  document.getElementById("rankwho").textContent = CREW.filter(function(p){ return p.id === me; })[0].name;
+  document.getElementById("rankwho").textContent = crewOf(me).name;
   if (!draft) draft = (state.ballots[me] || SEEDED).slice();
   var list = document.getElementById("ranklist");
   list.textContent = "";
+
+  function move(from, to){
+    if (isNaN(from) || to < 0 || to >= draft.length) return;
+    draft.splice(to, 0, draft.splice(from,1)[0]);
+    renderRank();
+  }
   draft.forEach(function(id, i){
     var u = unitById[id];
+    if (!u) return;
     var row = el("div","rankrow" + (i < FINAL_FOUR ? " top4" : i < MUST_SEE ? " top13" : ""));
     row.setAttribute("draggable","true");
-    row.dataset.idx = i;
     row.appendChild(el("div","pos", String(i+1)));
-    var nm = el("div","nm", u.name);
-    row.appendChild(nm);
+    row.appendChild(el("div","nm", u.name));
+    var star = el("button","starbtn","★");
+    star.title = "Make this your one must-do";
+    star.setAttribute("aria-label","Star " + u.name + " as your must-do");
+    star.setAttribute("aria-pressed", state.musts[me] === id ? "true" : "false");
+    star.addEventListener("click", function(){
+      state.musts[me] = (state.musts[me] === id) ? null : id;
+      saveBallot(); renderAll();
+    });
+    row.appendChild(star);
     var ar = el("div","arrows");
     var up = el("button", null, "▲"); up.setAttribute("aria-label","Move " + u.name + " up");
     var dn = el("button", null, "▼"); dn.setAttribute("aria-label","Move " + u.name + " down");
@@ -1018,26 +1428,19 @@ function renderRank(){
     });
     list.appendChild(row);
   });
-  function move(from, to){
-    if (isNaN(from) || to < 0 || to >= draft.length) return;
-    var x = draft.splice(from,1)[0];
-    draft.splice(to,0,x);
-    renderRank();
-  }
 
   var t = tally(), tbl = document.getElementById("tally");
   tbl.textContent = "";
   var thead = el("thead"), hr = el("tr");
   hr.appendChild(el("th","nm","Outing"));
-  CREW.forEach(function(p){ hr.appendChild(el("th", null, p.name.slice(0,4))); });
+  CREW.forEach(function(p){ hr.appendChild(el("th","who-" + p.id, p.name.slice(0,4))); });
   hr.appendChild(el("th", null, "Pts"));
   hr.appendChild(el("th", null, "Split"));
   thead.appendChild(hr); tbl.appendChild(thead);
   var tb = el("tbody");
   t.rows.forEach(function(r, i){
     var tr = el("tr", r.spread >= 8 ? "split" : "");
-    var nm = el("td","nm", (i+1) + ". " + r.name);
-    tr.appendChild(nm);
+    tr.appendChild(el("td","nm", (i+1) + ". " + r.name));
     CREW.forEach(function(p){ tr.appendChild(el("td", null, r.pos[p.id] ? String(r.pos[p.id]) : "—")); });
     tr.appendChild(el("td","pts", t.voters ? String(r.pts) : "—"));
     tr.appendChild(el("td", null, t.voters > 1 ? String(r.spread) : "—"));
@@ -1045,10 +1448,10 @@ function renderRank(){
   });
   tbl.appendChild(tb);
   document.getElementById("tallyn").textContent = t.voters === 0
-    ? "no ballots in — seeded order"
-    : t.voters + " of 4 ballots in";
+    ? "no ballots in — seeded order" : t.voters + " of 4 ballots in";
 }
 
+/* ── Roster & logistics ─────────────────────────────────────────────── */
 function renderRoster(){
   var g = document.getElementById("roster");
   g.textContent = "";
@@ -1056,14 +1459,16 @@ function renderRoster(){
     var c = el("div","vcard");
     var h = el("div","vhead");
     h.appendChild(el("h4", null, v.name));
-    h.appendChild(el("span","seedno","#" + v.seed));
+    h.appendChild(el("span","seedno","No. " + v.seed));
     c.appendChild(h);
     c.appendChild(el("p","why", v.why));
     var dl = el("dl");
     function row(k, val){ dl.appendChild(el("dt", null, k)); dl.appendChild(el("dd", null, val)); }
+    var mi = distMi(BASE.ll, v.ll);
     row("Effort", loadWord(v.load) + " · " + v.period);
     row("Time", hrs(v.min) + " short, " + hrs(v.ideal) + " full");
     row("Booking", v.resv === "none" ? "Walk up" : v.resv === "required" ? "Required" : "Recommended");
+    row("From base", mi.toFixed(1) + " mi · " + walkMin(mi) + " min walk");
     row("Weather", "Cold " + v.w.cold + ", rain " + v.w.rain);
     if (v.bundle) row("Goes with", BUNDLES[v.bundle].name);
     if (v.closed && v.closed.wd && v.closed.wd.length) row("Closed", "Sundays and federal holidays");
@@ -1075,6 +1480,7 @@ function renderRoster(){
 function renderLogi(){
   var g = document.getElementById("logi");
   g.textContent = "";
+  function head(txt){ var h = el("header"); h.appendChild(el("h3", null, txt)); return h; }
 
   var trains = el("div","card");
   trains.appendChild(head("The train"));
@@ -1085,16 +1491,14 @@ function renderLogi(){
     "<tr><td>Crescent&nbsp;19 south</td><td>Washington Union</td><td>Anniston, AL</td><td class='m'>Out 6:30 pm &middot; home ~10:30 am CT</td></tr>" +
     "</tbody>";
   tw.appendChild(tt); trains.appendChild(tw);
-  var b = el("div","body");
-  b.appendChild(el("p","hint","Two roomettes across the hall. Beds fold down, dinner comes to the room, and Anniston lets us leave at a civilized hour instead of waiting up in Atlanta. Home base is aimed at L'Enfant Plaza: walking distance to Air and Space, Natural History and the Monument, one seat on the Metro to Arlington."));
-  trains.appendChild(b);
+  trains.appendChild(el("p","hint","Two roomettes across the hall. Beds fold down, dinner comes to the room, and Anniston lets us leave at a civilized hour instead of waiting up in Atlanta. Home base is aimed at L'Enfant Plaza: walking distance to Air and Space, Natural History and the Monument, one seat on the Metro to Arlington."));
   g.appendChild(trains);
 
   var rcard = el("div","card");
   rcard.appendChild(head("Bookings"));
-  var needed = VENUES.filter(function(v){ return v.resv !== "none"; });
-  needed.forEach(function(v){
-    var placedHere = Object.keys(state.placements).some(function(uid){ return unitById[uid].members.indexOf(v.id) > -1; });
+  var board = cur();
+  VENUES.filter(function(v){ return v.resv !== "none"; }).forEach(function(v){
+    var onPlan = Object.keys(board).some(function(uid){ return unitById[uid] && unitById[uid].members.indexOf(v.id) > -1; });
     var row = el("div","resv" + (state.resv[v.id] ? " done" : ""));
     var cb = document.createElement("input");
     cb.type = "checkbox"; cb.checked = !!state.resv[v.id];
@@ -1108,7 +1512,7 @@ function renderLogi(){
     t.appendChild(el("b", null, v.name));
     t.appendChild(el("span", null,
       (v.resv === "required" ? "Required" : "Recommended") +
-      (placedHere ? " · on the board" : " · not scheduled yet") +
+      (onPlan ? " · on this plan" : " · not on this plan") +
       (v.id === "washington-monument" ? " · tickets drop 30 days out at 10 am" : "") +
       (v.id === "us-capitol" ? " · go through a member of Congress for the good slot" : "")));
     row.appendChild(t);
@@ -1124,11 +1528,13 @@ function renderLogi(){
    ["Art. II","This is not a death march.",
     "One Big thing a day, and a Big day earns an Easy night. The board refuses to stack two Bigs, and it will tell you when you try."],
    ["Art. III","Spend the twenty bucks.",
-    "Metro when it is convenient, walking when the walk is nice, and a car the second it saves a thousand cold steps at the end of a day."],
+    "Metro when it is convenient, walking when the walk is nice, and a car the second it saves a thousand cold steps. The map tab does that arithmetic for every day."],
    ["Art. IV","We stay together.",
     "One family unit, the whole week. Every day has something worth doing and the load is budgeted across the whole day so all four of us can do all of it."],
-   ["Art. V","Nothing consequential lands silently.",
-    "Every cut this board makes shows up in Checks with the name of the thing it cost. If it costs a must-see thing, you see that before it happens, not after."]
+   ["Art. V","Everyone gets one veto.",
+    "Star your one must-do on the Ranking tab. It gets placed before anything else, and any plan missing somebody's star gets flagged in Checks. Getting outvoted is fine; getting steamrolled is not."],
+   ["Art. VI","Nothing consequential lands silently.",
+    "Every cut shows up in Checks with the name of the thing it cost, and the nights slider tells you what a shorter trip loses before you let go of it."]
   ].forEach(function(r){
     var d = el("div","rule");
     d.appendChild(el("div","art", r[0]));
@@ -1141,22 +1547,18 @@ function renderLogi(){
 
   var pack = el("div","card");
   pack.appendChild(head("Packing, the short version"));
-  var pb = el("div","body");
   var tw2 = el("div","tablewrap"), t2 = el("table","tt");
   t2.innerHTML =
     "<thead><tr><th>Item</th><th>Why</th></tr></thead><tbody>" +
     "<tr><td>Real gloves and a hat</td><td>The memorial loop is an hour outdoors after dark in December.</td></tr>" +
-    "<tr><td>Broken-in shoes</td><td>An Arlington day is roughly five miles, most of it uphill.</td></tr>" +
+    "<tr><td>Broken-in shoes</td><td>An Arlington day runs about five miles, most of it uphill.</td></tr>" +
     "<tr><td>Photo ID for everyone</td><td>Capitol and Archives security, and Amtrak at Anniston.</td></tr>" +
     "<tr><td>A day bag that closes</td><td>Every museum on the Mall runs bag check at the door.</td></tr>" +
     "<tr><td>Battery pack</td><td>Cold eats phones, and the tickets are on the phones.</td></tr>" +
     "<tr><td>Printed tickets, once</td><td>Union Station Wi-Fi is a rumor. Print the timed passes.</td></tr>" +
     "</tbody>";
-  tw2.appendChild(t2); pb.appendChild(tw2);
-  pack.appendChild(pb);
+  tw2.appendChild(t2); pack.appendChild(tw2);
   g.appendChild(pack);
-
-  function head(txt){ var h = el("header"); h.appendChild(el("h3", null, txt)); return h; }
 }
 
 function renderCrew(){
@@ -1174,32 +1576,31 @@ function renderCrew(){
   });
   document.getElementById("rolelabel").textContent = role();
 }
-
-function renderAll(){ renderCrew(); renderBoard(); renderRank(); renderRoster(); renderLogi(); }
+function renderAll(){ renderCrew(); renderBoard(); renderCompare(); renderMap(); renderRank(); renderRoster(); renderLogi(); }
 
 /* ── Interaction ────────────────────────────────────────────────────── */
 var dragId = null;
 document.addEventListener("dragstart", function(ev){
-  var c = ev.target.closest ? ev.target.closest(".chip") : null;
+  var c = ev.target && ev.target.closest ? ev.target.closest(".chip") : null;
   dragId = c ? c.dataset.unit : null;
 });
 document.addEventListener("dragend", function(){ dragId = null; });
 
 function place(uid, dayIdx, slot){
+  if (!canEdit()) return;
   var u = unitById[uid];
   if (!u || u.period !== slot) return;
-  var days = frameDays(), day = days[dayIdx];
+  var days = frameDays(), day = days[dayIdx], board = cur();
   if (!day || structuralAt(day, slot)) return;
-  for (var id in state.placements){
-    var p = state.placements[id];
-    if (p.d === dayIdx && p.slot === slot && id !== uid) delete state.placements[id];
+  for (var id in board){
+    var p = board[id];
+    if (p.d === dayIdx && p.slot === slot && id !== uid) delete board[id];
   }
-  state.placements[uid] = {d:dayIdx, slot:slot};
+  board[uid] = {d:dayIdx, slot:slot};
   picked = null;
   var cl = closedOn(u, day);
   save(); renderAll();
-  if (cl) toast(cl + ".");
-  else toast(u.name + " → " + fmt(day) + ", " + (slot === "day" ? "daytime" : "after dark") + ".");
+  toast(cl ? cl + "." : u.name + " → " + fmt(day) + ", " + (slot === "day" ? "daytime" : "after dark") + ".");
 }
 
 var toastTimer;
@@ -1207,7 +1608,7 @@ function toast(msg){
   var t = document.getElementById("toast");
   t.textContent = msg; t.classList.add("on");
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(function(){ t.classList.remove("on"); }, 2600);
+  toastTimer = setTimeout(function(){ t.classList.remove("on"); }, 2800);
 }
 
 document.getElementById("tablist").addEventListener("click", function(ev){
@@ -1216,20 +1617,29 @@ document.getElementById("tablist").addEventListener("click", function(ev){
   Array.prototype.forEach.call(this.querySelectorAll("button"), function(x){
     x.setAttribute("aria-selected", x === b ? "true" : "false");
   });
-  ["board","rank","roster","logi"].forEach(function(t){
+  ["board","compare","map","rank","roster","logi"].forEach(function(t){
     document.getElementById("p-" + t).hidden = (t !== b.dataset.tab);
   });
 });
 document.getElementById("autofill").addEventListener("click", autoFill);
 document.getElementById("clearboard").addEventListener("click", function(){
-  state.placements = {}; picked = null; save(); renderAll(); toast("Board cleared.");
+  if (!canEdit()) return;
+  var b = cur();
+  for (var k in b) delete b[k];
+  picked = null; save(); renderAll(); toast(boardName(viewing) + " cleared.");
 });
+document.getElementById("printbtn").addEventListener("click", function(){ window.print(); });
 document.getElementById("nights").addEventListener("input", function(){
   if (!isDispatcher()) return;
+  document.getElementById("nightsn").textContent = this.value;
+  document.getElementById("nightshint").textContent = nightsPreview(parseInt(this.value, 10));
+});
+document.getElementById("nights").addEventListener("change", function(){
+  if (!isDispatcher()) return;
   state.config.nights = parseInt(this.value, 10);
-  var max = state.config.nights;
-  Object.keys(state.placements).forEach(function(id){
-    if (state.placements[id].d > max) delete state.placements[id];
+  BOARD_KEYS.forEach(function(k){
+    var b = pl(k);
+    Object.keys(b).forEach(function(id){ if (b[id].d > state.config.nights) delete b[id]; });
   });
   save(); renderAll();
 });
@@ -1238,32 +1648,67 @@ document.getElementById("submitballot").addEventListener("click", function(){
   saveBallot(); renderAll();
   toast("Ballot in. " + tally().voters + " of 4 counted.");
 });
-document.getElementById("resetballot").addEventListener("click", function(){
-  draft = SEEDED.slice(); renderRank();
-});
+document.getElementById("resetballot").addEventListener("click", function(){ draft = SEEDED.slice(); renderRank(); });
 document.getElementById("useconsensus").addEventListener("click", function(){
-  var t = tally();
-  if (!t.voters){ toast("No ballots in yet — nothing to plan from."); return; }
+  if (!tally().voters){ toast("No ballots in yet — nothing to plan from."); return; }
   state.planFrom = "tally"; autoFill();
+});
+
+/* ── Share link: how plans travel when there is no server ───────────── */
+function encodeState(){
+  var payload = {v:1, who:me, n:state.config.nights, s:state.config.start,
+    b:{}, w:state.wx, r:Object.keys(state.resv), m:state.musts[me] || null,
+    o:state.ballots[me] || null};
+  var src = pl(me);
+  Object.keys(src).forEach(function(k){ payload.b[k] = [src[k].d, src[k].slot === "day" ? 0 : 1]; });
+  return btoa(JSON.stringify(payload)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+function applyShared(str){
+  try{
+    var p = JSON.parse(atob(str.replace(/-/g,"+").replace(/_/g,"/")));
+    if (!p || p.v !== 1 || !crewOf(p.who)) return false;
+    var dst = pl(p.who), k;
+    for (k in dst) delete dst[k];
+    Object.keys(p.b || {}).forEach(function(id){
+      if (unitById[id]) dst[id] = {d:p.b[id][0], slot:p.b[id][1] ? "night" : "day"};
+    });
+    if (p.n) state.config.nights = p.n;
+    if (p.s) state.config.start = p.s;
+    if (p.w) state.wx = p.w;
+    (p.r || []).forEach(function(v){ state.resv[v] = true; });
+    if (p.m) state.musts[p.who] = p.m;
+    if (Array.isArray(p.o)) state.ballots[p.who] = p.o;
+    viewing = p.who;
+    localSave();
+    return crewOf(p.who).name;
+  }catch(e){ return false; }
+}
+document.getElementById("share").addEventListener("click", function(){
+  var url = location.origin + location.pathname + "#plan=" + encodeState();
+  function done(){ toast("Link copied. Whoever opens it sees " + crewOf(me).name + "'s plan."); }
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(done, function(){ window.prompt("Copy this link:", url); });
+  } else window.prompt("Copy this link:", url);
 });
 
 /* ── Export ─────────────────────────────────────────────────────────── */
 function buildICS(){
-  var days = frameDays(), L = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Crescent Dispatch//EN","CALSCALE:GREGORIAN"];
+  var days = frameDays(), board = cur();
+  var L = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Crescent Dispatch//EN","CALSCALE:GREGORIAN"];
   function stamp(d, h, m){
     return d.getFullYear() + String(d.getMonth()+1).padStart(2,"0") + String(d.getDate()).padStart(2,"0") +
       "T" + String(h).padStart(2,"0") + String(m).padStart(2,"0") + "00";
   }
   days.forEach(function(day){
     ["day","night"].forEach(function(slot){
-      var o = occupantAt(days, day, slot);
+      var o = occupantAt(board, day, slot);
       if (!o) return;
       var s = slot === "day" ? [10,0] : [17,30], e = slot === "day" ? [16,0] : [21,0];
       L.push("BEGIN:VEVENT");
       L.push("UID:" + day.iso + "-" + slot + "@crescent-dispatch");
       L.push("DTSTART;TZID=America/New_York:" + stamp(day.date, s[0], s[1]));
       L.push("DTEND;TZID=America/New_York:" + stamp(day.date, e[0], e[1]));
-      L.push("SUMMARY:" + String(o.name).replace(/&amp;/g,"and"));
+      L.push("SUMMARY:" + o.name);
       if (o.why) L.push("DESCRIPTION:" + String(o.why).replace(/\n/g," "));
       L.push("END:VEVENT");
     });
@@ -1272,12 +1717,12 @@ function buildICS(){
   return L.join("\r\n");
 }
 document.getElementById("ics").addEventListener("click", function(){
-  var text = buildICS(), name = "washington-for-christmas.ics";
+  var text = buildICS(), name = "washington-" + viewing + ".ics";
   if (window.claude && window.claude.use){
     window.claude.use("downloads").then(function(d){
       if (!d) return fallbackDownload(text, name);
       d.save({filename:name, data:text}).then(function(){ toast("Calendar saved."); })
-       .catch(function(err){ if (err && err.code === "declined") return; fallbackDownload(text, name); });
+       .catch(function(err){ if (!err || err.code !== "declined") fallbackDownload(text, name); });
     }).catch(function(){ fallbackDownload(text, name); });
   } else fallbackDownload(text, name);
 });
@@ -1287,7 +1732,7 @@ function fallbackDownload(text, name){
     a.href = URL.createObjectURL(new Blob([text], {type:"text/calendar"}));
     a.download = name; document.body.appendChild(a); a.click(); a.remove();
     toast("Calendar downloaded.");
-  }catch(e){ toast("Downloads are blocked here — open the page on its own domain to export."); }
+  }catch(e){ toast("Downloads are blocked here."); }
 }
 
 /* ── Countdown ──────────────────────────────────────────────────────── */
@@ -1301,55 +1746,63 @@ function fallbackDownload(text, name){
   setTimeout(tick, 1000);
 })();
 
-/* ── Boot: local first, live if the store answers ───────────────────── */
+/* ── Boot ───────────────────────────────────────────────────────────── */
 localLoad();
-if (!Object.keys(state.placements).length){
-  autoFillQuiet();
-}
-function autoFillQuiet(){ var t = toast; toast = function(){}; autoFill(); toast = t; }
+var sharedFrom = null;
+if (location.hash.indexOf("#plan=") === 0) sharedFrom = applyShared(location.hash.slice(6));
+if (!Object.keys(pl("family")).length) autoFillInto(pl("family"));
 renderAll();
+if (sharedFrom) toast("Opened " + sharedFrom + "'s shared plan.");
 
 var unwatchBallot = null;
 function watchBallot(){
   if (unwatchBallot) unwatchBallot();
   unwatchBallot = db.doc("votes/" + me).onSnapshot(function(snap){
-    if (snap.exists && Array.isArray(snap.data().order)){
-      state.ballots[me] = snap.data().order.slice();
-      if (!draft) draft = snap.data().order.slice();
-      renderRank();
+    if (!snap.exists) return;
+    var d = snap.data();
+    if (Array.isArray(d.order)){
+      state.ballots[me] = d.order.slice();
+      if (!draft) draft = d.order.slice();
     }
-  }, function(){});
+    if (d.must !== undefined) state.musts[me] = d.must;
+    renderRank();
+  }, noop);
 }
 setSync("", "working on this device");
 if (window.claude && window.claude.use){
   window.claude.use("db").then(function(store){
     if (!store){ setSync("local","this device only"); return; }
-    db = store; remote = true;
+    db = store;
     setSync("live","live for the family");
-    db.doc("trip/board").onSnapshot(function(snap){
-      if (!snap.exists) { save(); return; }
+    BOARD_KEYS.forEach(function(k){
+      db.doc("boards/" + k).onSnapshot(function(snap){
+        if (!snap.exists || snap.metadata.hasPendingWrites) return;
+        var d = snap.data();
+        if (d.placements) state.boards[k] = d.placements;
+        localSave(); renderBoard(); renderCompare(); renderMap();
+      }, noop);
+    });
+    db.doc("trip/shared").onSnapshot(function(snap){
+      if (!snap.exists || snap.metadata.hasPendingWrites) return;
       var d = snap.data();
-      if (d.by === me && snap.metadata.hasPendingWrites) return;
       if (d.config) state.config = d.config;
-      if (d.placements) state.placements = d.placements;
       if (d.wx) state.wx = d.wx;
       if (d.resv) state.resv = d.resv;
       if (d.planFrom) state.planFrom = d.planFrom;
       localSave(); renderAll();
-    }, function(){ setSync("local","this device only"); });
+    }, noop);
     CREW.forEach(function(p){
       db.doc("votes/" + p.id).onSnapshot(function(snap){
-        if (snap.exists && Array.isArray(snap.data().order)){
-          state.ballots[p.id] = snap.data().order.slice();
-          renderRank(); renderBoard();
-        }
-      }, function(){});
+        if (!snap.exists) return;
+        var d = snap.data();
+        if (Array.isArray(d.order)) state.ballots[p.id] = d.order.slice();
+        if (d.must !== undefined) state.musts[p.id] = d.must;
+        renderRank(); renderBoard();
+      }, noop);
     });
     watchBallot();
   }).catch(function(){ setSync("local","this device only"); });
-} else {
-  setSync("local","this device only");
-}
+} else setSync("local","this device only");
 </script>
 </body>
 </html>
