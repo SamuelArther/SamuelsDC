@@ -442,10 +442,11 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
   <div class="wrap">
     <p class="route">Amtrak Crescent 20 &amp; 19 &nbsp;&middot;&nbsp; Anniston, Alabama &#8646; Washington Union</p>
     <h1 class="title">Crescent <em>Dispatch</em></h1>
-    <p class="deck">The fourteen things I want to do in Washington, and the week that makes all
-      fourteen fit. Not a wish list &mdash; a schedule budgeted in hours, with the Uber rides counted,
-      that already survives the Sunday closures and the December cold. Everyone else can build theirs
-      beside it and we'll compare.</p>
+    <p class="deck">The fifteen things I want to do in Washington, and the week that makes all
+      fifteen fit. Not a wish list &mdash; a real schedule, budgeted in hours with the UberXL rides
+      counted, that survives the Sunday closures and a cold December evening. When a night gets long
+      we call a car and get warm on the way home, and the plan still works. Everyone else can build
+      theirs beside it and we'll compare.</p>
     <div class="rules-row"><hr><span class="mark">&#9670;</span><hr></div>
     <div class="clock" aria-label="Time until boarding">
       <div><b id="cd-d">&mdash;</b><span>days</span></div>
@@ -484,10 +485,10 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
     <section class="panel" id="p-ask">
       <div class="verdict" id="verdict"></div>
       <div class="secthead">
-        <h2>Fourteen things, in the order I want them</h2>
-        <p>This is the trip I'm asking for. Everything below is the arithmetic that says it
-          works &mdash; not a wish list, a schedule that survives the closures, the cold and the
-          walking.</p>
+        <h2>Fifteen things, in the order I want them</h2>
+        <p>This is the trip I am asking for. Everything below is the arithmetic that says it works &mdash;
+          which day each one lands on, how long it takes, and what the ride there costs. The cold is
+          budgeted for. So is the hot chocolate.</p>
       </div>
       <div class="asklist" id="asklist"></div>
       <div id="asknote" style="margin-top:20px"></div>
@@ -559,10 +560,12 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
           </div>
           <div class="card">
             <header><h3>How the distances work</h3></header>
-            <p class="hint">Straight-line miles from the L'Enfant Plaza base, which is why the Mall
-              museums are a walk and the Cathedral is not. The scheduler adds a bonus for keeping a
-              day's daytime and evening outings near each other, and Checks flags any day that puts
-              more than two and a half miles between them.</p>
+            <p class="hint">Straight-line miles from the hotel at L'Enfant Plaza, which is why the
+              Mall museums are a stroll and the Cathedral is a ride. Every hop is costed as an
+              UberXL &mdash; about 18&nbsp;mph door to door, plus a few minutes standing on a corner
+              with your hands in your pockets. The scheduler keeps a day's stops near each other
+              where it can, and Checks says something when a day turns into a lot of riding. None of
+              it is a rule. It just means nobody is surprised at nine at night.</p>
           </div>
         </aside>
       </div>
@@ -746,6 +749,9 @@ var WANTS = [
  {ask:"Georgetown", unit:"georgetown",
   why:"Brick streets, the canal, the shops, and lunch somewhere warm. Not a museum, on purpose.",
   rides:"Across town from the Mall. Sits naturally with the Cathedral."},
+ {ask:"The Martin Luther King Jr. Memorial", unit:"tidal-basin-loop",
+  why:"The Stone of Hope, cut straight out of the mountain of despair and pushed forward toward the water. Lit from below at night, and quiet enough to actually stand there a minute.",
+  rides:"Same walk as the Jefferson — the loop goes Jefferson, then FDR's waterfalls, then Dr. King facing out over the basin. One outing, three stops, and hot chocolate after."},
  {ask:"The National Mall", unit:"national-mall",
   why:"The lawn itself. Two miles from the Capitol steps to Lincoln, the Monument standing in the middle of it, and the Reflecting Pool at the far end.",
   rides:"Free, open, never closed, no ticket. It is also the thread the rest of this list hangs on — half of what I want is already strung along it, so this is the walk between them as much as a stop of its own."}
@@ -1121,7 +1127,7 @@ function nopeIds(){
 function askPlan(nights){ return autoFillInto({}, nights, wantUnits(true)); }
 
 /* Bump when WANTS/MAYBES change, so saved plans pick up the new outings. */
-var ASK_VERSION = 4;
+var ASK_VERSION = 5;
 /* Drop anything no longer in the catalog, append anything new, keep the order. */
 function normalizeBallot(arr){
   var seen = {}, out = [];
@@ -1146,20 +1152,20 @@ function checks(){
         if (cl) out.push({level:"stop", t:x.u.name + " on " + fmt(day),
           s:cl + ". Move it, or the day is wasted at the door."});
         if (weatherFit(x.u, wxFor(day)) <= -6) out.push({level:"warn", t:x.u.name + " in this weather",
-          s:"Rated poor for the conditions set on " + fmt(day) + ". Fine to keep — the Uber is the answer, not toughing it out."});
+          s:"Rated poor for the conditions set on " + fmt(day) + ". Fine to keep. If it turns miserable that is an UberXL and a hot chocolate, not a test of character."});
       });
       if (!list.length) return;
       var cap = budgetFor(day, slot), used = usedHours(board, day, slot);
       if (used > cap + 0.01)
         out.push({level:"warn", t:(slot === "day" ? "Daytime" : "The evening") + " on " + fmt(day) + " runs long",
-          s:used.toFixed(1) + " hours of visits and rides against about " + cap +
-            ". Shorten one — every chip has a full/short toggle — or move something."});
+          s:used.toFixed(1) + " hours of visiting and riding against about " + cap +
+            ". Shorten one — every chip has a full/short toggle — or move it to another day. Better to do three things properly and get warm than four things badly."});
       dayMiles += slotMiles(board, day, slot);
       dayRides += legsFor(list).length;
     });
     if (dayRides > 6 || dayMiles > 16)
       out.push({level:"warn", t:fmt(day) + " is a lot of riding",
-        s:dayRides + " Uber hops, " + dayMiles.toFixed(1) + " miles. Not impossible, just worth knowing before it is 9 pm and cold."});
+        s:dayRides + " Uber hops, " + dayMiles.toFixed(1) + " miles. Not impossible, just worth knowing before it is nine at night, everyone is cold, and we are still three stops from anywhere warm."});
   });
 
   var unplaced = must.filter(function(id){ return !board[id]; });
@@ -1556,7 +1562,7 @@ function renderAsk(){
     });
     line = stops + " outings across " + state.config.nights + " nights — "
       + (Math.round(hoursBooked) + " hours booked out of about " + Math.round(capacity) + " available, ")
-      + Math.round(mi) + " miles of Ubers all week. Nothing scheduled on a day it is closed, "
+      + Math.round(mi) + " miles of UberXL all week. Nothing scheduled on a day it is shut, "
       + "and the Capitol lands midweek because it shuts on Sundays."
       + (maybeIn ? " The National Gallery fits too." : " The National Gallery is the one that did not fit.");
   } else {
@@ -1781,7 +1787,7 @@ function renderMap(){
   var w2 = el("div","tablewrap"); w2.appendChild(t2);
   info.appendChild(w2);
   info.appendChild(el("p","hint", runOrder.length + " stops · " + total.toFixed(1) +
-    " miles of Ubers · about " + Math.round(travelHours(runOrder)*60) + " minutes in the car all day."));
+    " miles of Ubers · about " + Math.round(travelHours(runOrder)*60) + " minutes in the car all day — warm, sitting down, watching it go by."));
 }
 
 /* ── Ranking ────────────────────────────────────────────────────────── */
@@ -1894,7 +1900,7 @@ function renderLogi(){
     "</tbody>";
   tw.appendChild(tt); trains.appendChild(tw);
   trains.appendChild(el("p","hint","Two roomettes across the hall. Beds fold down, dinner comes to the room, and Anniston lets us leave at a civilized hour instead of waiting up in Atlanta. Home base is aimed at L'Enfant Plaza: walking distance to Air and Space, Natural History and the Monument, one seat on the Metro to Arlington."));
-  trains.appendChild(el("p","hint","No rental car, either way. The Crescent is the ride to Washington and home again, and inside the city it is Metro when that is simplest and an Uber whenever it is not. Every leg on the board is costed at about " + UBER_MPH + " mph plus a few minutes waiting, which is why a Cathedral-and-Georgetown day reads as expensive and a Mall day reads as free."));
+  trains.appendChild(el("p","hint","No rental car, either way. The Crescent is the ride up and the ride home, and inside the city it is Metro when that is simplest and an UberXL whenever it is not. Four of us fit in one with room for coats, which matters more than it sounds like it does at nine at night in December. Every leg on the board is costed at about " + UBER_MPH + " mph plus a few minutes standing on a corner, which is why a Cathedral-and-Georgetown day reads as expensive and a day on the Mall reads as nearly free."));
   g.appendChild(trains);
 
   var rcard = el("div","card");
@@ -1927,11 +1933,11 @@ function renderLogi(){
   rules.appendChild(head("House rules"));
   var rl = el("div","rules");
   [["Art. I","Cold can shorten an outing. It can't ruin the trip.",
-    "If it is 28° and blowing at the Korean War Memorial, we call an Uber XL, get warm, and reshuffle. Nobody pushes through misery to check a box. That is what the C/W/R switches on each day are for."],
+    "If it is 28° and blowing sideways at the Korean War Memorial, we do not tough it out. We look at each other, agree we have seen it, and call an UberXL. Four of us in the back, warm, watching the lit-up city slide past on the way home. Nobody has ever once regretted leaving ten minutes early."],
    ["Art. II","Stack the day, but count the hours.",
-    "More than one thing a day is the whole point. A day is a budget — about seven hours of daytime and four after dark — and the board counts the visits and the riding together, then tells you when a day has run past what it holds."],
-   ["Art. III","No rental car. We Uber.",
-    "The train gets us there and back; nobody is parking in this city. Metro when it happens to be easy, Uber the second it is not. Every hop on the board is priced in minutes, so a museum across town costs a ride, not an argument."],
+    "More than one thing a day is the whole point — that is why we are on a train and not a schedule. A day is a budget: about seven hours of daylight and four after dark, and the board counts the riding as well as the looking. When it says a day is full, what it means is that we would be walking back in the dark, hungry, wishing we had stopped an hour ago."],
+   ["Art. III","No rental car. We call an UberXL.",
+    "The Crescent gets us there and home again, and nobody is parking in this city. Metro when it happens to be easy, and an UberXL the second it is not — six blocks in December with cold hands is worth twenty dollars every single time. Every hop on the board is already priced in minutes, so a museum across town costs a ride, not an argument."],
    ["Art. IV","We stay together.",
     "One family unit, the whole week. Every day has something worth doing and the load is budgeted across the whole day so all four of us can do all of it."],
    ["Art. V","Everyone gets one veto.",
