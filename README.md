@@ -1,6 +1,6 @@
 # Crescent Dispatch
 
-A shared planning board for one specific trip: Anniston → Washington on the Amtrak
+Samuel's case for Washington at Christmas: ten things, and the week that makes all ten fit. Built on the Amtrak
 Crescent, Christmas 2026, four people, eight days.
 
 Live at **dc.sambonius.net**.

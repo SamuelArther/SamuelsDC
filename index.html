@@ -244,6 +244,34 @@ main{padding:30px 0 50px}
 .nights input{flex:1;accent-color:var(--green)}
 .nights b{color:var(--ink);font-size:15px;font-family:var(--f-disp)}
 
+/* ── The ask ────────────────────────────────────────────────────────── */
+.verdict{border:1px solid var(--green);border-left:4px solid var(--green);
+  background:var(--green-soft);padding:20px 24px;margin-bottom:30px}
+.verdict.short{border-color:var(--brass);border-left-color:var(--brass);background:var(--brass-soft)}
+.vlabel{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--green-ink)}
+.verdict.short .vlabel{color:var(--brass-ink)}
+.verdict h2{font-family:var(--f-disp);font-weight:600;font-size:clamp(23px,3.4vw,32px);
+  letter-spacing:-.02em;margin:6px 0 8px}
+.vbody{font-size:16px;color:var(--ink-2);max-width:70ch;line-height:1.5}
+.asklist{display:flex;flex-direction:column}
+.ask{display:grid;grid-template-columns:56px minmax(0,1fr) 168px;gap:0 20px;
+  border-top:1px solid var(--rule);padding:20px 0;align-items:start}
+.ask:last-child{border-bottom:1px solid var(--rule)}
+@media (max-width:700px){.ask{grid-template-columns:44px minmax(0,1fr);gap:0 14px}
+  .ask .when{grid-column:2;margin-top:9px;flex-direction:row;gap:10px;align-items:baseline;flex-wrap:wrap}}
+.ask .no{font-family:var(--f-disp);font-weight:400;font-size:30px;color:var(--brass-ink);
+  line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.ask h3{font-family:var(--f-disp);font-weight:600;font-size:22px;letter-spacing:-.02em;line-height:1.15}
+.askwhy{font-size:16px;color:var(--ink-2);margin-top:6px;line-height:1.5;max-width:60ch}
+.rides{font-size:14.5px;color:var(--ink-3);margin-top:7px;font-style:italic;max-width:60ch}
+.ask .when{display:flex;flex-direction:column;gap:1px;text-align:right}
+@media (max-width:700px){.ask .when{text-align:left}}
+.ask .when b{font-family:var(--f-disp);font-weight:600;font-size:17px;letter-spacing:-.015em}
+.ask .when b.cut{color:var(--claret-ink)}
+.ask .when span{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-3)}
+
 /* ── Compare ────────────────────────────────────────────────────────── */
 .cmpwrap{overflow-x:auto;border:1px solid var(--rule);background:var(--surface)}
 table.cmp{width:100%;border-collapse:collapse;min-width:850px}
@@ -389,9 +417,9 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
   <div class="wrap">
     <p class="route">Amtrak Crescent 20 &amp; 19 &nbsp;&middot;&nbsp; Anniston, Alabama &#8646; Washington Union</p>
     <h1 class="title">Crescent <em>Dispatch</em></h1>
-    <p class="deck">Washington at Christmas, planned four ways. Everyone builds their own week,
-      the plans sit side by side so you can see exactly where you disagree, and the arithmetic
-      settles what dinner arguments can't.</p>
+    <p class="deck">Ten things I want to do in Washington, and the week that makes all ten fit.
+      Not a wish list &mdash; a schedule that already survives the Sunday closures, the December
+      cold and the walking. Everyone else can build theirs beside it and we'll compare.</p>
     <div class="rules-row"><hr><span class="mark">&#9670;</span><hr></div>
     <div class="clock" aria-label="Time until boarding">
       <div><b id="cd-d">&mdash;</b><span>days</span></div>
@@ -414,7 +442,8 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
 
 <nav class="tabs">
   <div class="wrap" role="tablist" id="tablist">
-    <button role="tab" data-tab="board" aria-selected="true">The board <span class="count" id="tabwarn"></span></button>
+    <button role="tab" data-tab="ask" aria-selected="true">The ask</button>
+    <button role="tab" data-tab="board" aria-selected="false">The board <span class="count" id="tabwarn"></span></button>
     <button role="tab" data-tab="compare" aria-selected="false">Compare</button>
     <button role="tab" data-tab="map" aria-selected="false">Map</button>
     <button role="tab" data-tab="rank" aria-selected="false">Ranking</button>
@@ -426,7 +455,19 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
 <main>
   <div class="wrap">
 
-    <section class="panel" id="p-board">
+    <section class="panel" id="p-ask">
+      <div class="verdict" id="verdict"></div>
+      <div class="secthead">
+        <h2>Ten things, in the order I want them</h2>
+        <p>This is the trip I'm asking for. Everything below is the arithmetic that says it
+          works &mdash; not a wish list, a schedule that survives the closures, the cold and the
+          walking.</p>
+      </div>
+      <div class="asklist" id="asklist"></div>
+      <div id="asknote" style="margin-top:20px"></div>
+    </section>
+
+    <section class="panel" id="p-board" hidden>
       <div class="whosplan">
         <span class="label">Whose plan</span>
         <div class="planpick" id="planpick" role="group" aria-label="Whose plan to view"></div>
@@ -546,7 +587,7 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
 
 <footer><div class="wrap">
   <div class="fmark">&#9670;&#9670;&#9670;</div>
-  <p>Bart &middot; Jess &middot; Sam &middot; Nanny<br>
+  <p>Bart &middot; Jess &middot; Samuel &middot; Nanny<br>
      Anniston to Washington and back on the Crescent<br>
      dc.sambonius.net</p>
 </div></footer>
@@ -592,7 +633,7 @@ var VENUES = [
  {id:"national-christmas-tree",name:"National Christmas Tree",seed:11,tier:"protected",period:"night",load:"mid",env:"outdoor",min:.5,ideal:1,resv:"none",w:OUT,bundle:"christmas-washington",ll:[38.8946,-77.0365],
   why:"The tree on the Ellipse, with the state and territory trees ringed around it."},
  {id:"natural-history",name:"National Museum of Natural History",seed:12,tier:"medium",period:"day",load:"hi",env:"indoor",min:2.5,ideal:5,resv:"none",w:IN,bundle:null,closed:SMI,ll:[38.8913,-77.0261],
-  why:"Dinosaurs, the Hope Diamond, the elephant, the whale. Sam's day."},
+  why:"Dinosaurs, the Hope Diamond, the elephant, the whale. Samuel's day."},
  {id:"american-history",name:"National Museum of American History",seed:13,tier:"medium",period:"day",load:"hi",env:"indoor",min:2,ideal:4.5,resv:"none",w:IN,bundle:null,closed:SMI,ll:[38.8911,-77.0300],
   why:"The Star-Spangled Banner — the flag from the song — plus the presidents and the trains."},
  {id:"african-american-history",name:"African American History & Culture",seed:14,tier:"medium",period:"day",load:"hi",env:"indoor",min:3,ideal:5,resv:"recommended",w:IN,bundle:null,closed:SMI,ll:[38.8911,-77.0327],
@@ -618,7 +659,7 @@ var VENUES = [
  {id:"holiday-market",name:"DowntownDC Holiday Market",seed:24,tier:"bonus",period:"day",load:"lo",env:"outdoor",min:1,ideal:2,resv:"none",w:OUT,bundle:null,ll:[38.8977,-77.0231],
   why:"Stalls, cocoa, and one hour of the trip spent not being in a museum."},
  {id:"spy-museum",name:"International Spy Museum",seed:25,tier:"bonus",period:"day",load:"mid",env:"indoor",min:2,ideal:3,resv:"recommended",w:IN,bundle:null,ll:[38.8837,-77.0250],
-  why:"Paid, off the Mall, and the one Sam will still be talking about in January."}
+  why:"Paid, off the Mall, and the one Samuel will still be talking about in January."}
 ];
 
 var BUNDLES = {
@@ -632,10 +673,45 @@ var BUNDLES = {
    why:"Jefferson, FDR and Dr. King around the water. Quieter than the Mall, just as good lit."}
 };
 
+/* ── The ask ────────────────────────────────────────────────────────────
+   Samuel's ten, in the order he said them. Several arrive inside an outing
+   that carries other stops with it — noted, because a plan that pretends
+   the Capitol comes alone is a plan that runs out of afternoon.
+   ─────────────────────────────────────────────────────────────────────── */
+var WANTS = [
+ {ask:"Arlington National Cemetery", unit:"arlington",
+  why:"The Changing of the Guard on the hour, Kennedy's eternal flame, and the view back over the whole city from Arlington House.",
+  rides:"A full day on its own. Cold hill, real shoes."},
+ {ask:"ZooLights", unit:"zoolights",
+  why:"The whole National Zoo strung with lights, hot drinks, and the one night of the trip with nothing to learn.",
+  rides:"Downhill going in, uphill coming out. Worth it."},
+ {ask:"The Jefferson Memorial and the Tidal Basin", unit:"tidal-basin-loop",
+  why:"Jefferson lit across the water is the best-looking thing in the city after dark, and the walk around the basin is the quiet one.",
+  rides:"Comes as a loop: Jefferson, then FDR's waterfalls and rooms, then Dr. King facing the water."},
+ {ask:"The National Air and Space Museum", unit:"air-space",
+  why:"The Wright Flyer, the Spirit of St. Louis, and an Apollo capsule you can stand under.",
+  rides:"Free timed passes, and they have to be booked ahead."},
+ {ask:"The Vietnam Veterans Memorial", unit:"main-memorial-loop",
+  why:"Reach the Wall at dusk while the names still read, then let it get dark.",
+  rides:"Comes as the memorial night: the Wall, then WWII, then up the steps to Lincoln, then Korea under the lights."},
+ {ask:"The National Museum of American History", unit:"american-history",
+  why:"The Star-Spangled Banner — the actual flag from the actual song — plus the presidents, the trains, and the inventions.",
+  rides:"A whole day if we let it be one."},
+ {ask:"Seeing the White House", unit:"christmas-washington",
+  why:"From the fence on the Ellipse side, after dark, when it is lit.",
+  rides:"Pairs with the National Christmas Tree and the state trees ringed around it — same ten minutes' walk."},
+ {ask:"The U.S. Capitol", unit:"capitol-hill",
+  why:"Inside, under the dome, on a real tour rather than a photo from the lawn.",
+  rides:"Comes with the Library of Congress across the street. Closed Sundays, so it has to land midweek."},
+ {ask:"The Washington Monument", unit:"washington-monument",
+  why:"Up to the top. The Capitol one way, Lincoln the other, Arlington across the river — the whole trip in one look.",
+  rides:"Timed tickets drop 30 days out at 10 am and go in minutes."}
+];
+
 var CREW = [
  {id:"bart",  name:"Bart",  role:"Dispatcher — owns dates and nights"},
  {id:"jess",  name:"Jess",  role:"Full stakeholder"},
- {id:"sam",   name:"Sam",   role:"Full stakeholder"},
+ {id:"sam",   name:"Samuel",   role:"Full stakeholder"},
  {id:"nanny", name:"Nanny", role:"Full stakeholder"}
 ];
 var BOARD_KEYS = ["family","bart","jess","sam","nanny"];
@@ -847,8 +923,9 @@ function occupantAt(board, day, slot){
   }
   return null;
 }
-function autoFillInto(board, nights){
+function autoFillInto(board, nights, only){
   var days = frameDays(nights), order = planningOrder();
+  if (only) order = only.filter(function(id){ return unitById[id]; });
   for (var k in board) delete board[k];
   order.forEach(function(uid){
     var u = unitById[uid];
@@ -881,6 +958,14 @@ function autoFill(){
   save(); renderAll();
   toast(boardName(viewing) + " filled from " + (state.planFrom === "tally" ? "the family tally" : "the seeded order") + ".");
 }
+
+/* The ask, as scheduler input: the outings Samuel's ten actually require. */
+function wantUnits(){
+  var out = [];
+  WANTS.forEach(function(w){ if (out.indexOf(w.unit) < 0) out.push(w.unit); });
+  return out;
+}
+function askPlan(nights){ return autoFillInto({}, nights, wantUnits()); }
 
 /* ── Checks ─────────────────────────────────────────────────────────── */
 function checks(){
@@ -1222,6 +1307,81 @@ function nightsPreview(n){
   var cut = must.filter(function(id){ return !trial[id]; });
   if (!cut.length) return n + " nights fits all thirteen must-see things.";
   return n + " nights cuts " + cut.map(function(i){ return unitById[i].name; }).join(", ") + ".";
+}
+
+/* ── The ask ────────────────────────────────────────────────────────── */
+function renderAsk(){
+  var board = pl("sam"), days = frameDays();
+  var placedAt = {};
+  Object.keys(board).forEach(function(uid){ placedAt[uid] = board[uid]; });
+
+  var fits = WANTS.filter(function(w){ return placedAt[w.unit]; }).length;
+  var v = document.getElementById("verdict");
+  v.textContent = "";
+  v.className = "verdict" + (fits === WANTS.length ? "" : " short");
+  v.appendChild(el("p","vlabel", fits === WANTS.length ? "It all fits" : "Where it stands"));
+  v.appendChild(el("h2", null, fits === WANTS.length
+    ? "All ten fit in " + state.config.nights + " nights."
+    : fits + " of the ten fit in " + state.config.nights + " nights."));
+
+  var missed = WANTS.filter(function(w){ return !placedAt[w.unit]; });
+  var line;
+  if (fits === WANTS.length){
+    var bigs = 0;
+    days.forEach(function(day){
+      var d1 = occupantAt(board, day, "day"), n1 = occupantAt(board, day, "night");
+      if (d1 && n1 && d1.load === "hi" && n1.load === "hi") bigs++;
+    });
+    line = "One Big thing a day, " + (bigs ? bigs + " doubled-up days" : "no day doubled up") +
+      ", nothing scheduled on a day it is closed, and the Capitol lands midweek where it has to. " +
+      "Nine outings across " + state.config.nights + " nights, with room left over.";
+  } else {
+    line = "Short by: " + missed.map(function(w){ return w.ask; }).join(", ") +
+      ". Add a night, or something else has to move.";
+  }
+  v.appendChild(el("p","vbody", line));
+
+  var list = document.getElementById("asklist");
+  list.textContent = "";
+  WANTS.forEach(function(w, i){
+    var u = unitById[w.unit], at = placedAt[w.unit];
+    var row = el("div","ask");
+    row.appendChild(el("div","no", String(i+1).padStart(2,"0")));
+    var body = el("div","askbody");
+    body.appendChild(el("h3", null, w.ask));
+    body.appendChild(el("p","askwhy", w.why));
+    body.appendChild(el("p","rides", w.rides));
+    row.appendChild(body);
+    var when = el("div","when");
+    if (at){
+      var day = days[at.d];
+      when.appendChild(el("b", null, day ? fmt(day) : "—"));
+      when.appendChild(el("span", null, at.slot === "day" ? "daytime" : "after dark"));
+      when.appendChild(el("span","asload", loadWord(u.load) + " · " + hrs(u.ideal)));
+    } else {
+      when.appendChild(el("b","cut","Not scheduled"));
+      when.appendChild(el("span", null, "on the bench"));
+    }
+    row.appendChild(when);
+    list.appendChild(row);
+  });
+
+  var note = document.getElementById("asknote");
+  note.textContent = "";
+  var bookings = [];
+  wantUnits().forEach(function(uid){
+    if (!placedAt[uid]) return;
+    unitById[uid].members.forEach(function(vid){
+      var vv = byId[vid];
+      if (vv.resv !== "none" && !state.resv[vid]) bookings.push(vv.name);
+    });
+  });
+  if (bookings.length)
+    note.appendChild(el("p","hint","Still to book for this list: " + bookings.join(", ") + "."));
+  note.appendChild(el("p","hint","This is nine outings, because a few of the ten arrive together — "
+    + "the Wall comes with the memorial night, Jefferson with the Tidal Basin loop, the White House "
+    + "with the Christmas tree, and the Capitol with the Library of Congress. The board, the map and "
+    + "the compare tab all run on this same list."));
 }
 
 /* ── Compare ────────────────────────────────────────────────────────── */
@@ -1576,7 +1736,7 @@ function renderCrew(){
   });
   document.getElementById("rolelabel").textContent = role();
 }
-function renderAll(){ renderCrew(); renderBoard(); renderCompare(); renderMap(); renderRank(); renderRoster(); renderLogi(); }
+function renderAll(){ renderCrew(); renderAsk(); renderBoard(); renderCompare(); renderMap(); renderRank(); renderRoster(); renderLogi(); }
 
 /* ── Interaction ────────────────────────────────────────────────────── */
 var dragId = null;
@@ -1617,7 +1777,7 @@ document.getElementById("tablist").addEventListener("click", function(ev){
   Array.prototype.forEach.call(this.querySelectorAll("button"), function(x){
     x.setAttribute("aria-selected", x === b ? "true" : "false");
   });
-  ["board","compare","map","rank","roster","logi"].forEach(function(t){
+  ["ask","board","compare","map","rank","roster","logi"].forEach(function(t){
     document.getElementById("p-" + t).hidden = (t !== b.dataset.tab);
   });
 });
@@ -1750,7 +1910,17 @@ function fallbackDownload(text, name){
 localLoad();
 var sharedFrom = null;
 if (location.hash.indexOf("#plan=") === 0) sharedFrom = applyShared(location.hash.slice(6));
+/* Samuel's plan is the ask, laid out. Seeded once; his to change after that. */
+if (!Object.keys(pl("sam")).length){
+  var seeded = askPlan();
+  Object.keys(seeded).forEach(function(id){ pl("sam")[id] = seeded[id]; });
+}
+if (!state.ballots["sam"]){
+  var want = wantUnits();
+  state.ballots["sam"] = want.concat(SEEDED.filter(function(id){ return want.indexOf(id) < 0; }));
+}
 if (!Object.keys(pl("family")).length) autoFillInto(pl("family"));
+if (me === "sam" && !sharedFrom) viewing = "sam";
 renderAll();
 if (sharedFrom) toast("Opened " + sharedFrom + "'s shared plan.");
 
@@ -1779,7 +1949,7 @@ if (window.claude && window.claude.use){
         if (!snap.exists || snap.metadata.hasPendingWrites) return;
         var d = snap.data();
         if (d.placements) state.boards[k] = d.placements;
-        localSave(); renderBoard(); renderCompare(); renderMap();
+        localSave(); renderAsk(); renderBoard(); renderCompare(); renderMap();
       }, noop);
     });
     db.doc("trip/shared").onSnapshot(function(snap){
