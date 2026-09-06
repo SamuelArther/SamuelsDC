@@ -14,39 +14,42 @@
    its navy-and-red goes green-and-gold, and its Caslon goes Fraunces.
    ─────────────────────────────────────────────────────────────────────── */
 :root{
-  --paper:#F6F2E9; --surface:#FFFDF8; --surface-2:#F1ECE0;
-  --ink:#1E241F; --ink-2:#4C554E; --ink-3:#818A80;
-  --rule:#DED6C4; --rule-soft:#EAE3D4;
-  --green:#1E5140; --green-ink:#1E5140; --green-soft:#E2EDE6; --on-green:#FFFDF8;
-  --brass:#9A7B1F; --brass-ink:#836717; --brass-soft:#F3EAD0;
-  --claret:#8E322A; --claret-ink:#8E322A; --claret-soft:#F4E2DD;
-  --p-bart:#2F5E7A; --p-jess:#7A3F63; --p-sam:#9A6218; --p-nanny:#3E6B37;
-  --lift:0 1px 1px rgba(30,36,31,.04);
+  --paper:#FBF4E7; --surface:#FFFCF5; --surface-2:#F6EDDB;
+  --ink:#241A11; --ink-2:#584535; --ink-3:#8C7A66;
+  --rule:#E6D5BB; --rule-soft:#F0E5D1;
+  --orange:#C0530E; --orange-ink:#A8480C; --orange-soft:#FBE3CE; --on-orange:#FFFCF5;
+  --gold:#C08A06; --gold-ink:#8F6704; --gold-soft:#FCEFC6;
+  --ok:#5E7A1B; --ok-ink:#4C6415; --ok-soft:#EAF0D4;
+  --stop:#A62D1B; --stop-ink:#A62D1B; --stop-soft:#F9DED7;
+  --p-bart:#2F6A7A; --p-jess:#8C3B62; --p-sam:#C0530E; --p-nanny:#5E7A1B;
+  --lift:0 1px 1px rgba(60,35,10,.05);
   --f-disp:"Fraunces",Georgia,"Times New Roman",serif;
   --f-body:"Newsreader",Georgia,"Times New Roman",serif;
   --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Consolas,monospace;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --paper:#14130E; --surface:#1C1B15; --surface-2:#232219;
-    --ink:#EBE6D8; --ink-2:#B3AC9A; --ink-3:#857F70;
-    --rule:#35322A; --rule-soft:#2A2821;
-    --green:#6FBF9E; --green-ink:#6FBF9E; --green-soft:#14312A; --on-green:#0B1A15;
-    --brass:#D6AE55; --brass-ink:#D6AE55; --brass-soft:#33290F;
-    --claret:#D9776B; --claret-ink:#D9776B; --claret-soft:#331915;
-    --p-bart:#7FB2CE; --p-jess:#C98EB2; --p-sam:#DCA84F; --p-nanny:#87BD7B;
-    --lift:0 1px 2px rgba(0,0,0,.5);
+    --paper:#16110A; --surface:#1F1810; --surface-2:#282016;
+    --ink:#F3E7D5; --ink-2:#BFAE97; --ink-3:#93826D;
+    --rule:#3A2F22; --rule-soft:#2D2519;
+    --orange:#F2894A; --orange-ink:#F2894A; --orange-soft:#3A1F0D; --on-orange:#1A0E05;
+    --gold:#E8C260; --gold-ink:#E8C260; --gold-soft:#372A0D;
+    --ok:#A8C16A; --ok-ink:#A8C16A; --ok-soft:#242D11;
+    --stop:#E87B63; --stop-ink:#E87B63; --stop-soft:#3A1C14;
+    --p-bart:#6FB8C9; --p-jess:#D48CAF; --p-sam:#F2894A; --p-nanny:#A8C16A;
+    --lift:0 1px 2px rgba(0,0,0,.55);
   }
 }
 :root[data-theme="dark"]{
-  --paper:#14130E; --surface:#1C1B15; --surface-2:#232219;
-  --ink:#EBE6D8; --ink-2:#B3AC9A; --ink-3:#857F70;
-  --rule:#35322A; --rule-soft:#2A2821;
-  --green:#6FBF9E; --green-ink:#6FBF9E; --green-soft:#14312A; --on-green:#0B1A15;
-  --brass:#D6AE55; --brass-ink:#D6AE55; --brass-soft:#33290F;
-  --claret:#D9776B; --claret-ink:#D9776B; --claret-soft:#331915;
-  --p-bart:#7FB2CE; --p-jess:#C98EB2; --p-sam:#DCA84F; --p-nanny:#87BD7B;
-  --lift:0 1px 2px rgba(0,0,0,.5);
+  --paper:#16110A; --surface:#1F1810; --surface-2:#282016;
+  --ink:#F3E7D5; --ink-2:#BFAE97; --ink-3:#93826D;
+  --rule:#3A2F22; --rule-soft:#2D2519;
+  --orange:#F2894A; --orange-ink:#F2894A; --orange-soft:#3A1F0D; --on-orange:#1A0E05;
+  --gold:#E8C260; --gold-ink:#E8C260; --gold-soft:#372A0D;
+  --ok:#A8C16A; --ok-ink:#A8C16A; --ok-soft:#242D11;
+  --stop:#E87B63; --stop-ink:#E87B63; --stop-soft:#3A1C14;
+  --p-bart:#6FB8C9; --p-jess:#D48CAF; --p-sam:#F2894A; --p-nanny:#A8C16A;
+  --lift:0 1px 2px rgba(0,0,0,.55);
 }
 
 /* ── Base ───────────────────────────────────────────────────────────── */
@@ -60,12 +63,12 @@ h1,h2,h3,h4{font-family:var(--f-disp);margin:0;text-wrap:balance;line-height:1.1
   font-optical-sizing:auto}
 p{margin:0}
 button,input,select{font:inherit;color:inherit}
-a{color:var(--green-ink)}
-:focus-visible{outline:2px solid var(--green);outline-offset:2px;border-radius:2px}
+a{color:var(--orange-ink)}
+:focus-visible{outline:2px solid var(--orange);outline-offset:2px;border-radius:2px}
 .wrap{max-width:1180px;margin:0 auto;padding:0 26px}
 .label{font-family:var(--f-mono);font-size:10px;letter-spacing:.2em;
   text-transform:uppercase;color:var(--ink-3);font-weight:400}
-.mark{color:var(--brass-ink);font-size:.8em;vertical-align:.12em;letter-spacing:.4em}
+.mark{color:var(--gold-ink);font-size:.8em;vertical-align:.12em;letter-spacing:.4em}
 
 /* ── Masthead ───────────────────────────────────────────────────────── */
 .mast{border-bottom:1px solid var(--rule);background:var(--surface)}
@@ -74,7 +77,7 @@ a{color:var(--green-ink)}
   text-transform:uppercase;color:var(--ink-3)}
 h1.title{font-family:var(--f-disp);font-weight:700;font-variation-settings:"SOFT" 0,"WONK" 1;
   font-size:clamp(40px,7vw,74px);letter-spacing:-.02em;margin:14px 0 0;color:var(--ink)}
-h1.title em{font-style:italic;font-weight:400;color:var(--green-ink)}
+h1.title em{font-style:italic;font-weight:400;color:var(--orange-ink)}
 .deck{font-size:18px;color:var(--ink-2);max-width:60ch;margin:16px auto 0;line-height:1.55}
 .rules-row{display:flex;align-items:center;justify-content:center;gap:14px;margin:26px 0 0}
 .rules-row hr{flex:1;max-width:160px;border:0;border-top:1px solid var(--rule)}
@@ -83,7 +86,7 @@ h1.title em{font-style:italic;font-weight:400;color:var(--green-ink)}
 .clock div{padding:10px 18px;border-right:1px solid var(--rule);text-align:center;min-width:74px}
 .clock div:last-child{border-right:0}
 .clock b{display:block;font-family:var(--f-disp);font-weight:600;font-size:26px;
-  color:var(--green-ink);line-height:1.1;font-variant-numeric:tabular-nums}
+  color:var(--orange-ink);line-height:1.1;font-variant-numeric:tabular-nums}
 .clock span{font-family:var(--f-mono);font-size:9px;letter-spacing:.16em;
   text-transform:uppercase;color:var(--ink-3)}
 .clock .depart b{font-size:15px;color:var(--ink);padding-top:6px;font-weight:500}
@@ -98,15 +101,15 @@ h1.title em{font-style:italic;font-weight:400;color:var(--green-ink)}
   text-transform:uppercase;padding:5px 12px;border:1px solid var(--rule);
   background:transparent;color:var(--ink-2);border-radius:2px;cursor:pointer}
 .crew button:hover{border-color:var(--ink-3)}
-.crew button[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:var(--on-green)}
+.crew button[aria-pressed="true"]{background:var(--orange);border-color:var(--orange);color:var(--on-orange)}
 .role{font-family:var(--f-mono);font-size:10px;letter-spacing:.13em;
   text-transform:uppercase;color:var(--ink-3)}
 .sync{margin-left:auto;display:flex;align-items:center;gap:8px;
   font-family:var(--f-mono);font-size:10px;letter-spacing:.13em;
   text-transform:uppercase;color:var(--ink-3)}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--ink-3);flex:none}
-.dot.live{background:var(--green)}
-.dot.local{background:var(--brass)}
+.dot.live{background:var(--ok)}
+.dot.local{background:var(--gold)}
 
 /* ── Tabs ───────────────────────────────────────────────────────────── */
 .tabs{background:var(--surface);border-bottom:1px solid var(--rule)}
@@ -115,8 +118,8 @@ h1.title em{font-style:italic;font-weight:400;color:var(--green-ink)}
   padding:13px 18px 12px;cursor:pointer;font-family:var(--f-disp);font-weight:600;
   font-size:15px;letter-spacing:-.005em;color:var(--ink-3);white-space:nowrap}
 .tabs button:hover{color:var(--ink)}
-.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--green)}
-.tabs .count{font-family:var(--f-mono);font-size:10px;color:var(--claret-ink);margin-left:6px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--orange)}
+.tabs .count{font-family:var(--f-mono);font-size:10px;color:var(--stop-ink);margin-left:6px}
 
 main{padding:30px 0 50px}
 .panel[hidden]{display:none}
@@ -134,7 +137,7 @@ main{padding:30px 0 50px}
 .planpick button:hover{border-color:var(--ink-3);color:var(--ink)}
 .planpick button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--surface)}
 .planpick .swatch{width:8px;height:8px;border-radius:50%;flex:none}
-.planpick button[data-who="family"] .swatch{background:var(--green)}
+.planpick button[data-who="family"] .swatch{background:var(--orange)}
 .planpick button[data-who="bart"]  .swatch{background:var(--p-bart)}
 .planpick button[data-who="jess"]  .swatch{background:var(--p-jess)}
 .planpick button[data-who="sam"]   .swatch{background:var(--p-sam)}
@@ -142,7 +145,7 @@ main{padding:30px 0 50px}
 .planpick .empty{opacity:.5}
 .whosplan .acts{margin-left:auto;display:flex;gap:7px;flex-wrap:wrap;align-items:center}
 .ro{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
-  color:var(--brass-ink);border:1px solid var(--brass);padding:3px 9px;border-radius:2px}
+  color:var(--gold-ink);border:1px solid var(--gold);padding:3px 9px;border-radius:2px}
 
 /* ── Board ──────────────────────────────────────────────────────────── */
 .board{display:grid;grid-template-columns:minmax(0,1fr) 318px;gap:28px;align-items:start}
@@ -158,7 +161,7 @@ main{padding:30px 0 50px}
   text-transform:uppercase;color:var(--ink-3)}
 .day-date{font-family:var(--f-disp);font-weight:600;font-size:28px;letter-spacing:-.02em;line-height:1.05}
 .day-tag{font-family:var(--f-mono);font-size:9px;letter-spacing:.13em;
-  text-transform:uppercase;color:var(--brass-ink);margin-top:3px}
+  text-transform:uppercase;color:var(--gold-ink);margin-top:3px}
 .wx{display:flex;gap:4px;margin-top:11px}
 @media (max-width:640px){.wx{margin:0}}
 .wx button{font-family:var(--f-mono);font-size:9.5px;width:22px;height:22px;padding:0;
@@ -166,11 +169,33 @@ main{padding:30px 0 50px}
   border-radius:2px;cursor:pointer;line-height:1}
 .wx button[aria-pressed="true"]{background:var(--ink-2);border-color:var(--ink-2);color:var(--surface)}
 .walk{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.05em;color:var(--ink-3);margin-top:9px}
-.battery{margin-top:auto;display:flex;gap:3px;padding-top:12px}
-@media (max-width:640px){.battery{margin:0 0 0 auto;padding-top:0;align-self:center}}
-.battery i{height:4px;width:17px;background:var(--rule);display:block}
-.battery i.on{background:var(--green)}
-.battery i.over{background:var(--claret)}
+.hoursbar{margin-top:auto;height:5px;background:var(--rule-soft);border-radius:3px;
+  overflow:hidden;margin-bottom:4px}
+.hoursbar i{display:block;height:100%;background:var(--orange);border-radius:3px}
+.hoursbar.over i{background:var(--stop)}
+.hoursnum{font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;color:var(--ink-3)}
+@media (max-width:640px){.hoursbar{margin:0 0 0 auto;width:70px;align-self:center}
+  .hoursnum{align-self:center}}
+.slot-label .hrs.over{color:var(--stop-ink)}
+.ridenote{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.07em;color:var(--ink-3);
+  border-top:1px dashed var(--rule);padding-top:7px;margin-top:1px}
+.ctl{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.ctlbtn{font-family:var(--f-mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;
+  padding:3px 8px;border:1px solid var(--rule);background:transparent;color:var(--ink-3);
+  border-radius:2px;cursor:pointer;line-height:1.5}
+.ctlbtn:hover{border-color:var(--orange);color:var(--orange-ink)}
+.ctlbtn[aria-pressed="true"]{background:var(--gold-soft);border-color:var(--gold);color:var(--gold-ink)}
+.ctlbtn.ord{width:24px;padding:3px 0;text-align:center}
+.ctlbtn[disabled]{opacity:.3;cursor:not-allowed}
+.asksub{border-top:1px solid var(--rule);padding:22px 0 4px}
+.asksub h3{font-family:var(--f-disp);font-weight:600;font-size:19px;letter-spacing:-.018em}
+.asksub p{font-size:14.5px;color:var(--ink-3);margin-top:4px;font-style:italic}
+.nopes{border:1px solid var(--rule);border-left:4px solid var(--stop);padding:16px 20px;
+  background:var(--surface);margin-bottom:16px}
+.nopes h3{font-family:var(--f-disp);font-weight:600;font-size:18px;letter-spacing:-.015em}
+.nopes ul{margin:8px 0 8px;padding-left:20px}
+.nopes li{font-size:15px;color:var(--ink-2)}
+.nopes p{font-size:14px;color:var(--ink-3);line-height:1.5}
 .slots{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media (max-width:640px){.slots{grid-template-columns:1fr;gap:12px}}
 .slot{display:flex;flex-direction:column;gap:8px;min-height:104px}
@@ -178,9 +203,9 @@ main{padding:30px 0 50px}
   text-transform:uppercase;color:var(--ink-3);display:flex;gap:8px;align-items:baseline;
   border-bottom:1px solid var(--rule-soft);padding-bottom:5px}
 .slot-label .hrs{margin-left:auto;letter-spacing:.05em}
-.slot.drop{outline:1px dashed var(--green);outline-offset:6px}
+.slot.drop{outline:1px dashed var(--orange);outline-offset:6px}
 .place{font-family:var(--f-mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;
-  color:var(--green-ink);border:1px dashed var(--green);padding:11px;text-align:center;
+  color:var(--orange-ink);border:1px dashed var(--orange);padding:11px;text-align:center;
   background:none;cursor:copy;width:100%;border-radius:2px}
 .slot-empty{font-family:var(--f-body);font-style:italic;font-size:14.5px;color:var(--ink-3);
   padding:10px 0}
@@ -190,11 +215,11 @@ main{padding:30px 0 50px}
   padding:10px 12px;cursor:grab;position:relative;border-radius:2px;box-shadow:var(--lift)}
 .chip.ro{cursor:default}
 .chip.dragging{opacity:.35}
-.chip.sel{border-color:var(--green);border-left-color:var(--green);
-  box-shadow:0 0 0 2px var(--green-soft)}
-.chip.hi{border-left-color:var(--claret)}
-.chip.mid{border-left-color:var(--brass)}
-.chip.lo{border-left-color:var(--green)}
+.chip.sel{border-color:var(--orange);border-left-color:var(--orange);
+  box-shadow:0 0 0 2px var(--orange-soft)}
+.chip.hi{border-left-color:var(--stop)}
+.chip.mid{border-left-color:var(--gold)}
+.chip.lo{border-left-color:var(--ok)}
 .chip.fixed{cursor:default;border-left-color:var(--rule);background:var(--surface-2);
   box-shadow:none}
 .chip h4{font-family:var(--f-disp);font-weight:600;font-size:17px;letter-spacing:-.015em;
@@ -204,12 +229,12 @@ main{padding:30px 0 50px}
 .chip .why{font-size:14.5px;color:var(--ink-2);margin-top:7px;line-height:1.45}
 .chip .rmv{position:absolute;top:5px;right:5px;border:0;background:none;color:var(--ink-3);
   cursor:pointer;font-family:var(--f-mono);font-size:15px;line-height:1;padding:2px 5px;border-radius:2px}
-.chip .rmv:hover{color:var(--claret-ink);background:var(--claret-soft)}
+.chip .rmv:hover{color:var(--stop-ink);background:var(--stop-soft)}
 .flags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
 .flag{font-family:var(--f-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
-  padding:2px 6px;border-radius:2px;background:var(--claret-soft);color:var(--claret-ink)}
-.flag.warn{background:var(--brass-soft);color:var(--brass-ink)}
-.flag.ok{background:var(--green-soft);color:var(--green-ink)}
+  padding:2px 6px;border-radius:2px;background:var(--stop-soft);color:var(--stop-ink)}
+.flag.warn{background:var(--gold-soft);color:var(--gold-ink)}
+.flag.ok{background:var(--ok-soft);color:var(--ok-ink)}
 .flag.must{background:var(--ink);color:var(--surface)}
 
 /* ── Side ───────────────────────────────────────────────────────────── */
@@ -225,32 +250,32 @@ main{padding:30px 0 50px}
 .check{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid var(--rule-soft);
   font-size:14.5px;line-height:1.45}
 .check:last-child{border-bottom:0}
-.check .bar{width:2px;flex:none;background:var(--brass)}
-.check.stop .bar{background:var(--claret)}
-.check.ok .bar{background:var(--green)}
+.check .bar{width:2px;flex:none;background:var(--gold)}
+.check.stop .bar{background:var(--stop)}
+.check.ok .bar{background:var(--ok)}
 .check b{font-family:var(--f-disp);font-weight:600;display:block;font-size:15px;letter-spacing:-.01em}
 .check span{color:var(--ink-2)}
 .btnrow{display:flex;flex-wrap:wrap;gap:7px}
 .btn{font-family:var(--f-disp);font-weight:600;font-size:13.5px;padding:7px 13px;
   border-radius:2px;cursor:pointer;border:1px solid var(--rule);background:var(--surface);color:var(--ink)}
 .btn:hover{border-color:var(--ink-3)}
-.btn.primary{background:var(--green);border-color:var(--green);color:var(--on-green)}
+.btn.primary{background:var(--orange);border-color:var(--orange);color:var(--on-orange)}
 .btn.primary:hover{filter:brightness(1.1)}
 .btn.ghost{border-style:dashed;background:transparent}
 .btn[disabled]{opacity:.4;cursor:not-allowed}
 .hint{font-size:14px;color:var(--ink-3);line-height:1.5}
 .nights{display:flex;align-items:center;gap:10px;margin-top:14px;
   font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
-.nights input{flex:1;accent-color:var(--green)}
+.nights input{flex:1;accent-color:var(--orange)}
 .nights b{color:var(--ink);font-size:15px;font-family:var(--f-disp)}
 
 /* ── The ask ────────────────────────────────────────────────────────── */
-.verdict{border:1px solid var(--green);border-left:4px solid var(--green);
-  background:var(--green-soft);padding:20px 24px;margin-bottom:30px}
-.verdict.short{border-color:var(--brass);border-left-color:var(--brass);background:var(--brass-soft)}
+.verdict{border:1px solid var(--ok);border-left:4px solid var(--ok);
+  background:var(--ok-soft);padding:20px 24px;margin-bottom:30px}
+.verdict.short{border-color:var(--gold);border-left-color:var(--gold);background:var(--gold-soft)}
 .vlabel{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--green-ink)}
-.verdict.short .vlabel{color:var(--brass-ink)}
+  color:var(--ok-ink)}
+.verdict.short .vlabel{color:var(--gold-ink)}
 .verdict h2{font-family:var(--f-disp);font-weight:600;font-size:clamp(23px,3.4vw,32px);
   letter-spacing:-.02em;margin:6px 0 8px}
 .vbody{font-size:16px;color:var(--ink-2);max-width:70ch;line-height:1.5}
@@ -260,7 +285,7 @@ main{padding:30px 0 50px}
 .ask:last-child{border-bottom:1px solid var(--rule)}
 @media (max-width:700px){.ask{grid-template-columns:44px minmax(0,1fr);gap:0 14px}
   .ask .when{grid-column:2;margin-top:9px;flex-direction:row;gap:10px;align-items:baseline;flex-wrap:wrap}}
-.ask .no{font-family:var(--f-disp);font-weight:400;font-size:30px;color:var(--brass-ink);
+.ask .no{font-family:var(--f-disp);font-weight:400;font-size:30px;color:var(--gold-ink);
   line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.03em}
 .ask h3{font-family:var(--f-disp);font-weight:600;font-size:22px;letter-spacing:-.02em;line-height:1.15}
 .askwhy{font-size:16px;color:var(--ink-2);margin-top:6px;line-height:1.5;max-width:60ch}
@@ -268,7 +293,7 @@ main{padding:30px 0 50px}
 .ask .when{display:flex;flex-direction:column;gap:1px;text-align:right}
 @media (max-width:700px){.ask .when{text-align:left}}
 .ask .when b{font-family:var(--f-disp);font-weight:600;font-size:17px;letter-spacing:-.015em}
-.ask .when b.cut{color:var(--claret-ink)}
+.ask .when b.cut{color:var(--stop-ink)}
 .ask .when span{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.12em;
   text-transform:uppercase;color:var(--ink-3)}
 
@@ -281,7 +306,7 @@ table.cmp th{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.14em;
   position:sticky;top:0;z-index:2}
 table.cmp th.who-bart{color:var(--p-bart)} table.cmp th.who-jess{color:var(--p-jess)}
 table.cmp th.who-sam{color:var(--p-sam)}   table.cmp th.who-nanny{color:var(--p-nanny)}
-table.cmp th.who-family{color:var(--green-ink)}
+table.cmp th.who-family{color:var(--orange-ink)}
 table.cmp td{padding:10px 13px;border-bottom:1px solid var(--rule-soft);vertical-align:top;
   font-size:14.5px;line-height:1.35}
 table.cmp td.daycell{font-family:var(--f-disp);font-weight:600;font-size:15px;
@@ -292,7 +317,7 @@ table.cmp td.slotcell{font-family:var(--f-mono);font-size:9px;letter-spacing:.13
   text-transform:uppercase;color:var(--ink-3);background:var(--surface-2);
   border-right:1px solid var(--rule-soft);white-space:nowrap}
 table.cmp td.none{color:var(--ink-3);font-style:italic}
-table.cmp tr.agreed td:not(.daycell):not(.slotcell){background:var(--green-soft)}
+table.cmp tr.agreed td:not(.daycell):not(.slotcell){background:var(--ok-soft)}
 .cmplegend{display:flex;flex-wrap:wrap;gap:18px;margin-top:14px;font-family:var(--f-mono);
   font-size:10px;letter-spacing:.08em;color:var(--ink-3);align-items:center;text-transform:uppercase}
 .cmplegend i{width:10px;height:10px;display:inline-block;margin-right:6px;vertical-align:-1px}
@@ -309,11 +334,11 @@ table.cmp tr.agreed td:not(.daycell):not(.slotcell){background:var(--green-soft)
 .mapsvg{width:100%;height:auto;display:block}
 .mapsvg .grid{stroke:var(--rule-soft);stroke-width:1}
 .mapsvg .mall{stroke:var(--rule);stroke-width:7;stroke-linecap:round}
-.mapsvg .route{stroke:var(--green);stroke-width:1.6;stroke-dasharray:6 4;fill:none}
+.mapsvg .route{stroke:var(--orange);stroke-width:1.6;stroke-dasharray:6 4;fill:none}
 .mapsvg .dot{fill:var(--rule)}
 .mapsvg .dot.on{fill:var(--ink-3)}
-.mapsvg .dot.hot{fill:var(--green)}
-.mapsvg .base{fill:var(--brass)}
+.mapsvg .dot.hot{fill:var(--orange)}
+.mapsvg .base{fill:var(--gold)}
 .mapsvg text{font-family:var(--f-mono);font-size:9px;fill:var(--ink-3);letter-spacing:.05em}
 .mapsvg text.hot{fill:var(--ink)}
 .mapsvg .scalebar{stroke:var(--ink-3);stroke-width:1.2}
@@ -325,16 +350,16 @@ table.cmp tr.agreed td:not(.daycell):not(.slotcell){background:var(--green-soft)
 .rankrow{display:grid;grid-template-columns:26px 1fr auto auto;align-items:center;gap:9px;
   padding:8px 4px;border-bottom:1px solid var(--rule-soft);background:var(--paper);cursor:grab}
 .rankrow.dragging{opacity:.35}
-.rankrow.over{background:var(--green-soft)}
-.rankrow.top13{box-shadow:inset 2px 0 0 var(--green)}
-.rankrow.top4{box-shadow:inset 2px 0 0 var(--brass)}
+.rankrow.over{background:var(--orange-soft)}
+.rankrow.top13{box-shadow:inset 2px 0 0 var(--orange)}
+.rankrow.top4{box-shadow:inset 2px 0 0 var(--gold)}
 .rankrow .pos{font-family:var(--f-mono);font-size:11px;color:var(--ink-3);text-align:right}
 .rankrow .nm{font-family:var(--f-disp);font-weight:500;font-size:15.5px;line-height:1.25;letter-spacing:-.01em}
 .rankrow .arrows{display:flex;gap:3px}
 .rankrow .arrows button,.starbtn{border:1px solid var(--rule);background:var(--surface);width:23px;
   height:23px;border-radius:2px;cursor:pointer;font-size:10px;line-height:1;color:var(--ink-3);padding:0}
 .rankrow .arrows button:hover,.starbtn:hover{border-color:var(--ink-3);color:var(--ink)}
-.starbtn[aria-pressed="true"]{background:var(--brass);border-color:var(--brass);color:#FFFDF8}
+.starbtn[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:#FFFDF8}
 table.tally{width:100%;border-collapse:collapse;margin-top:12px}
 table.tally th{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.13em;
   text-transform:uppercase;color:var(--ink-3);text-align:right;padding:9px;
@@ -347,7 +372,7 @@ table.tally td{padding:8px 9px;border-bottom:1px solid var(--rule-soft);text-ali
 table.tally td.nm{font-family:var(--f-disp);font-weight:500;font-size:15px;color:var(--ink);
   letter-spacing:-.01em}
 table.tally td.pts{color:var(--ink)}
-table.tally tr.split td{background:var(--brass-soft)}
+table.tally tr.split td{background:var(--gold-soft)}
 .tablewrap{overflow-x:auto}
 
 /* ── Roster ─────────────────────────────────────────────────────────── */
@@ -372,7 +397,7 @@ table.tt td.m{font-family:var(--f-mono);font-size:11.5px;color:var(--ink-2)}
 table.tt tr:last-child td{border-bottom:0}
 .resv{display:flex;align-items:flex-start;gap:11px;padding:10px 0;border-bottom:1px solid var(--rule-soft)}
 .resv:last-child{border-bottom:0}
-.resv input[type=checkbox]{margin-top:5px;width:15px;height:15px;accent-color:var(--green);flex:none}
+.resv input[type=checkbox]{margin-top:5px;width:15px;height:15px;accent-color:var(--orange);flex:none}
 .resv .t{flex:1;min-width:0}
 .resv .t b{font-family:var(--f-disp);font-weight:600;font-size:16px;display:block;letter-spacing:-.012em}
 .resv .t span{font-size:14px;color:var(--ink-2)}
@@ -381,14 +406,14 @@ table.tt tr:last-child td{border-bottom:0}
 .rule{padding:13px 0;border-bottom:1px solid var(--rule-soft)}
 .rule:last-child{border-bottom:0}
 .rule .art{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--brass-ink)}
+  color:var(--gold-ink)}
 .rule b{font-family:var(--f-disp);font-weight:600;font-size:18px;display:block;margin:3px 0 4px;
   letter-spacing:-.015em}
 .rule p{font-size:15px;color:var(--ink-2);line-height:1.5}
 
 footer{border-top:1px solid var(--rule);margin-top:48px;padding:26px 0 46px;background:var(--surface)}
 footer .wrap{text-align:center}
-footer .fmark{color:var(--brass-ink);letter-spacing:.5em;font-size:12px}
+footer .fmark{color:var(--gold-ink);letter-spacing:.5em;font-size:12px}
 footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-spacing:.1em;
   text-transform:uppercase;margin-top:12px;line-height:2}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:24px;z-index:99;
@@ -417,9 +442,10 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
   <div class="wrap">
     <p class="route">Amtrak Crescent 20 &amp; 19 &nbsp;&middot;&nbsp; Anniston, Alabama &#8646; Washington Union</p>
     <h1 class="title">Crescent <em>Dispatch</em></h1>
-    <p class="deck">Ten things I want to do in Washington, and the week that makes all ten fit.
-      Not a wish list &mdash; a schedule that already survives the Sunday closures, the December
-      cold and the walking. Everyone else can build theirs beside it and we'll compare.</p>
+    <p class="deck">The thirteen things I want to do in Washington, and the week that makes all
+      thirteen fit. Not a wish list &mdash; a schedule budgeted in hours, with the Uber rides counted,
+      that already survives the Sunday closures and the December cold. Everyone else can build theirs
+      beside it and we'll compare.</p>
     <div class="rules-row"><hr><span class="mark">&#9670;</span><hr></div>
     <div class="clock" aria-label="Time until boarding">
       <div><b id="cd-d">&mdash;</b><span>days</span></div>
@@ -458,7 +484,7 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
     <section class="panel" id="p-ask">
       <div class="verdict" id="verdict"></div>
       <div class="secthead">
-        <h2>Ten things, in the order I want them</h2>
+        <h2>Thirteen things, in the order I want them</h2>
         <p>This is the trip I'm asking for. Everything below is the arithmetic that says it
           works &mdash; not a wish list, a schedule that survives the closures, the cold and the
           walking.</p>
@@ -705,7 +731,33 @@ var WANTS = [
   rides:"Comes with the Library of Congress across the street. Closed Sundays, so it has to land midweek."},
  {ask:"The Washington Monument", unit:"washington-monument",
   why:"Up to the top. The Capitol one way, Lincoln the other, Arlington across the river — the whole trip in one look.",
-  rides:"Timed tickets drop 30 days out at 10 am and go in minutes."}
+  rides:"Timed tickets drop 30 days out at 10 am and go in minutes."},
+ {ask:"The National Archives", unit:"national-archives",
+  why:"The Declaration, the Constitution and the Bill of Rights. The actual paper, in the actual room.",
+  rides:"Short as these go — an hour and a half does it, so it stacks with something else."},
+ {ask:"The DowntownDC Holiday Market", unit:"holiday-market",
+  why:"Stalls, cocoa, and one hour of the trip spent not being in a museum.",
+  rides:"An easy hour. Good for the front or back end of a bigger day."},
+ {ask:"Washington National Cathedral", unit:"national-cathedral",
+  why:"Stained glass, gargoyles, and the Darth Vader grotesque if you can spot it from the ground.",
+  rides:"Uptown, so it is a real Uber ride — best paired with Georgetown rather than with the Mall."},
+ {ask:"Georgetown", unit:"georgetown",
+  why:"Brick streets, the canal, the shops, and lunch somewhere warm. Not a museum, on purpose.",
+  rides:"Across town from the Mall. Sits naturally with the Cathedral."}
+];
+
+/* Wanted if the week has room, cut first if it does not. */
+var MAYBES = [
+ {ask:"The National Gallery of Art", unit:"national-gallery",
+  why:"West building for the old masters, East for the strange ones, and the tunnel between them.",
+  rides:"Right on the Mall, so it costs a slot but almost no travel. Nice to have, not a must."}
+];
+
+/* Off the list on purpose. Stated here so nobody quietly adds them back. */
+var NOPES = [
+ {name:"National Museum of Natural History", why:"Not this trip."},
+ {name:"African American History & Culture", why:"Not this trip."},
+ {name:"International Spy Museum", why:"Not this trip."}
 ];
 
 var CREW = [
@@ -719,7 +771,6 @@ var BASE = {name:"L'Enfant Plaza base", ll:[38.8845,-77.0255]};
 var TRIP = {start:"2026-11-29", nights:7, board:"2026-11-28T20:04:00-06:00", backAtWork:"2026-12-10"};
 
 /* ── Units ──────────────────────────────────────────────────────────── */
-var LOADN = {lo:0, mid:1, hi:2};
 var TIERN = {protected:0, high:1, medium:2, bonus:3};
 var FITN  = {poor:0, acceptable:1, good:2, excellent:3};
 var FITS  = {poor:-6, acceptable:-2, good:0, excellent:1};
@@ -889,16 +940,6 @@ function planningOrder(){
   if (!starred.length) return base;
   return starred.concat(base.filter(function(id){ return starred.indexOf(id) < 0; }));
 }
-function pairScore(a, b){
-  if (b == null) return 1;
-  var x = LOADN[a], y = LOADN[b];
-  if (x === 2 && y === 2) return -12;
-  if (x === 2 && y === 1) return -3;
-  if (x === 2 && y === 0) return 2;
-  if (x === 1 && y === 1) return 0;
-  if (x === 1 && y === 0) return 1;
-  return -1;
-}
 function weatherFit(u, cond){
   var active = ["rain","cold","wind","heat"].filter(function(k){ return cond[k]; });
   if (!active.length) return 0;
@@ -914,14 +955,61 @@ function structuralAt(day, slot){
     return {name:"Southbound sleeper", load:"lo", note:"Crescent 19 departs 6:30 pm", ll:[38.8977,-77.0064]};
   return null;
 }
+/* ── Hours, not slots ───────────────────────────────────────────────────
+   A day is not "one thing"; it is a budget. Daytime runs about 10 to 5,
+   the evening about 5:30 to 9:30, and everything between stops is an Uber
+   ride — no rental car, so travel is a fare and a wait, not a parking hunt.
+   ─────────────────────────────────────────────────────────────────────── */
+var DAY_HOURS = 7, NIGHT_HOURS = 4, DEPART_HOURS = 4;
+var UBER_MPH = 18, UBER_WAIT_MIN = 6;
+
+function budgetFor(day, slot){
+  if (slot === "night") return day.kind === "departure" ? 0 : NIGHT_HOURS;
+  if (day.kind === "arrival") return 0;
+  if (day.kind === "departure") return DEPART_HOURS;
+  return DAY_HOURS;
+}
+function hoursOf(u, p){ return (p && p.short && u.min < u.ideal) ? u.min : u.ideal; }
+
+/* Everything placed in one slot, in the order it will actually happen. */
+function occupantsAt(board, day, slot){
+  var out = [];
+  for (var id in board){
+    var p = board[id];
+    if (p.d === day.i && p.slot === slot && unitById[id]) out.push({u:unitById[id], p:p, id:id});
+  }
+  out.sort(function(a,b){ return (a.p.i || 0) - (b.p.i || 0); });
+  return out;
+}
+/* Hotel out, every stop in order, hotel back. */
+function legsFor(list){
+  if (!list.length) return [];
+  var pts = [BASE.ll].concat(list.map(function(x){ return x.u.ll; })).concat([BASE.ll]);
+  var out = [];
+  for (var i = 0; i < pts.length - 1; i++) out.push(distMi(pts[i], pts[i+1]));
+  return out;
+}
+function travelHours(list){
+  var legs = legsFor(list), mi = 0;
+  legs.forEach(function(d){ mi += d; });
+  return mi / UBER_MPH + legs.length * UBER_WAIT_MIN / 60;
+}
+function usedHours(board, day, slot){
+  var list = occupantsAt(board, day, slot), h = 0;
+  list.forEach(function(x){ h += hoursOf(x.u, x.p); });
+  return h + travelHours(list);
+}
+function slotMiles(board, day, slot){
+  var legs = legsFor(occupantsAt(board, day, slot)), mi = 0;
+  legs.forEach(function(d){ mi += d; });
+  return mi;
+}
+/* The first thing in a slot — what the compare table and the day rail show. */
 function occupantAt(board, day, slot){
   var s = structuralAt(day, slot);
   if (s) return s;
-  for (var id in board){
-    var p = board[id];
-    if (p.d === day.i && p.slot === slot && unitById[id]) return unitById[id];
-  }
-  return null;
+  var list = occupantsAt(board, day, slot);
+  return list.length ? list[0].u : null;
 }
 function autoFillInto(board, nights, only){
   var days = frameDays(nights), order = planningOrder();
@@ -930,25 +1018,35 @@ function autoFillInto(board, nights, only){
   order.forEach(function(uid){
     var u = unitById[uid];
     if (!u) return;
-    var best = null, bestScore = -1e9;
+    var best = null, bestScore = -1e9, bestShort = false;
     days.forEach(function(day){
-      if (structuralAt(day, u.period)) return;
-      if (occupantAt(board, day, u.period)) return;
+      var cap = budgetFor(day, u.period);
+      if (!cap || structuralAt(day, u.period)) return;
       if (closedOn(u, day)) return;
-      if (day.kind === "departure" && u.period === "day" && (u.load === "hi" || u.env === "outdoor")) return;
-      var sc = weatherFit(u, wxFor(day));
-      var other = occupantAt(board, day, u.period === "day" ? "night" : "day");
-      sc += pairScore(u.load, other ? other.load : null);
-      if (other && other.ll){                     /* keep a day's two outings near each other */
-        var mi = distMi(u.ll, other.ll);
-        sc += mi < 0.8 ? 2 : mi < FAR_MI ? 0 : -4;
-      }
-      if (u.preferDow != null && day.dow === u.preferDow) sc += 3;
-      if (day.kind === "core") sc += 1;
-      sc -= day.i * 0.05;
-      if (sc > bestScore){ bestScore = sc; best = day; }
+      var list = occupantsAt(board, day, u.period);
+      [false, true].forEach(function(sh){
+        if (sh && u.min >= u.ideal) return;            /* nothing to shorten */
+        /* Try it in place, so travel time is measured, not guessed. */
+        board[u.id] = {d:day.i, slot:u.period, i:list.length, short:sh};
+        var after = usedHours(board, day, u.period);
+        delete board[u.id];
+        if (after > cap + 0.01) return;                /* the day genuinely will not hold it */
+        var sc = weatherFit(u, wxFor(day));
+        if (u.preferDow != null && day.dow === u.preferDow) sc += 3;
+        if (day.kind === "core") sc += 1;
+        if (list.length) sc += 1.6;                    /* stacking a day is the point now */
+        if (list.length){                              /* keep consecutive stops close */
+          var mi = distMi(u.ll, list[list.length-1].u.ll);
+          sc += mi < 1 ? 2 : mi < FAR_MI ? 0.5 : -1.5;
+        }
+        sc += (cap - after) * 0.15;                    /* leave the week some slack */
+        sc -= day.i * 0.05;
+        if (sh) sc -= 3.5;                             /* the full visit unless it will not fit */
+        if (sc > bestScore){ bestScore = sc; best = day; bestShort = sh; }
+      });
     });
-    if (best) board[u.id] = {d:best.i, slot:u.period};
+    if (best) board[u.id] = {d:best.i, slot:u.period,
+      i:occupantsAt(board, best, u.period).length, short:bestShort};
   });
   return board;
 }
@@ -959,13 +1057,21 @@ function autoFill(){
   toast(boardName(viewing) + " filled from " + (state.planFrom === "tally" ? "the family tally" : "the seeded order") + ".");
 }
 
-/* The ask, as scheduler input: the outings Samuel's ten actually require. */
-function wantUnits(){
+/* The ask, as scheduler input. Musts first, maybes last so they cut first. */
+function wantUnits(includeMaybes){
   var out = [];
   WANTS.forEach(function(w){ if (out.indexOf(w.unit) < 0) out.push(w.unit); });
+  if (includeMaybes !== false)
+    MAYBES.forEach(function(w){ if (out.indexOf(w.unit) < 0) out.push(w.unit); });
   return out;
 }
-function askPlan(nights){ return autoFillInto({}, nights, wantUnits()); }
+function nopeIds(){
+  return NOPES.map(function(n){
+    var v = VENUES.filter(function(x){ return x.name === n.name; })[0];
+    return v ? v.id : null;
+  }).filter(Boolean);
+}
+function askPlan(nights){ return autoFillInto({}, nights, wantUnits(true)); }
 
 /* ── Checks ─────────────────────────────────────────────────────────── */
 function checks(){
@@ -973,24 +1079,28 @@ function checks(){
   var must = order.slice(0, MUST_SEE);
 
   days.forEach(function(day){
+    var dayMiles = 0, dayRides = 0;
     ["day","night"].forEach(function(slot){
-      var o = occupantAt(board, day, slot);
-      if (!o || !o.members) return;
-      var cl = closedOn(o, day);
-      if (cl) out.push({level:"stop", t:o.name + " on " + fmt(day),
-        s:cl + ". Move it, or the day is wasted at the door."});
-      if (weatherFit(o, wxFor(day)) <= -6) out.push({level:"warn", t:o.name + " in this weather",
-        s:"Rated poor for the conditions set on " + fmt(day) + ". Fine to keep — just have the warm plan ready."});
+      var list = occupantsAt(board, day, slot);
+      list.forEach(function(x){
+        var cl = closedOn(x.u, day);
+        if (cl) out.push({level:"stop", t:x.u.name + " on " + fmt(day),
+          s:cl + ". Move it, or the day is wasted at the door."});
+        if (weatherFit(x.u, wxFor(day)) <= -6) out.push({level:"warn", t:x.u.name + " in this weather",
+          s:"Rated poor for the conditions set on " + fmt(day) + ". Fine to keep — the Uber is the answer, not toughing it out."});
+      });
+      if (!list.length) return;
+      var cap = budgetFor(day, slot), used = usedHours(board, day, slot);
+      if (used > cap + 0.01)
+        out.push({level:"warn", t:(slot === "day" ? "Daytime" : "The evening") + " on " + fmt(day) + " runs long",
+          s:used.toFixed(1) + " hours of visits and rides against about " + cap +
+            ". Shorten one — every chip has a full/short toggle — or move something."});
+      dayMiles += slotMiles(board, day, slot);
+      dayRides += legsFor(list).length;
     });
-    var d1 = occupantAt(board, day, "day"), n1 = occupantAt(board, day, "night");
-    if (d1 && n1 && d1.load === "hi" && n1.load === "hi")
-      out.push({level:"stop", t:"Two Bigs on " + fmt(day),
-        s:d1.name + " and " + n1.name + " in one day is the death march the house rules ban."});
-    if (d1 && n1 && d1.ll && n1.ll){
-      var mi = distMi(d1.ll, n1.ll);
-      if (mi > FAR_MI) out.push({level:"warn", t:"A long hop on " + fmt(day),
-        s:d1.name + " to " + n1.name + " is " + mi.toFixed(1) + " miles. Budget a car, not a walk."});
-    }
+    if (dayRides > 6 || dayMiles > 16)
+      out.push({level:"warn", t:fmt(day) + " is a lot of riding",
+        s:dayRides + " Uber hops, " + dayMiles.toFixed(1) + " miles. Not impossible, just worth knowing before it is 9 pm and cold."});
   });
 
   var unplaced = must.filter(function(id){ return !board[id]; });
@@ -1090,9 +1200,37 @@ function chip(u, opts){
     r.setAttribute("aria-label","Remove " + u.name + " from this plan");
     r.addEventListener("click", function(ev){
       ev.stopPropagation();
-      delete cur()[u.id]; save(); renderAll();
+      delete cur()[u.id]; reindex(); save(); renderAll();
     });
     c.appendChild(r);
+  }
+  if (opts.placement && editable){
+    var ctl = el("div","ctl"), p = opts.placement;
+    if (u.min < u.ideal){
+      var tog = el("button","ctlbtn", p.short ? "Short visit · " + hrs(u.min) : "Full visit · " + hrs(u.ideal));
+      tog.title = "Switch between the full visit and the greatest-hits version";
+      tog.setAttribute("aria-pressed", p.short ? "true" : "false");
+      tog.addEventListener("click", function(ev){
+        ev.stopPropagation();
+        cur()[u.id].short = !cur()[u.id].short;
+        save(); renderAll();
+      });
+      ctl.appendChild(tog);
+    }
+    if (opts.slotLen > 1){
+      var earlier = el("button","ctlbtn ord","↑");
+      earlier.title = "Do this earlier in the " + (opts.slot === "day" ? "day" : "evening");
+      earlier.setAttribute("aria-label","Move " + u.name + " earlier");
+      earlier.disabled = opts.slotPos === 0;
+      earlier.addEventListener("click", function(ev){ ev.stopPropagation(); reorder(u.id, -1); });
+      var later = el("button","ctlbtn ord","↓");
+      later.title = "Do this later";
+      later.setAttribute("aria-label","Move " + u.name + " later");
+      later.disabled = opts.slotPos === opts.slotLen - 1;
+      later.addEventListener("click", function(ev){ ev.stopPropagation(); reorder(u.id, 1); });
+      ctl.appendChild(earlier); ctl.appendChild(later);
+    }
+    if (ctl.childNodes.length) c.appendChild(ctl);
   }
   if (editable){
     c.addEventListener("dragstart", function(ev){
@@ -1192,21 +1330,23 @@ function renderBoard(){
     });
     rail.appendChild(wxb);
 
-    var dU = occupantAt(board, day, "day"), nU = occupantAt(board, day, "night");
-    if (dU && nU && dU.ll && nU.ll){
-      var mi = distMi(dU.ll, nU.ll);
-      rail.appendChild(el("div","walk", mi.toFixed(1) + " mi · " + walkMin(mi) + " min walk"));
-    }
+    var dayStops = occupantsAt(board, day, "day").length + occupantsAt(board, day, "night").length;
+    var dayMi = slotMiles(board, day, "day") + slotMiles(board, day, "night");
+    if (dayStops)
+      rail.appendChild(el("div","walk", dayStops + (dayStops === 1 ? " outing" : " outings") +
+        (dayMi > 0.2 ? " · " + dayMi.toFixed(1) + " mi by Uber" : "")));
 
-    var bat = el("div","battery"), total = 0;
-    [dU, nU].forEach(function(o){ if (o) total += LOADN[o.load] + 1; });
-    for (var i = 0; i < 4; i++){
-      var pip = el("i");
-      if (i < total) pip.className = total > 4 ? "over" : "on";
-      bat.appendChild(pip);
+    var capAll = budgetFor(day,"day") + budgetFor(day,"night");
+    var usedAll = usedHours(board, day, "day") + usedHours(board, day, "night");
+    if (capAll){
+      var bar = el("div","hoursbar" + (usedAll > capAll + 0.01 ? " over" : ""));
+      var fill = el("i");
+      fill.style.width = Math.min(100, usedAll / capAll * 100) + "%";
+      bar.appendChild(fill);
+      bar.title = (Math.round(usedAll*10)/10) + " of " + capAll + " hours booked";
+      rail.appendChild(bar);
+      rail.appendChild(el("div","hoursnum", (Math.round(usedAll*10)/10) + " / " + capAll + " hr"));
     }
-    bat.title = "Day load: " + total + " of 4";
-    rail.appendChild(bat);
     card.appendChild(rail);
 
     var slots = el("div","slots");
@@ -1214,27 +1354,45 @@ function renderBoard(){
       var box = el("div","slot");
       var lab = el("div","slot-label");
       lab.appendChild(el("span", null, slot === "day" ? "Daytime" : "After dark"));
-      var o = occupantAt(board, day, slot);
-      if (o && o.ideal) lab.appendChild(el("span","hrs", hrs(o.ideal)));
+      var cap = budgetFor(day, slot), used = usedHours(board, day, slot);
+      var list = occupantsAt(board, day, slot);
+      if (cap){
+        var hh = el("span","hrs" + (used > cap + 0.01 ? " over" : ""),
+          (Math.round(used*10)/10) + " of " + cap + " hr");
+        lab.appendChild(hh);
+      }
       box.appendChild(lab);
 
       var fixed = structuralAt(day, slot);
       if (fixed) box.appendChild(fixedChip(fixed));
-      else if (o){
-        var flags = [];
-        if (closedOn(o, day)) flags.push({k:"", t:"closed"});
-        if (weatherFit(o, wxFor(day)) <= -6) flags.push({k:"warn", t:"weather"});
-        if (o.members.filter(function(v){ return byId[v].resv !== "none" && !state.resv[v]; }).length)
-          flags.push({k:"warn", t:"needs booking"});
-        CREW.forEach(function(p){ if (state.musts[p.id] === o.id) flags.push({k:"must", t:p.name + "'s must-do"}); });
-        if (!flags.length) flags.push({k:"ok", t:"clear"});
-        box.appendChild(chip(o, {remove:true, flags:flags, editable:editable}));
-      } else if (editable && picked && unitById[picked] && unitById[picked].period === slot){
-        var pb = el("button","place","Place " + unitById[picked].name + " here");
+      else if (list.length){
+        list.forEach(function(x, idx){
+          var flags = [];
+          if (closedOn(x.u, day)) flags.push({k:"", t:"closed"});
+          if (weatherFit(x.u, wxFor(day)) <= -6) flags.push({k:"warn", t:"weather"});
+          if (x.u.members.filter(function(v){ return byId[v].resv !== "none" && !state.resv[v]; }).length)
+            flags.push({k:"warn", t:"needs booking"});
+          CREW.forEach(function(p){ if (state.musts[p.id] === x.u.id) flags.push({k:"must", t:p.name + "'s must-do"}); });
+          if (!flags.length) flags.push({k:"ok", t:"clear"});
+          box.appendChild(chip(x.u, {remove:true, flags:flags, editable:editable,
+            slotPos:idx, slotLen:list.length, placement:x.p, day:day, slot:slot}));
+        });
+        if (list.length > 1){
+          var mi = slotMiles(board, day, slot);
+          box.appendChild(el("div","ridenote", legsFor(list).length + " Uber hops · " +
+            mi.toFixed(1) + " mi · about " + Math.round(travelHours(list)*60) + " min riding"));
+        }
+      }
+      if (!fixed && editable && picked && unitById[picked] && unitById[picked].period === slot
+          && cap && !board[picked]){
+        var pb = el("button","place",
+          (list.length ? "Add " : "Place ") + unitById[picked].name + " here");
         pb.addEventListener("click", function(){ place(picked, day.i, slot); });
         box.appendChild(pb);
-      } else {
-        box.appendChild(el("div","slot-empty", slot === "day" ? "Open — nothing scheduled" : "Dinner, nothing scheduled"));
+      } else if (!fixed && !list.length){
+        box.appendChild(el("div","slot-empty", cap
+          ? (slot === "day" ? "Open — nothing scheduled" : "Dinner, nothing scheduled")
+          : "Held by the train"));
       }
 
       if (editable){
@@ -1316,37 +1474,44 @@ function renderAsk(){
   Object.keys(board).forEach(function(uid){ placedAt[uid] = board[uid]; });
 
   var fits = WANTS.filter(function(w){ return placedAt[w.unit]; }).length;
+  var maybeIn = MAYBES.filter(function(w){ return placedAt[w.unit]; }).length;
+  var all = fits === WANTS.length;
   var v = document.getElementById("verdict");
   v.textContent = "";
-  v.className = "verdict" + (fits === WANTS.length ? "" : " short");
-  v.appendChild(el("p","vlabel", fits === WANTS.length ? "It all fits" : "Where it stands"));
-  v.appendChild(el("h2", null, fits === WANTS.length
-    ? "All ten fit in " + state.config.nights + " nights."
-    : fits + " of the ten fit in " + state.config.nights + " nights."));
+  v.className = "verdict" + (all ? "" : " short");
+  v.appendChild(el("p","vlabel", all ? "It all fits" : "Where it stands"));
+  v.appendChild(el("h2", null, all
+    ? "All " + WANTS.length + " fit in " + state.config.nights + " nights."
+    : fits + " of " + WANTS.length + " fit in " + state.config.nights + " nights."));
 
-  var missed = WANTS.filter(function(w){ return !placedAt[w.unit]; });
   var line;
-  if (fits === WANTS.length){
-    var bigs = 0;
+  if (all){
+    var stops = 0, mi = 0, hoursBooked = 0, capacity = 0;
     days.forEach(function(day){
-      var d1 = occupantAt(board, day, "day"), n1 = occupantAt(board, day, "night");
-      if (d1 && n1 && d1.load === "hi" && n1.load === "hi") bigs++;
+      ["day","night"].forEach(function(slot){
+        stops += occupantsAt(board, day, slot).length;
+        mi += slotMiles(board, day, slot);
+        hoursBooked += usedHours(board, day, slot);
+        capacity += budgetFor(day, slot);
+      });
     });
-    line = "One Big thing a day, " + (bigs ? bigs + " doubled-up days" : "no day doubled up") +
-      ", nothing scheduled on a day it is closed, and the Capitol lands midweek where it has to. " +
-      "Nine outings across " + state.config.nights + " nights, with room left over.";
+    line = stops + " outings across " + state.config.nights + " nights — "
+      + (Math.round(hoursBooked) + " hours booked out of about " + Math.round(capacity) + " available, ")
+      + Math.round(mi) + " miles of Ubers all week. Nothing scheduled on a day it is closed, "
+      + "and the Capitol lands midweek because it shuts on Sundays."
+      + (maybeIn ? " The National Gallery fits too." : " The National Gallery is the one that did not fit.");
   } else {
-    line = "Short by: " + missed.map(function(w){ return w.ask; }).join(", ") +
-      ". Add a night, or something else has to move.";
+    line = "Short by: " + WANTS.filter(function(w){ return !placedAt[w.unit]; })
+      .map(function(w){ return w.ask; }).join(", ") + ". Add a night, or shorten a visit — every chip on the board has a full/short toggle.";
   }
   v.appendChild(el("p","vbody", line));
 
   var list = document.getElementById("asklist");
   list.textContent = "";
-  WANTS.forEach(function(w, i){
+  function askRow(w, n){
     var u = unitById[w.unit], at = placedAt[w.unit];
     var row = el("div","ask");
-    row.appendChild(el("div","no", String(i+1).padStart(2,"0")));
+    row.appendChild(el("div","no", n));
     var body = el("div","askbody");
     body.appendChild(el("h3", null, w.ask));
     body.appendChild(el("p","askwhy", w.why));
@@ -1357,19 +1522,37 @@ function renderAsk(){
       var day = days[at.d];
       when.appendChild(el("b", null, day ? fmt(day) : "—"));
       when.appendChild(el("span", null, at.slot === "day" ? "daytime" : "after dark"));
-      when.appendChild(el("span","asload", loadWord(u.load) + " · " + hrs(u.ideal)));
+      when.appendChild(el("span", null, (at.short ? "short · " : "") + hrs(hoursOf(u, at))));
     } else {
       when.appendChild(el("b","cut","Not scheduled"));
       when.appendChild(el("span", null, "on the bench"));
     }
     row.appendChild(when);
     list.appendChild(row);
-  });
+  }
+  WANTS.forEach(function(w, i){ askRow(w, String(i+1).padStart(2,"0")); });
+
+  if (MAYBES.length){
+    var h = el("div","asksub");
+    h.appendChild(el("h3", null, "Would be cool, not mandatory"));
+    h.appendChild(el("p", null, "Scheduled last, so this is what gets cut first if the week tightens."));
+    list.appendChild(h);
+    MAYBES.forEach(function(w){ askRow(w, "+"); });
+  }
 
   var note = document.getElementById("asknote");
   note.textContent = "";
+  if (NOPES.length){
+    var no = el("div","nopes");
+    no.appendChild(el("h3", null, "Not this trip"));
+    var ul = el("ul");
+    NOPES.forEach(function(n){ ul.appendChild(el("li", null, n.name)); });
+    no.appendChild(ul);
+    no.appendChild(el("p", null, "These are off the list on purpose. They stay in the roster so the rest of the family can put them on their own plan, but they will not be scheduled on mine."));
+    note.appendChild(no);
+  }
   var bookings = [];
-  wantUnits().forEach(function(uid){
+  wantUnits(true).forEach(function(uid){
     if (!placedAt[uid]) return;
     unitById[uid].members.forEach(function(vid){
       var vv = byId[vid];
@@ -1378,10 +1561,10 @@ function renderAsk(){
   });
   if (bookings.length)
     note.appendChild(el("p","hint","Still to book for this list: " + bookings.join(", ") + "."));
-  note.appendChild(el("p","hint","This is nine outings, because a few of the ten arrive together — "
-    + "the Wall comes with the memorial night, Jefferson with the Tidal Basin loop, the White House "
-    + "with the Christmas tree, and the Capitol with the Library of Congress. The board, the map and "
-    + "the compare tab all run on this same list."));
+  note.appendChild(el("p","hint","Some of these arrive together: the Wall comes with the whole memorial night, "
+    + "Jefferson with the Tidal Basin loop, the White House with the Christmas tree, and the Capitol with the "
+    + "Library of Congress across the street. Days can hold more than one outing — the board budgets each one "
+    + "in hours, including the Uber time between stops."));
 }
 
 /* ── Compare ────────────────────────────────────────────────────────── */
@@ -1427,7 +1610,7 @@ function renderCompare(){
   var lg = document.getElementById("cmplegend");
   lg.textContent = "";
   var sw = el("span");
-  var i = el("i"); i.style.background = "var(--green-soft)"; i.style.border = "1px solid var(--green)";
+  var i = el("i"); i.style.background = "var(--orange-soft)"; i.style.border = "1px solid var(--orange)";
   sw.appendChild(i); sw.appendChild(document.createTextNode("Everyone put the same thing here"));
   lg.appendChild(sw);
   lg.appendChild(el("span", null, comparable
@@ -1451,9 +1634,10 @@ function renderMap(){
   });
 
   var day = days[mapDay], board = cur();
-  var dU = occupantAt(board, day, "day"), nU = occupantAt(board, day, "night");
+  var dayList = occupantsAt(board, day, "day"), nightList = occupantsAt(board, day, "night");
+  var runOrder = dayList.concat(nightList);
   var hot = {};
-  [dU, nU].forEach(function(o){ if (o && o.members) o.members.forEach(function(m){ hot[m] = true; }); });
+  runOrder.forEach(function(x){ x.u.members.forEach(function(m){ hot[m] = true; }); });
 
   /* Project lat/lng to metres so the drawing keeps its real aspect ratio. */
   var k = Math.cos(38.8845 * Math.PI/180);
@@ -1478,10 +1662,7 @@ function renderMap(){
     x1:px(byId["us-capitol"].ll), y1:py(byId["us-capitol"].ll),
     x2:px(byId["lincoln-memorial"].ll), y2:py(byId["lincoln-memorial"].ll)}));
 
-  var stops = [BASE.ll];
-  if (dU) stops.push(dU.ll);
-  if (nU) stops.push(nU.ll);
-  stops.push(BASE.ll);
+  var stops = [BASE.ll].concat(runOrder.map(function(x){ return x.u.ll; })).concat([BASE.ll]);
   if (stops.length > 2){
     var d = "M " + stops.map(function(ll){ return px(ll).toFixed(1) + " " + py(ll).toFixed(1); }).join(" L ");
     s.appendChild(svgEl("path", {"class":"route", d:d}));
@@ -1519,7 +1700,7 @@ function renderMap(){
   var info = document.getElementById("walkinfo");
   info.textContent = "";
   info.appendChild(el("p","hint", boardName(viewing) + " · " + fmt(day)));
-  if (!dU && !nU){
+  if (!runOrder.length){
     info.appendChild(el("p","hint","Nothing scheduled that day on this plan."));
     return;
   }
@@ -1530,16 +1711,18 @@ function renderMap(){
     var tr = el("tr");
     tr.appendChild(el("td","m", labelText));
     tr.appendChild(el("td", null, name));
-    tr.appendChild(el("td","m", mi.toFixed(1) + " mi · " + walkMin(mi) + " min"));
+    tr.appendChild(el("td","m", mi.toFixed(1) + " mi · " + Math.round(mi/UBER_MPH*60 + UBER_WAIT_MIN) + " min"));
     tb2.appendChild(tr);
   }
-  if (dU) leg("Daytime", dU.name, distMi(BASE.ll, dU.ll));
-  if (nU) leg("Evening", nU.name, distMi(dU ? dU.ll : BASE.ll, nU.ll));
-  leg("Round trip", "Including the walk home", total);
+  runOrder.forEach(function(x, i){
+    leg(i === 0 ? "From the hotel" : "Then", x.u.name, distMi(stops[i], stops[i+1]));
+  });
+  leg("Home", "Back to L'Enfant Plaza", distMi(stops[stops.length-2], stops[stops.length-1]));
   t2.appendChild(tb2);
   var w2 = el("div","tablewrap"); w2.appendChild(t2);
   info.appendChild(w2);
-  if (total > 5) info.appendChild(el("p","hint","That is a long day on foot in December. Spend the twenty bucks."));
+  info.appendChild(el("p","hint", runOrder.length + " stops · " + total.toFixed(1) +
+    " miles of Ubers · about " + Math.round(travelHours(runOrder)*60) + " minutes in the car all day."));
 }
 
 /* ── Ranking ────────────────────────────────────────────────────────── */
@@ -1652,6 +1835,7 @@ function renderLogi(){
     "</tbody>";
   tw.appendChild(tt); trains.appendChild(tw);
   trains.appendChild(el("p","hint","Two roomettes across the hall. Beds fold down, dinner comes to the room, and Anniston lets us leave at a civilized hour instead of waiting up in Atlanta. Home base is aimed at L'Enfant Plaza: walking distance to Air and Space, Natural History and the Monument, one seat on the Metro to Arlington."));
+  trains.appendChild(el("p","hint","No rental car, either way. The Crescent is the ride to Washington and home again, and inside the city it is Metro when that is simplest and an Uber whenever it is not. Every leg on the board is costed at about " + UBER_MPH + " mph plus a few minutes waiting, which is why a Cathedral-and-Georgetown day reads as expensive and a Mall day reads as free."));
   g.appendChild(trains);
 
   var rcard = el("div","card");
@@ -1685,10 +1869,10 @@ function renderLogi(){
   var rl = el("div","rules");
   [["Art. I","Cold can shorten an outing. It can't ruin the trip.",
     "If it is 28° and blowing at the Korean War Memorial, we call an Uber XL, get warm, and reshuffle. Nobody pushes through misery to check a box. That is what the C/W/R switches on each day are for."],
-   ["Art. II","This is not a death march.",
-    "One Big thing a day, and a Big day earns an Easy night. The board refuses to stack two Bigs, and it will tell you when you try."],
-   ["Art. III","Spend the twenty bucks.",
-    "Metro when it is convenient, walking when the walk is nice, and a car the second it saves a thousand cold steps. The map tab does that arithmetic for every day."],
+   ["Art. II","Stack the day, but count the hours.",
+    "More than one thing a day is the whole point. A day is a budget — about seven hours of daytime and four after dark — and the board counts the visits and the riding together, then tells you when a day has run past what it holds."],
+   ["Art. III","No rental car. We Uber.",
+    "The train gets us there and back; nobody is parking in this city. Metro when it happens to be easy, Uber the second it is not. Every hop on the board is priced in minutes, so a museum across town costs a ride, not an argument."],
    ["Art. IV","We stay together.",
     "One family unit, the whole week. Every day has something worth doing and the load is budgeted across the whole day so all four of us can do all of it."],
    ["Art. V","Everyone gets one veto.",
@@ -1746,21 +1930,43 @@ document.addEventListener("dragstart", function(ev){
 });
 document.addEventListener("dragend", function(){ dragId = null; });
 
+/* Keep each slot's running order dense after a removal. */
+function reindex(){
+  var board = cur(), days = frameDays();
+  days.forEach(function(day){
+    ["day","night"].forEach(function(slot){
+      occupantsAt(board, day, slot).forEach(function(x, i){ board[x.id].i = i; });
+    });
+  });
+}
+function reorder(uid, dir){
+  var board = cur(), p = board[uid];
+  if (!p) return;
+  var days = frameDays(), list = occupantsAt(board, days[p.d], p.slot);
+  var at = list.findIndex(function(x){ return x.id === uid; });
+  var to = at + dir;
+  if (at < 0 || to < 0 || to >= list.length) return;
+  list.splice(to, 0, list.splice(at, 1)[0]);
+  list.forEach(function(x, i){ board[x.id].i = i; });
+  save(); renderAll();
+}
 function place(uid, dayIdx, slot){
   if (!canEdit()) return;
   var u = unitById[uid];
   if (!u || u.period !== slot) return;
   var days = frameDays(), day = days[dayIdx], board = cur();
-  if (!day || structuralAt(day, slot)) return;
-  for (var id in board){
-    var p = board[id];
-    if (p.d === dayIdx && p.slot === slot && id !== uid) delete board[id];
-  }
-  board[uid] = {d:dayIdx, slot:slot};
+  if (!day || structuralAt(day, slot) || !budgetFor(day, slot)) return;
+  var list = occupantsAt(board, day, slot);
+  board[uid] = {d:dayIdx, slot:slot, i:list.length, short:false};
+  reindex();
   picked = null;
-  var cl = closedOn(u, day);
+  var cl = closedOn(u, day), cap = budgetFor(day, slot), used = usedHours(board, day, slot);
   save(); renderAll();
-  toast(cl ? cl + "." : u.name + " → " + fmt(day) + ", " + (slot === "day" ? "daytime" : "after dark") + ".");
+  if (cl) toast(cl + ".");
+  else if (used > cap + 0.01)
+    toast(u.name + " → " + fmt(day) + ". That slot is now " + (Math.round(used*10)/10) +
+      " hours against " + cap + " — shorten something.");
+  else toast(u.name + " → " + fmt(day) + ", " + (slot === "day" ? "daytime" : "after dark") + ".");
 }
 
 var toastTimer;
@@ -1861,16 +2067,36 @@ function buildICS(){
   }
   days.forEach(function(day){
     ["day","night"].forEach(function(slot){
-      var o = occupantAt(board, day, slot);
-      if (!o) return;
-      var s = slot === "day" ? [10,0] : [17,30], e = slot === "day" ? [16,0] : [21,0];
-      L.push("BEGIN:VEVENT");
-      L.push("UID:" + day.iso + "-" + slot + "@crescent-dispatch");
-      L.push("DTSTART;TZID=America/New_York:" + stamp(day.date, s[0], s[1]));
-      L.push("DTEND;TZID=America/New_York:" + stamp(day.date, e[0], e[1]));
-      L.push("SUMMARY:" + o.name);
-      if (o.why) L.push("DESCRIPTION:" + String(o.why).replace(/\n/g," "));
-      L.push("END:VEVENT");
+      var fixed = structuralAt(day, slot);
+      if (fixed){
+        var fs = slot === "day" ? [14,0] : [19,0], fe = slot === "day" ? [17,0] : [21,0];
+        L.push("BEGIN:VEVENT");
+        L.push("UID:" + day.iso + "-" + slot + "-fixed@crescent-dispatch");
+        L.push("DTSTART;TZID=America/New_York:" + stamp(day.date, fs[0], fs[1]));
+        L.push("DTEND;TZID=America/New_York:" + stamp(day.date, fe[0], fe[1]));
+        L.push("SUMMARY:" + fixed.name);
+        if (fixed.note) L.push("DESCRIPTION:" + fixed.note);
+        L.push("END:VEVENT");
+        return;
+      }
+      /* Lay the day out end to end, with the Uber ride between each stop. */
+      var list = occupantsAt(board, day, slot);
+      var t = slot === "day" ? 10 : 17.5;
+      list.forEach(function(x, i){
+        t += (i === 0 ? distMi(BASE.ll, x.u.ll) : distMi(list[i-1].u.ll, x.u.ll)) / UBER_MPH
+             + UBER_WAIT_MIN/60;
+        var dur = hoursOf(x.u, x.p), st = t, en = t + dur;
+        t = en;
+        function hm(v){ return [Math.floor(v) % 24, Math.round((v % 1) * 60)]; }
+        var a = hm(st), b = hm(en);
+        L.push("BEGIN:VEVENT");
+        L.push("UID:" + day.iso + "-" + slot + "-" + i + "@crescent-dispatch");
+        L.push("DTSTART;TZID=America/New_York:" + stamp(day.date, a[0], a[1]));
+        L.push("DTEND;TZID=America/New_York:" + stamp(day.date, b[0], b[1]));
+        L.push("SUMMARY:" + x.u.name + (x.p.short ? " (short visit)" : ""));
+        if (x.u.why) L.push("DESCRIPTION:" + String(x.u.why).replace(/\n/g," "));
+        L.push("END:VEVENT");
+      });
     });
   });
   L.push("END:VCALENDAR");
