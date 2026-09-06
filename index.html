@@ -442,8 +442,8 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
   <div class="wrap">
     <p class="route">Amtrak Crescent 20 &amp; 19 &nbsp;&middot;&nbsp; Anniston, Alabama &#8646; Washington Union</p>
     <h1 class="title">Crescent <em>Dispatch</em></h1>
-    <p class="deck">The thirteen things I want to do in Washington, and the week that makes all
-      thirteen fit. Not a wish list &mdash; a schedule budgeted in hours, with the Uber rides counted,
+    <p class="deck">The fourteen things I want to do in Washington, and the week that makes all
+      fourteen fit. Not a wish list &mdash; a schedule budgeted in hours, with the Uber rides counted,
       that already survives the Sunday closures and the December cold. Everyone else can build theirs
       beside it and we'll compare.</p>
     <div class="rules-row"><hr><span class="mark">&#9670;</span><hr></div>
@@ -484,7 +484,7 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
     <section class="panel" id="p-ask">
       <div class="verdict" id="verdict"></div>
       <div class="secthead">
-        <h2>Thirteen things, in the order I want them</h2>
+        <h2>Fourteen things, in the order I want them</h2>
         <p>This is the trip I'm asking for. Everything below is the arithmetic that says it
           works &mdash; not a wish list, a schedule that survives the closures, the cold and the
           walking.</p>
@@ -685,7 +685,9 @@ var VENUES = [
  {id:"holiday-market",name:"DowntownDC Holiday Market",seed:24,tier:"bonus",period:"day",load:"lo",env:"outdoor",min:1,ideal:2,resv:"none",w:OUT,bundle:null,ll:[38.8977,-77.0231],
   why:"Stalls, cocoa, and one hour of the trip spent not being in a museum."},
  {id:"spy-museum",name:"International Spy Museum",seed:25,tier:"bonus",period:"day",load:"mid",env:"indoor",min:2,ideal:3,resv:"recommended",w:IN,bundle:null,ll:[38.8837,-77.0250],
-  why:"Paid, off the Mall, and the one Samuel will still be talking about in January."}
+  why:"Paid, off the Mall, and the one Samuel will still be talking about in January."},
+ {id:"national-mall",name:"The National Mall",seed:26,tier:"high",period:"day",load:"mid",env:"outdoor",min:1,ideal:2.5,resv:"none",w:{rain:"poor",cold:"acceptable",wind:"poor",heat:"acceptable"},bundle:null,ll:[38.8899,-77.0231],
+  why:"The lawn itself: two miles of it, Capitol steps to the Lincoln Memorial, Monument in the middle and the museums down both sides."}
 ];
 
 var BUNDLES = {
@@ -743,7 +745,10 @@ var WANTS = [
   rides:"Uptown, so it is a real Uber ride — best paired with Georgetown rather than with the Mall."},
  {ask:"Georgetown", unit:"georgetown",
   why:"Brick streets, the canal, the shops, and lunch somewhere warm. Not a museum, on purpose.",
-  rides:"Across town from the Mall. Sits naturally with the Cathedral."}
+  rides:"Across town from the Mall. Sits naturally with the Cathedral."},
+ {ask:"The National Mall", unit:"national-mall",
+  why:"The lawn itself. Two miles from the Capitol steps to Lincoln, the Monument standing in the middle of it, and the Reflecting Pool at the far end.",
+  rides:"Free, open, never closed, no ticket. It is also the thread the rest of this list hangs on — half of what I want is already strung along it, so this is the walk between them as much as a stop of its own."}
 ];
 
 /* Wanted if the week has room, cut first if it does not. */
@@ -1011,6 +1016,48 @@ function occupantAt(board, day, slot){
   var list = occupantsAt(board, day, slot);
   return list.length ? list[0].u : null;
 }
+/* Where would this outing go, given what the board already holds? */
+function bestSpot(board, uid, days){
+  var u = unitById[uid];
+  if (!u) return null;
+  var best = null, bestScore = -1e9, bestShort = false;
+  days.forEach(function(day){
+    var cap = budgetFor(day, u.period);
+    if (!cap || structuralAt(day, u.period)) return;
+    if (closedOn(u, day)) return;
+    var list = occupantsAt(board, day, u.period);
+    [false, true].forEach(function(sh){
+      if (sh && u.min >= u.ideal) return;
+      board[u.id] = {d:day.i, slot:u.period, i:list.length, short:sh};
+      var after = usedHours(board, day, u.period);
+      delete board[u.id];
+      if (after > cap + 0.01) return;
+      var sc = weatherFit(u, wxFor(day));
+      if (u.preferDow != null && day.dow === u.preferDow) sc += 3;
+      if (day.kind === "core") sc += 1;
+      if (list.length) sc += 1.6;
+      if (list.length){
+        var mi = distMi(u.ll, list[list.length-1].u.ll);
+        sc += mi < 1 ? 2 : mi < FAR_MI ? 0.5 : -1.5;
+      }
+      sc += (cap - after) * 0.15;
+      sc -= day.i * 0.05;
+      if (sh) sc -= 3.5;
+      if (sc > bestScore){ bestScore = sc; best = day; bestShort = sh; }
+    });
+  });
+  return best ? {day:best, short:bestShort} : null;
+}
+/* Slot one outing into a board without disturbing what is already placed. */
+function addBest(board, uid, nights){
+  if (board[uid]) return false;
+  var spot = bestSpot(board, uid, frameDays(nights));
+  if (!spot) return false;
+  var u = unitById[uid];
+  board[uid] = {d:spot.day.i, slot:u.period,
+    i:occupantsAt(board, spot.day, u.period).length, short:spot.short};
+  return true;
+}
 function autoFillInto(board, nights, only){
   var days = frameDays(nights), order = planningOrder();
   if (only) order = only.filter(function(id){ return unitById[id]; });
@@ -1072,6 +1119,18 @@ function nopeIds(){
   }).filter(Boolean);
 }
 function askPlan(nights){ return autoFillInto({}, nights, wantUnits(true)); }
+
+/* Bump when WANTS/MAYBES change, so saved plans pick up the new outings. */
+var ASK_VERSION = 4;
+/* Drop anything no longer in the catalog, append anything new, keep the order. */
+function normalizeBallot(arr){
+  var seen = {}, out = [];
+  (arr || []).forEach(function(id){
+    if (unitById[id] && !seen[id]){ seen[id] = 1; out.push(id); }
+  });
+  SEEDED.forEach(function(id){ if (!seen[id]){ seen[id] = 1; out.push(id); } });
+  return out;
+}
 
 /* ── Checks ─────────────────────────────────────────────────────────── */
 function checks(){
@@ -2140,10 +2199,29 @@ if (location.hash.indexOf("#plan=") === 0) sharedFrom = applyShared(location.has
 if (!Object.keys(pl("sam")).length){
   var seeded = askPlan();
   Object.keys(seeded).forEach(function(id){ pl("sam")[id] = seeded[id]; });
+  state.askVersion = ASK_VERSION;
 }
+/* The ask grew since this browser last saw it: fold the new outings in
+   without disturbing anything already arranged by hand. */
+if (state.askVersion !== ASK_VERSION){
+  var added = [];
+  wantUnits(true).forEach(function(id){
+    if (!pl("sam")[id] && addBest(pl("sam"), id)) added.push(unitById[id].name);
+  });
+  state.askVersion = ASK_VERSION;
+  localSave();
+  if (added.length) setTimeout(function(){ toast("Added to your plan: " + added.join(", ") + "."); }, 900);
+}
+/* A ballot from an older catalog is missing the newer outings — repair it
+   rather than silently dropping the vote for being the wrong length. */
+CREW.forEach(function(p){
+  var b = state.ballots[p.id];
+  if (!b) return;
+  state.ballots[p.id] = normalizeBallot(b);
+});
 if (!state.ballots["sam"]){
-  var want = wantUnits();
-  state.ballots["sam"] = want.concat(SEEDED.filter(function(id){ return want.indexOf(id) < 0; }));
+  var want = wantUnits(true);
+  state.ballots["sam"] = normalizeBallot(want);
 }
 if (!Object.keys(pl("family")).length) autoFillInto(pl("family"));
 if (me === "sam" && !sharedFrom) viewing = "sam";
