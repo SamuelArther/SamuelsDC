@@ -3,7 +3,7 @@
 A shared planning board for one specific trip: Anniston → Washington on the Amtrak
 Crescent, Christmas 2026, four people, eight days.
 
-Live at **dc.myway.sambonius.net**.
+Live at **dc.sambonius.net**.
 
 ## What it is
 
@@ -75,11 +75,11 @@ It is one static file. Any of these work:
 
 ```
 # GitHub Pages — Settings → Pages → deploy from branch main, root
-# then point dc.myway.sambonius.net at it with a CNAME
+# then point dc.sambonius.net at it with a CNAME
 
 # Cloudflare Pages
 npx wrangler pages deploy . --project-name samuels-dc
 ```
 
 For a custom domain on GitHub Pages, add a `CNAME` file containing
-`dc.myway.sambonius.net` and set the matching DNS record.
+`dc.sambonius.net` and set the matching DNS record.
