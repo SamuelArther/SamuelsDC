@@ -1,0 +1,1355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crescent Dispatch</title>
+<meta name="description" content="The working board for Washington at Christmas — rank it, place it, and watch the week balance itself.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..900&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400..700&display=swap">
+<style>
+/* ── Tokens ─────────────────────────────────────────────────────────── */
+:root{
+  --ink:#0F1720; --ink-2:#3D4B5A; --ink-3:#6B7C8D;
+  --paper:#E6ECF0; --surface:#FFFFFF; --surface-2:#F1F5F8; --plate:#101B27;
+  --plate-ink:#DCE7EE; --plate-dim:#7E93A4; --plate-line:#24333F;
+  --line:#C6D2DB; --line-soft:#DFE7EC;
+  --rail:#0D6A4E; --rail-ink:#0D6A4E; --rail-soft:#D5EBE1; --on-rail:#FFFFFF;
+  --lamp:#A76F10; --lamp-ink:#8A5B0B; --lamp-soft:#F7E9CB;
+  --stop:#A5322A; --stop-ink:#A5322A; --stop-soft:#F7DFDB;
+  --shadow:0 1px 2px rgba(15,23,32,.06), 0 8px 24px -14px rgba(15,23,32,.28);
+  --f-disp:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Consolas,monospace;
+  --r:4px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#DDE6ED; --ink-2:#A2B2C0; --ink-3:#77899A;
+    --paper:#0A1017; --surface:#141D27; --surface-2:#1B2732; --plate:#050B12;
+    --plate-ink:#CFDEE8; --plate-dim:#71879A; --plate-line:#1D2A35;
+    --line:#2A3843; --line-soft:#1F2B36;
+    --rail:#4BC99C; --rail-ink:#4BC99C; --rail-soft:#0E3227; --on-rail:#04140E;
+    --lamp:#E5B559; --lamp-ink:#E5B559; --lamp-soft:#332714;
+    --stop:#E4796A; --stop-ink:#E4796A; --stop-soft:#341A17;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 28px -16px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#DDE6ED; --ink-2:#A2B2C0; --ink-3:#77899A;
+  --paper:#0A1017; --surface:#141D27; --surface-2:#1B2732; --plate:#050B12;
+  --plate-ink:#CFDEE8; --plate-dim:#71879A; --plate-line:#1D2A35;
+  --line:#2A3843; --line-soft:#1F2B36;
+  --rail:#4BC99C; --rail-ink:#4BC99C; --rail-soft:#0E3227; --on-rail:#04140E;
+  --lamp:#E5B559; --lamp-ink:#E5B559; --lamp-soft:#332714;
+  --stop:#E4796A; --stop-ink:#E4796A; --stop-soft:#341A17;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 28px -16px rgba(0,0,0,.8);
+}
+
+/* ── Base ───────────────────────────────────────────────────────────── */
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);
+  font-size:15.5px;line-height:1.55;-webkit-font-smoothing:antialiased}
+img{max-width:100%}
+h1,h2,h3,h4{font-family:var(--f-disp);margin:0;text-wrap:balance;line-height:1.1}
+p{margin:0}
+button,input,select{font:inherit;color:inherit}
+a{color:var(--rail-ink)}
+:focus-visible{outline:2px solid var(--rail);outline-offset:2px;border-radius:2px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+.eyebrow{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-3)}
+
+/* ── Nameboard ──────────────────────────────────────────────────────── */
+.board-head{background:var(--plate);border-bottom:3px solid var(--rail)}
+.board-head .wrap{padding-top:20px;padding-bottom:18px}
+.nameplate{display:flex;flex-wrap:wrap;align-items:center;gap:7px 13px;
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.19em;
+  text-transform:uppercase;color:var(--plate-dim)}
+.nameplate .num{background:var(--rail);color:var(--on-rail);padding:2px 7px;
+  font-weight:600;letter-spacing:.12em;border-radius:2px}
+h1.title{font-family:var(--f-disp);font-variation-settings:"wdth" 118;
+  font-weight:800;font-size:clamp(34px,6.3vw,60px);letter-spacing:-.008em;
+  text-transform:uppercase;margin:11px 0 5px;color:#F4F9FC}
+.subtitle{font-family:var(--f-body);font-size:15.5px;color:#9BAEBD;max-width:62ch}
+.subtitle em{color:var(--rail);font-style:normal;font-weight:600}
+.clock{display:flex;margin-top:19px;border:1px solid var(--plate-line);
+  border-radius:var(--r);overflow:hidden;width:max-content;max-width:100%;
+  background:rgba(255,255,255,.03);flex-wrap:wrap}
+.clock div{padding:8px 15px;border-right:1px solid var(--plate-line);text-align:center;min-width:68px}
+.clock div:last-child{border-right:0;text-align:left}
+.clock b{display:block;font-family:var(--f-mono);font-size:21px;font-weight:600;
+  color:var(--lamp);line-height:1.25;font-variant-numeric:tabular-nums}
+.clock span{font-family:var(--f-mono);font-size:9px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--plate-dim)}
+.clock .depart b{font-size:13px;color:var(--plate-ink);padding-top:5px}
+
+/* ── Crew bar ───────────────────────────────────────────────────────── */
+.crewbar{background:var(--surface);border-bottom:1px solid var(--line);
+  position:sticky;top:0;z-index:40}
+.crewbar .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:9px 16px;
+  padding-top:9px;padding-bottom:9px}
+.crew{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.crew button{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;
+  text-transform:uppercase;padding:5px 11px;border:1px solid var(--line);
+  background:transparent;color:var(--ink-2);border-radius:99px;cursor:pointer}
+.crew button:hover{border-color:var(--ink-3)}
+.crew button[aria-pressed="true"]{background:var(--rail);border-color:var(--rail);
+  color:var(--on-rail)}
+.role{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-3)}
+.sync{margin-left:auto;display:flex;align-items:center;gap:7px;
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ink-3);flex:none}
+.dot.live{background:var(--rail);box-shadow:0 0 0 3px var(--rail-soft)}
+.dot.local{background:var(--lamp);box-shadow:0 0 0 3px var(--lamp-soft)}
+
+/* ── Tabs ───────────────────────────────────────────────────────────── */
+.tabs{background:var(--surface);border-bottom:1px solid var(--line)}
+.tabs .wrap{display:flex;gap:2px;overflow-x:auto}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;
+  padding:11px 14px;cursor:pointer;font-family:var(--f-disp);font-weight:700;
+  font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);
+  white-space:nowrap}
+.tabs button:hover{color:var(--ink)}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--rail)}
+.tabs .count{font-family:var(--f-mono);font-size:10px;color:var(--stop-ink);margin-left:5px}
+
+main{padding:22px 0 40px}
+.panel[hidden]{display:none}
+
+/* ── Board ──────────────────────────────────────────────────────────── */
+.board{display:grid;grid-template-columns:minmax(0,1fr) 326px;gap:20px;align-items:start}
+@media (max-width:1000px){.board{grid-template-columns:1fr}}
+.ladder{display:flex;flex-direction:column;gap:10px}
+.day{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--shadow);display:grid;grid-template-columns:126px minmax(0,1fr);overflow:hidden}
+@media (max-width:640px){.day{grid-template-columns:1fr}}
+.day-rail{background:var(--surface-2);border-right:1px solid var(--line-soft);
+  padding:12px;display:flex;flex-direction:column;gap:2px}
+@media (max-width:640px){.day-rail{border-right:0;border-bottom:1px solid var(--line-soft);
+  flex-direction:row;align-items:center;gap:11px}}
+.day-dow{font-family:var(--f-disp);font-variation-settings:"wdth" 112;font-weight:800;
+  font-size:12.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
+.day-date{font-family:var(--f-disp);font-variation-settings:"wdth" 112;font-weight:800;
+  font-size:24px;letter-spacing:-.015em;line-height:1.05}
+.day-tag{font-family:var(--f-mono);font-size:9px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--lamp-ink);margin-top:3px}
+.wx{display:flex;gap:3px;margin-top:9px}
+@media (max-width:640px){.wx{margin:0}}
+.wx button{font-family:var(--f-mono);font-size:9.5px;width:21px;height:21px;padding:0;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink-3);
+  border-radius:3px;cursor:pointer;line-height:1}
+.wx button[aria-pressed="true"]{background:var(--ink-3);border-color:var(--ink-3);color:var(--surface)}
+.battery{margin-top:auto;display:flex;gap:2px;padding-top:9px}
+@media (max-width:640px){.battery{margin:0 0 0 auto;padding-top:0}}
+.battery i{height:5px;width:16px;border-radius:1px;background:var(--line);display:block}
+.battery i.on{background:var(--rail)}
+.battery i.over{background:var(--stop)}
+.slots{display:grid;grid-template-columns:1fr 1fr}
+@media (max-width:640px){.slots{grid-template-columns:1fr}}
+.slot{padding:11px 12px 13px;min-height:118px;border-right:1px solid var(--line-soft);
+  display:flex;flex-direction:column;gap:7px}
+.slot:last-child{border-right:0}
+@media (max-width:640px){.slot{border-right:0;border-bottom:1px solid var(--line-soft)}
+  .slot:last-child{border-bottom:0}}
+.slot-label{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-3);display:flex;gap:7px;align-items:center}
+.slot-label .hrs{margin-left:auto;color:var(--ink-3);letter-spacing:.04em}
+.slot.drop{background:var(--rail-soft);outline:2px dashed var(--rail);outline-offset:-4px}
+.slot.armed{background:var(--surface-2)}
+.slot.armed .place{display:block}
+.place{display:none;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--rail-ink);border:1px dashed var(--rail);
+  border-radius:var(--r);padding:9px;text-align:center;background:none;cursor:copy;width:100%}
+.slot-empty{font-family:var(--f-mono);font-size:11px;color:var(--ink-3);
+  border:1px dashed var(--line);border-radius:var(--r);padding:13px;text-align:center}
+
+/* ── Chips ──────────────────────────────────────────────────────────── */
+.chip{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--ink-3);
+  border-radius:var(--r);padding:8px 10px;cursor:grab;position:relative}
+.chip.dragging{opacity:.4}
+.chip.sel{outline:2px solid var(--rail);outline-offset:1px}
+.chip.hi{border-left-color:var(--stop)}
+.chip.mid{border-left-color:var(--lamp)}
+.chip.lo{border-left-color:var(--rail)}
+.chip.fixed{cursor:default;border-left-color:var(--line);background:var(--surface-2)}
+.chip h4{font-family:var(--f-disp);font-weight:700;font-size:14.5px;letter-spacing:-.008em;
+  padding-right:18px}
+.chip .meta{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--ink-3);margin-top:4px;display:flex;flex-wrap:wrap;gap:3px 10px}
+.chip .why{font-size:12.5px;color:var(--ink-2);margin-top:5px;line-height:1.4}
+.chip .rmv{position:absolute;top:4px;right:4px;border:0;background:none;color:var(--ink-3);
+  cursor:pointer;font-family:var(--f-mono);font-size:14px;line-height:1;padding:3px 6px;border-radius:3px}
+.chip .rmv:hover{color:var(--stop-ink);background:var(--stop-soft)}
+.flags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.flag{font-family:var(--f-mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;
+  padding:2px 5px;border-radius:2px;background:var(--stop-soft);color:var(--stop-ink)}
+.flag.warn{background:var(--lamp-soft);color:var(--lamp-ink)}
+.flag.ok{background:var(--rail-soft);color:var(--rail-ink)}
+
+/* ── Cards / side ───────────────────────────────────────────────────── */
+.side{display:flex;flex-direction:column;gap:14px;position:sticky;top:53px}
+@media (max-width:1000px){.side{position:static}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--shadow)}
+.card > header{padding:10px 13px;border-bottom:1px solid var(--line-soft);
+  display:flex;align-items:baseline;gap:8px}
+.card > header h3{font-family:var(--f-disp);font-weight:800;font-size:11.5px;
+  letter-spacing:.14em;text-transform:uppercase}
+.card > header .n{margin-left:auto;font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
+.card .body{padding:12px 13px}
+.bench{display:flex;flex-direction:column;gap:7px;max-height:min(50vh,500px);
+  overflow-y:auto;padding:12px 13px}
+.checks{display:flex;flex-direction:column}
+.check{display:flex;gap:9px;padding:9px 13px;border-bottom:1px solid var(--line-soft);
+  font-size:13px;line-height:1.42}
+.check:last-child{border-bottom:0}
+.check .bar{width:3px;border-radius:2px;flex:none;background:var(--lamp)}
+.check.stop .bar{background:var(--stop)}
+.check.ok .bar{background:var(--rail)}
+.check b{font-family:var(--f-disp);font-weight:700;display:block;font-size:13px}
+.check span{color:var(--ink-2)}
+.btnrow{display:flex;flex-wrap:wrap;gap:7px}
+.btn{font-family:var(--f-disp);font-weight:700;font-size:11.5px;letter-spacing:.09em;
+  text-transform:uppercase;padding:8px 12px;border-radius:var(--r);cursor:pointer;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.btn:hover{border-color:var(--ink-3)}
+.btn.primary{background:var(--rail);border-color:var(--rail);color:var(--on-rail)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{border-style:dashed}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.hint{font-size:12.5px;color:var(--ink-3);line-height:1.45}
+.nights{display:flex;align-items:center;gap:9px;margin-top:11px;
+  font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-3)}
+.nights input{flex:1;accent-color:var(--rail)}
+.nights b{color:var(--ink);font-size:13px}
+
+/* ── Ranking ────────────────────────────────────────────────────────── */
+.rank-grid{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:900px){.rank-grid{grid-template-columns:1fr}}
+.ranklist{display:flex;flex-direction:column;gap:5px;padding:12px 13px}
+.rankrow{display:grid;grid-template-columns:24px 1fr auto;align-items:center;gap:9px;
+  padding:7px 9px;border:1px solid var(--line-soft);border-radius:var(--r);
+  background:var(--surface);cursor:grab}
+.rankrow.dragging{opacity:.4}
+.rankrow.over{border-color:var(--rail);background:var(--rail-soft)}
+.rankrow.top13{border-left:3px solid var(--rail)}
+.rankrow.top4{border-left:3px solid var(--lamp)}
+.rankrow .pos{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--ink-3);text-align:right}
+.rankrow .nm{font-family:var(--f-disp);font-weight:600;font-size:14px;line-height:1.2}
+.rankrow .arrows{display:flex;gap:3px}
+.rankrow .arrows button{border:1px solid var(--line);background:var(--surface);width:23px;
+  height:23px;border-radius:3px;cursor:pointer;font-size:10px;line-height:1;color:var(--ink-2);padding:0}
+.rankrow .arrows button:hover{border-color:var(--ink-3)}
+table.tally{width:100%;border-collapse:collapse}
+table.tally th{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--ink-3);text-align:right;padding:8px 9px;
+  border-bottom:1px solid var(--line);font-weight:500;white-space:nowrap}
+table.tally th.nm,table.tally td.nm{text-align:left}
+table.tally td{padding:7px 9px;border-bottom:1px solid var(--line-soft);text-align:right;
+  font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:12.5px;color:var(--ink-2)}
+table.tally td.nm{font-family:var(--f-disp);font-weight:600;font-size:14px;color:var(--ink)}
+table.tally td.pts{font-weight:600;color:var(--ink)}
+table.tally tr.split td{background:var(--lamp-soft)}
+.tablewrap{overflow-x:auto}
+
+/* ── Roster ─────────────────────────────────────────────────────────── */
+.roster{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.vcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  padding:13px 14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px}
+.vhead{display:flex;align-items:baseline;gap:8px}
+.vcard h4{font-family:var(--f-disp);font-weight:700;font-size:16px;letter-spacing:-.012em;flex:1}
+.seedno{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);border:1px solid var(--line);
+  border-radius:2px;padding:1px 5px;flex:none}
+.vcard .why{font-size:13.5px;color:var(--ink-2);line-height:1.45}
+.vcard dl{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:0}
+.vcard dt{font-family:var(--f-mono);color:var(--ink-3);text-transform:uppercase;
+  font-size:9px;letter-spacing:.11em;padding-top:2px}
+.vcard dd{margin:0;color:var(--ink-2);font-family:var(--f-mono);font-size:11px}
+
+/* ── Logistics ──────────────────────────────────────────────────────── */
+.logi{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px;align-items:start}
+table.tt{width:100%;border-collapse:collapse;font-size:13.5px}
+table.tt th{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--ink-3);text-align:left;padding:8px 11px;border-bottom:1px solid var(--line);font-weight:500}
+table.tt td{padding:9px 11px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+table.tt td.m{font-family:var(--f-mono);font-size:11.5px;white-space:nowrap;color:var(--ink-2)}
+table.tt tr:last-child td{border-bottom:0}
+.resv{display:flex;align-items:flex-start;gap:10px;padding:9px 13px;border-bottom:1px solid var(--line-soft)}
+.resv:last-child{border-bottom:0}
+.resv input[type=checkbox]{margin-top:4px;width:15px;height:15px;accent-color:var(--rail);flex:none}
+.resv .t{flex:1;min-width:0}
+.resv .t b{font-family:var(--f-disp);font-weight:700;font-size:14px;display:block}
+.resv .t span{font-size:12.5px;color:var(--ink-2)}
+.resv.done .t b{text-decoration:line-through;color:var(--ink-3)}
+.rules{display:flex;flex-direction:column}
+.rule{padding:11px 13px;border-bottom:1px solid var(--line-soft)}
+.rule:last-child{border-bottom:0}
+.rule .art{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--rail-ink)}
+.rule b{font-family:var(--f-disp);font-weight:700;font-size:15px;display:block;margin:2px 0 3px}
+.rule p{font-size:13.5px;color:var(--ink-2);line-height:1.45}
+
+footer{border-top:1px solid var(--line);margin-top:36px;padding:20px 0 40px;
+  font-family:var(--f-mono);font-size:11px;color:var(--ink-3);letter-spacing:.05em}
+footer .wrap{display:flex;flex-wrap:wrap;gap:6px 20px;align-items:baseline}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:22px;z-index:99;
+  background:var(--plate);color:var(--plate-ink);font-family:var(--f-mono);font-size:12px;
+  padding:9px 16px;border-radius:99px;box-shadow:var(--shadow);opacity:0;transition:opacity .18s;
+  pointer-events:none;border:1px solid var(--rail);max-width:90vw;text-align:center}
+.toast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="board-head">
+  <div class="wrap">
+    <div class="nameplate">
+      <span class="num">20 &middot; 19</span>
+      <span>Amtrak Crescent</span>
+      <span>Anniston AL &nbsp;&#8646;&nbsp; Washington Union</span>
+      <span>Two sleeper rooms</span>
+    </div>
+    <h1 class="title">Crescent Dispatch</h1>
+    <p class="subtitle">The working board for Washington at Christmas. Four people, eight days,
+      eighteen outings and room for about half of them. Everybody ranks, the board balances the
+      load against closures and cold, and <em>everyone sees the same plan the second it changes.</em></p>
+    <div class="clock" aria-label="Time until boarding">
+      <div><b id="cd-d">&mdash;</b><span>days</span></div>
+      <div><b id="cd-h">&mdash;</b><span>hrs</span></div>
+      <div><b id="cd-m">&mdash;</b><span>min</span></div>
+      <div><b id="cd-s">&mdash;</b><span>sec</span></div>
+      <div class="depart"><b>Sat Nov 28</b><span>board at Anniston, 8:04&thinsp;pm</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="crewbar">
+  <div class="wrap">
+    <span class="eyebrow">On the board as</span>
+    <div class="crew" id="crew" role="group" aria-label="Who are you"></div>
+    <span class="role" id="rolelabel"></span>
+    <div class="sync"><span class="dot" id="syncdot"></span><span id="syncmsg">connecting</span></div>
+  </div>
+</div>
+
+<nav class="tabs">
+  <div class="wrap" role="tablist" id="tablist">
+    <button role="tab" data-tab="board" aria-selected="true">The board <span class="count" id="tabwarn"></span></button>
+    <button role="tab" data-tab="rank" aria-selected="false">Ranking</button>
+    <button role="tab" data-tab="roster" aria-selected="false">Roster</button>
+    <button role="tab" data-tab="logi" aria-selected="false">Logistics</button>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap">
+
+    <section class="panel" id="p-board">
+      <div class="board">
+        <div class="ladder" id="ladder"></div>
+        <aside class="side">
+          <div class="card">
+            <header><h3>Plan the week</h3></header>
+            <div class="body">
+              <div class="btnrow">
+                <button class="btn primary" id="autofill">Auto-fill</button>
+                <button class="btn ghost" id="clearboard">Clear</button>
+                <button class="btn" id="ics">Export .ics</button>
+              </div>
+              <p class="hint" style="margin-top:10px" id="planhint"></p>
+              <div class="nights">
+                <span>Nights</span>
+                <input type="range" id="nights" min="3" max="10" step="1" value="7">
+                <b id="nightsn">7</b>
+              </div>
+              <p class="hint" id="nightshint" style="margin-top:5px"></p>
+            </div>
+          </div>
+          <div class="card">
+            <header><h3>The bench</h3><span class="n" id="benchn"></span></header>
+            <div class="bench" id="bench"></div>
+          </div>
+          <div class="card">
+            <header><h3>Checks</h3><span class="n" id="checkn"></span></header>
+            <div class="checks" id="checks"></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="panel" id="p-rank" hidden>
+      <div class="rank-grid">
+        <div class="card">
+          <header><h3>Your ballot</h3><span class="n" id="rankwho"></span></header>
+          <div class="body" style="padding-bottom:2px">
+            <p class="hint">Drag to reorder, or use the arrows. Your top four are what a shortened
+              trip keeps; your top thirteen are what the board protects. Nobody reads your list as a
+              list &mdash; only the tally, and only once you submit it.</p>
+            <div class="btnrow" style="margin-top:10px">
+              <button class="btn primary" id="submitballot">Submit ballot</button>
+              <button class="btn ghost" id="resetballot">Reset to seeded order</button>
+            </div>
+          </div>
+          <div class="ranklist" id="ranklist"></div>
+        </div>
+        <div class="card">
+          <header><h3>The tally</h3><span class="n" id="tallyn"></span></header>
+          <div class="tablewrap"><table class="tally" id="tally"></table></div>
+          <div class="body">
+            <p class="hint">Points are Borda: first place on a ballot is worth 18, last is worth 1.
+              Highlighted rows are the ones the family splits hardest on &mdash; those are the
+              conversations worth having at dinner, not on the board.</p>
+            <div class="btnrow" style="margin-top:10px">
+              <button class="btn" id="useconsensus">Plan from the tally</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="p-roster" hidden>
+      <div class="roster" id="roster"></div>
+    </section>
+
+    <section class="panel" id="p-logi" hidden>
+      <div class="logi" id="logi"></div>
+    </section>
+
+  </div>
+</main>
+
+<footer><div class="wrap">
+  <span>Bart &middot; Jess &middot; Sam &middot; Nanny</span>
+  <span>Crescent 20 north &middot; Crescent 19 south</span>
+  <span>dc.myway.sambonius.net</span>
+</div></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════════════════
+   Crescent Dispatch — a shared planning board for one specific trip.
+   Venue attributes below are planning facts, not opinions: how much of a
+   day something eats, what weather ruins it, and when it is closed.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+var IN   = {rain:"excellent", cold:"excellent", wind:"excellent", heat:"excellent"};
+var MEM  = {rain:"poor",      cold:"acceptable", wind:"poor",     heat:"good"};
+var OUT  = {rain:"poor",      cold:"good",       wind:"acceptable", heat:"good"};
+var FED  = {wd:[0], hol:["thanksgiving","christmas","newyear"]};   // closed Sundays
+var SMI  = {wd:[],  hol:["christmas"]};
+
+var VENUES = [
+ {id:"us-capitol",name:"U.S. Capitol",seed:1,tier:"protected",period:"day",load:"hi",env:"mixed",min:2.5,ideal:4,resv:"recommended",w:{rain:"good",cold:"good",wind:"good",heat:"good"},bundle:"capitol-hill",closed:FED,
+  why:"Inside, under the dome, on a real tour. Book through a member of Congress or the visitor center."},
+ {id:"national-archives",name:"National Archives",seed:2,tier:"protected",period:"day",load:"lo",env:"indoor",min:1.5,ideal:2.5,resv:"recommended",w:IN,bundle:null,closed:{wd:[],hol:["thanksgiving","christmas"]},
+  why:"The Declaration, the Constitution, the Bill of Rights. The actual paper in the actual room."},
+ {id:"lincoln-memorial",name:"Lincoln Memorial",seed:3,tier:"protected",period:"night",load:"hi",env:"outdoor",min:.5,ideal:1,resv:"none",w:MEM,bundle:"main-memorial-loop",
+  why:"Nineteen feet of Lincoln, lit from below, at the top of the steps."},
+ {id:"library-of-congress",name:"Library of Congress",seed:4,tier:"protected",period:"day",load:"hi",env:"indoor",min:1.5,ideal:2.5,resv:"required",w:IN,bundle:"capitol-hill",closed:FED,
+  why:"The Great Hall of the Jefferson Building. Free timed passes, and they go fast."},
+ {id:"vietnam-memorial",name:"Vietnam Veterans Memorial",seed:5,tier:"protected",period:"night",load:"hi",env:"outdoor",min:.5,ideal:.75,resv:"none",w:MEM,bundle:"main-memorial-loop",
+  why:"Arrive at dusk while the names still read. Then let it go dark."},
+ {id:"air-space",name:"National Air and Space Museum",seed:6,tier:"high",period:"day",load:"hi",env:"indoor",min:2.5,ideal:5,resv:"required",w:IN,bundle:null,closed:SMI,
+  why:"The Wright Flyer, the Spirit of St. Louis, an Apollo capsule. Free timed passes required."},
+ {id:"arlington",name:"Arlington National Cemetery",seed:7,tier:"high",period:"day",load:"hi",env:"outdoor",min:3,ideal:5,resv:"none",w:{rain:"poor",cold:"acceptable",wind:"poor",heat:"acceptable"},bundle:null,
+  why:"Changing of the Guard on the hour. Build the day around it and dress for a cold hill."},
+ {id:"wwii-memorial",name:"World War II Memorial",seed:8,tier:"protected",period:"night",load:"hi",env:"outdoor",min:.5,ideal:.75,resv:"none",w:MEM,bundle:"main-memorial-loop",
+  why:"The fountain lit, the two arches, and a short walk on to Lincoln."},
+ {id:"korean-memorial",name:"Korean War Veterans Memorial",seed:9,tier:"protected",period:"night",load:"hi",env:"outdoor",min:.5,ideal:.75,resv:"none",w:MEM,bundle:"main-memorial-loop",
+  why:"Nineteen statues under lights, in the cold. Nobody forgets this one."},
+ {id:"white-house",name:"White House Exterior",seed:10,tier:"protected",period:"night",load:"mid",env:"outdoor",min:.5,ideal:1,resv:"none",w:OUT,bundle:"christmas-washington",
+  why:"From the fence on the Ellipse side. Ten minutes, and better after dark."},
+ {id:"national-christmas-tree",name:"National Christmas Tree",seed:11,tier:"protected",period:"night",load:"mid",env:"outdoor",min:.5,ideal:1,resv:"none",w:OUT,bundle:"christmas-washington",
+  why:"The tree on the Ellipse, with the state and territory trees ringed around it."},
+ {id:"natural-history",name:"National Museum of Natural History",seed:12,tier:"medium",period:"day",load:"hi",env:"indoor",min:2.5,ideal:5,resv:"none",w:IN,bundle:null,closed:SMI,
+  why:"Dinosaurs, the Hope Diamond, the elephant, the whale. Sam's day."},
+ {id:"american-history",name:"National Museum of American History",seed:13,tier:"medium",period:"day",load:"hi",env:"indoor",min:2,ideal:4.5,resv:"none",w:IN,bundle:null,closed:SMI,
+  why:"The Star-Spangled Banner — the flag from the song — plus the presidents and the trains."},
+ {id:"african-american-history",name:"African American History & Culture",seed:14,tier:"medium",period:"day",load:"hi",env:"indoor",min:3,ideal:5,resv:"recommended",w:IN,bundle:null,closed:SMI,
+  why:"Start underground in the history galleries and climb toward culture. Big, and heavy in places."},
+ {id:"washington-monument",name:"Washington Monument",seed:15,tier:"medium",period:"day",load:"mid",env:"mixed",min:1,ideal:2,resv:"required",w:{rain:"poor",cold:"good",wind:"poor",heat:"acceptable"},bundle:null,closed:{wd:[],hol:["christmas"]},
+  why:"Timed tickets drop 30 days out at 10 am sharp. The view is the whole trip at once."},
+ {id:"jefferson-memorial",name:"Jefferson Memorial",seed:16,tier:"medium",period:"night",load:"mid",env:"outdoor",min:.5,ideal:1,resv:"none",w:MEM,bundle:"tidal-basin-loop",
+  why:"Across the water, quiet, and the best-lit dome on the basin."},
+ {id:"mlk-memorial",name:"Martin Luther King Jr. Memorial",seed:17,tier:"medium",period:"night",load:"mid",env:"outdoor",min:.5,ideal:.75,resv:"none",w:MEM,bundle:"tidal-basin-loop",
+  why:"The Stone of Hope cut out of the mountain of despair, facing the water."},
+ {id:"fdr-memorial",name:"Franklin Delano Roosevelt Memorial",seed:18,tier:"medium",period:"night",load:"mid",env:"outdoor",min:.75,ideal:1.25,resv:"none",w:MEM,bundle:"tidal-basin-loop",
+  why:"Four outdoor rooms, waterfalls, and the only memorial on the Mall with a dog in it."},
+ {id:"national-gallery",name:"National Gallery of Art",seed:19,tier:"bonus",period:"day",load:"hi",env:"indoor",min:2,ideal:4,resv:"none",w:IN,bundle:null,closed:{wd:[],hol:["christmas","newyear"]},
+  why:"West building for the old masters, East for the strange ones, tunnel in between."},
+ {id:"georgetown",name:"Georgetown",seed:20,tier:"bonus",period:"day",load:"mid",env:"mixed",min:2,ideal:4,resv:"none",w:{rain:"poor",cold:"good",wind:"acceptable",heat:"acceptable"},bundle:null,
+  why:"Brick streets, the canal, the shops, lunch somewhere warm. Not a museum, on purpose."},
+ {id:"national-cathedral",name:"Washington National Cathedral",seed:21,tier:"bonus",period:"day",load:"mid",env:"indoor",min:1.5,ideal:3,resv:"recommended",w:IN,bundle:null,
+  why:"Stained glass, gargoyles, and the Darth Vader grotesque if you can spot it from the ground."},
+ {id:"fords-theatre",name:"Ford's Theatre",seed:22,tier:"bonus",period:"day",load:"lo",env:"indoor",min:1,ideal:2,resv:"recommended",w:IN,bundle:null,closed:{wd:[],hol:["thanksgiving","christmas"]},
+  why:"The theatre and the Petersen house across the street. Lands harder than you expect."},
+ {id:"zoolights",name:"ZooLights",seed:23,tier:"bonus",period:"night",load:"mid",env:"outdoor",min:1.5,ideal:2.5,resv:"recommended",w:OUT,bundle:null,
+  why:"The whole zoo strung with lights. Downhill going in, uphill coming back out."},
+ {id:"holiday-market",name:"DowntownDC Holiday Market",seed:24,tier:"bonus",period:"day",load:"lo",env:"outdoor",min:1,ideal:2,resv:"none",w:OUT,bundle:null,
+  why:"Stalls, cocoa, and one hour of the trip spent not being in a museum."},
+ {id:"spy-museum",name:"International Spy Museum",seed:25,tier:"bonus",period:"day",load:"mid",env:"indoor",min:2,ideal:3,resv:"recommended",w:IN,bundle:null,
+  why:"Paid, off the Mall, and the one Sam will still be talking about in January."}
+];
+
+var BUNDLES = {
+ "capitol-hill":{name:"Capitol Hill",core:["us-capitol","library-of-congress"],
+   why:"Tour under the dome in the morning, then across the street to the most beautiful room in the country."},
+ "main-memorial-loop":{name:"The memorial loop",core:["wwii-memorial","vietnam-memorial","lincoln-memorial","korean-memorial"],
+   why:"WWII, Vietnam, Lincoln, Korea — on foot, after dark, in that order. The night we will talk about for years."},
+ "christmas-washington":{name:"Christmas Washington",core:["white-house","national-christmas-tree"],preferDow:6,
+   why:"The White House fence, the Ellipse, the National Christmas Tree. Lights and cocoa, nothing to learn."},
+ "tidal-basin-loop":{name:"The Tidal Basin after dark",core:["jefferson-memorial","fdr-memorial","mlk-memorial"],
+   why:"Jefferson, FDR and Dr. King around the water. Quieter than the Mall, just as good lit."}
+};
+
+var CREW = [
+ {id:"bart",  name:"Bart",  role:"Dispatcher — owns dates and nights"},
+ {id:"jess",  name:"Jess",  role:"Full stakeholder"},
+ {id:"sam",   name:"Sam",   role:"Full stakeholder"},
+ {id:"nanny", name:"Nanny", role:"Full stakeholder"}
+];
+
+var TRIP = {start:"2026-11-29", nights:7, board:"2026-11-28T20:04:00-06:00",
+            backAtWork:"2026-12-10"};
+
+/* ── Units: what the board actually places ──────────────────────────── */
+var LOADN = {lo:0, mid:1, hi:2};
+var TIERN = {protected:0, high:1, medium:2, bonus:3};
+var FITN  = {poor:0, acceptable:1, good:2, excellent:3};
+var FITS  = {poor:-6, acceptable:-2, good:0, excellent:1};
+var BUNDLE_LOAD = {"capitol-hill":"hi","main-memorial-loop":"hi","christmas-washington":"mid","tidal-basin-loop":"mid"};
+
+var byId = {}; VENUES.forEach(function(v){ byId[v.id] = v; });
+
+function worstWeather(vs){
+  var out = {};
+  ["rain","cold","wind","heat"].forEach(function(k){
+    var best = "excellent";
+    vs.forEach(function(v){ if (FITN[v.w[k]] < FITN[best]) best = v.w[k]; });
+    out[k] = best;
+  });
+  return out;
+}
+
+var UNITS = (function(){
+  var out = [], seen = {};
+  Object.keys(BUNDLES).forEach(function(bid){
+    var b = BUNDLES[bid], ms = b.core.map(function(i){ return byId[i]; });
+    ms.forEach(function(v){ seen[v.id] = true; });
+    out.push({
+      id:bid, name:b.name, why:b.why, members:b.core, bundle:true,
+      seed:Math.min.apply(null, ms.map(function(v){ return v.seed; })),
+      tier:ms.reduce(function(t,v){ return TIERN[v.tier] < TIERN[t] ? v.tier : t; }, ms[0].tier),
+      period:ms[0].period, load:BUNDLE_LOAD[bid],
+      env:ms.every(function(v){ return v.env === "indoor"; }) ? "indoor" :
+          ms.every(function(v){ return v.env === "outdoor"; }) ? "outdoor" : "mixed",
+      min:ms.reduce(function(s,v){ return s + v.min; }, 0),
+      ideal:ms.reduce(function(s,v){ return s + v.ideal; }, 0),
+      resv:ms.reduce(function(r,v){ return v.resv === "required" ? "required" :
+            (r === "required" ? r : (v.resv === "recommended" ? "recommended" : r)); }, "none"),
+      w:worstWeather(ms), preferDow:b.preferDow
+    });
+  });
+  VENUES.forEach(function(v){
+    if (seen[v.id]) return;
+    out.push({id:v.id, name:v.name, why:v.why, members:[v.id], bundle:false,
+      seed:v.seed, tier:v.tier, period:v.period, load:v.load, env:v.env,
+      min:v.min, ideal:v.ideal, resv:v.resv, w:v.w});
+  });
+  out.sort(function(a,b){ return a.seed - b.seed; });
+  return out;
+})();
+var unitById = {}; UNITS.forEach(function(u){ unitById[u.id] = u; });
+var SEEDED = UNITS.map(function(u){ return u.id; });
+var MUST_SEE = 13, FINAL_FOUR = 4;
+
+/* ── Dates ──────────────────────────────────────────────────────────── */
+var DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+var MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function parseISO(s){ var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s); return m ? new Date(+m[1], +m[2]-1, +m[3]) : null; }
+function iso(d){ return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); }
+function addDays(d,n){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()+n); }
+function holidayOf(d){
+  var m = d.getMonth()+1, day = d.getDate();
+  if (m === 12 && day === 25) return "christmas";
+  if (m === 1  && day === 1)  return "newyear";
+  if (m === 11 && d.getDay() === 4 && day >= 22 && day <= 28) return "thanksgiving";
+  return null;
+}
+function frameDays(){
+  var s = parseISO(state.config.start), n = state.config.nights, out = [];
+  for (var i = 0; i <= n; i++){
+    var d = addDays(s,i);
+    out.push({i:i, date:d, iso:iso(d), dow:d.getDay(),
+      kind: i === 0 ? "arrival" : (i === n ? "departure" : "core")});
+  }
+  return out;
+}
+function closedOn(u, day){
+  for (var i = 0; i < u.members.length; i++){
+    var c = byId[u.members[i]].closed;
+    if (!c) continue;
+    if (c.wd && c.wd.indexOf(day.dow) > -1) return byId[u.members[i]].name + " is closed Sundays";
+    var h = holidayOf(day.date);
+    if (h && c.hol && c.hol.indexOf(h) > -1) return byId[u.members[i]].name + " is closed for the holiday";
+  }
+  return null;
+}
+
+/* ── State ──────────────────────────────────────────────────────────── */
+var state = {
+  config:{start:TRIP.start, nights:TRIP.nights},
+  placements:{},          // unitId -> {d, slot}
+  wx:{},                  // isoDate -> {cold,wind,rain}
+  resv:{},                // venueId -> true
+  ballots:{},             // person -> [unitId,...]
+  planFrom:"seed"         // "seed" | "tally"
+};
+var me = localStorage.getItem("cd.me") || "sam";
+var draft = null;         // the ballot being edited on the ranking tab
+var picked = null;        // unit id armed for click-to-place
+var db = null, remote = false;
+
+function role(){ var c = CREW.filter(function(p){ return p.id === me; })[0]; return c ? c.role : ""; }
+function isDispatcher(){ return me === "bart"; }
+function wxFor(d){ return state.wx[d.iso] || {cold:true, wind:false, rain:false}; }
+
+/* ── Persistence ────────────────────────────────────────────────────── */
+var saveTimer = null;
+function localSave(){ try{ localStorage.setItem("cd.state", JSON.stringify(state)); }catch(e){} }
+function localLoad(){
+  try{
+    var raw = localStorage.getItem("cd.state");
+    if (raw){ var s = JSON.parse(raw); for (var k in s) if (s[k] != null) state[k] = s[k]; }
+  }catch(e){}
+}
+function save(){
+  localSave();
+  if (!db) return;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(function(){
+    db.doc("trip/board").set({
+      config:state.config, placements:state.placements, wx:state.wx,
+      resv:state.resv, planFrom:state.planFrom, by:me, at:Date.now()
+    }).catch(function(){ setSync("local","saved on this device"); });
+  }, 350);
+}
+function saveBallot(){
+  localSave();
+  if (!db) return;
+  db.doc("votes/" + me).set({order:draft.slice(), at:Date.now()})
+    .catch(function(){ setSync("local","saved on this device"); });
+}
+function setSync(kind, msg){
+  var dot = document.getElementById("syncdot");
+  dot.className = "dot" + (kind ? " " + kind : "");
+  document.getElementById("syncmsg").textContent = msg;
+}
+
+/* ── The scheduler ──────────────────────────────────────────────────── */
+function planningOrder(){
+  if (state.planFrom === "tally"){
+    var t = tally();
+    if (t.voters > 0) return t.rows.map(function(r){ return r.id; });
+  }
+  return SEEDED.slice();
+}
+function pairScore(a, b){
+  if (b == null) return 1;
+  var x = LOADN[a], y = LOADN[b];
+  if (x === 2 && y === 2) return -12;   // never two Bigs in one day
+  if (x === 2 && y === 1) return -3;
+  if (x === 2 && y === 0) return 2;     // a Big day earns an Easy night
+  if (x === 1 && y === 1) return 0;
+  if (x === 1 && y === 0) return 1;
+  return -1;                            // two Easies wastes a day
+}
+function weatherFit(u, cond){
+  var active = ["rain","cold","wind","heat"].filter(function(k){ return cond[k]; });
+  if (!active.length) return 0;
+  var worst = "excellent";
+  active.forEach(function(k){ if (FITN[u.w[k]] < FITN[worst]) worst = u.w[k]; });
+  return FITS[worst];
+}
+function structuralAt(day, slot){
+  if (day.kind === "arrival") return slot === "day"
+    ? {name:"Arrive, hotel, food", load:"lo", note:"Union Station about 2:12 pm"}
+    : {name:"The Capitol, illuminated", load:"mid", note:"Three blocks from the station"};
+  if (day.kind === "departure" && slot === "night")
+    return {name:"Southbound sleeper", load:"lo", note:"Crescent 19 departs 6:30 pm"};
+  return null;
+}
+function occupantAt(days, day, slot){
+  if (structuralAt(day, slot)) return structuralAt(day, slot);
+  for (var id in state.placements){
+    var p = state.placements[id];
+    if (p.d === day.i && p.slot === slot) return unitById[id];
+  }
+  return null;
+}
+function autoFill(){
+  state.placements = {};
+  var days = frameDays(), order = planningOrder();
+  order.forEach(function(uid){
+    var u = unitById[uid];
+    if (!u) return;
+    var best = null, bestScore = -1e9;
+    days.forEach(function(day){
+      if (structuralAt(day, u.period)) return;
+      if (occupantAt(days, day, u.period)) return;
+      if (closedOn(u, day)) return;
+      if (day.kind === "departure" && u.period === "day"){
+        if (u.load === "hi" || u.env === "outdoor") return;   // getting-on-a-train morning
+      }
+      var sc = 0;
+      sc += weatherFit(u, wxFor(day));
+      var other = occupantAt(days, day, u.period === "day" ? "night" : "day");
+      sc += pairScore(u.load, other ? other.load : null);
+      if (u.preferDow != null && day.dow === u.preferDow) sc += 3;
+      if (day.kind === "core") sc += 1;
+      sc -= day.i * 0.05;                                     // earlier is safer
+      if (sc > bestScore){ bestScore = sc; best = day; }
+    });
+    if (best) state.placements[u.id] = {d:best.i, slot:u.period};
+  });
+  save();
+  renderAll();
+  toast("Board filled from " + (state.planFrom === "tally" ? "the family tally" : "the seeded order") + ".");
+}
+
+/* ── Checks ─────────────────────────────────────────────────────────── */
+function checks(){
+  var days = frameDays(), out = [], order = planningOrder();
+  var must = order.slice(0, MUST_SEE);
+
+  days.forEach(function(day){
+    ["day","night"].forEach(function(slot){
+      var o = occupantAt(days, day, slot);
+      if (!o || !o.members) return;
+      var cl = closedOn(o, day);
+      if (cl) out.push({level:"stop", t:o.name + " on " + fmt(day),
+        s:cl + ". Move it or the day is wasted at the door."});
+      var fit = weatherFit(o, wxFor(day));
+      if (fit <= -6) out.push({level:"warn", t:o.name + " in this weather",
+        s:"Rated poor for the conditions set on " + fmt(day) + ". Fine to keep — just have the warm plan ready."});
+    });
+    var d1 = occupantAt(days, day, "day"), n1 = occupantAt(days, day, "night");
+    if (d1 && n1 && d1.load === "hi" && n1.load === "hi")
+      out.push({level:"stop", t:"Two Bigs on " + fmt(day),
+        s:d1.name + " and " + n1.name + " in one day is the death march the house rules ban."});
+  });
+
+  var unplacedMust = must.filter(function(id){ return !state.placements[id]; });
+  if (unplacedMust.length)
+    out.push({level:"stop", t:unplacedMust.length + " must-see " + (unplacedMust.length === 1 ? "thing is" : "things are") + " on the bench",
+      s:unplacedMust.map(function(i){ return unitById[i].name; }).join(", ") + ". Add a night or cut something below it."});
+
+  var needs = [];
+  Object.keys(state.placements).forEach(function(uid){
+    unitById[uid].members.forEach(function(vid){
+      var v = byId[vid];
+      if (v.resv !== "none" && !state.resv[vid]) needs.push(v.name);
+    });
+  });
+  if (needs.length)
+    out.push({level:"warn", t:needs.length + " " + (needs.length === 1 ? "booking" : "bookings") + " still open",
+      s:needs.join(", ") + ". Timed passes for the Monument drop 30 days out."});
+
+  var home = addDays(parseISO(state.config.start), state.config.nights + 1);
+  var buffer = Math.round((parseISO(TRIP.backAtWork) - home) / 86400000);
+  if (buffer <= 0) out.push({level:"stop", t:"Bart misses work",
+    s:"Home " + fmt({date:home}) + ", back on the clock Thu Dec 10 at 2 pm. That does not work."});
+  else if (buffer === 1) out.push({level:"warn", t:"One day of slack before work",
+    s:"Home " + fmt({date:home}) + ", Bart is back on the clock Thu Dec 10. Any delay eats it."});
+
+  if (!out.length) out.push({level:"ok", t:"The week holds",
+    s:"No closures, no double-Bigs, every must-see thing placed, every booking accounted for."});
+  return out;
+}
+function fmt(day){ var d = day.date; return DOW[d.getDay()] + " " + MON[d.getMonth()] + " " + d.getDate(); }
+
+/* ── Tally ──────────────────────────────────────────────────────────── */
+function tally(){
+  var ids = SEEDED, N = ids.length, pts = {}, pos = {};
+  ids.forEach(function(i){ pts[i] = 0; pos[i] = {}; });
+  var voters = 0;
+  CREW.forEach(function(p){
+    var b = state.ballots[p.id];
+    if (!b || b.length !== N) return;
+    voters++;
+    b.forEach(function(id, i){ if (pts[id] == null) return; pts[id] += (N - i); pos[id][p.id] = i + 1; });
+  });
+  var rows = ids.map(function(id){
+    var ps = CREW.map(function(p){ return pos[id][p.id]; }).filter(function(v){ return v; });
+    return {id:id, name:unitById[id].name, pts:pts[id], pos:pos[id],
+      spread: ps.length > 1 ? Math.max.apply(null, ps) - Math.min.apply(null, ps) : 0};
+  });
+  if (voters === 0) rows.sort(function(a,b){ return unitById[a.id].seed - unitById[b.id].seed; });
+  else rows.sort(function(a,b){ return b.pts - a.pts || unitById[a.id].seed - unitById[b.id].seed; });
+  return {rows:rows, voters:voters, N:N};
+}
+
+/* ── Rendering ──────────────────────────────────────────────────────── */
+function el(tag, cls, txt){ var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+function loadWord(l){ return l === "hi" ? "Big" : l === "mid" ? "Real" : "Easy"; }
+function hrs(n){ return (Math.round(n*10)/10) + " hr"; }
+
+function chip(u, opts){
+  opts = opts || {};
+  var c = el("div", "chip " + u.load + (picked === u.id ? " sel" : ""));
+  c.setAttribute("draggable","true");
+  c.dataset.unit = u.id;
+  c.setAttribute("role","button");
+  c.setAttribute("tabindex","0");
+  c.setAttribute("aria-label", u.name + ", " + loadWord(u.load) + ", " + u.period);
+  c.appendChild(el("h4", null, u.name));
+  var m = el("div","meta");
+  m.appendChild(el("span", null, loadWord(u.load)));
+  m.appendChild(el("span", null, u.period === "day" ? "Daytime" : "After dark"));
+  m.appendChild(el("span", null, hrs(u.ideal)));
+  if (u.bundle) m.appendChild(el("span", null, u.members.length + " stops"));
+  c.appendChild(m);
+  if (opts.why) c.appendChild(el("p","why", u.why));
+  if (opts.flags && opts.flags.length){
+    var f = el("div","flags");
+    opts.flags.forEach(function(fl){ f.appendChild(el("span","flag " + (fl.k||""), fl.t)); });
+    c.appendChild(f);
+  }
+  if (opts.remove){
+    var r = el("button","rmv","×");
+    r.title = "Back to the bench";
+    r.setAttribute("aria-label","Remove " + u.name + " from the board");
+    r.addEventListener("click", function(ev){
+      ev.stopPropagation();
+      delete state.placements[u.id]; save(); renderAll();
+    });
+    c.appendChild(r);
+  }
+  c.addEventListener("dragstart", function(ev){
+    ev.dataTransfer.setData("text/plain", u.id);
+    ev.dataTransfer.effectAllowed = "move";
+    c.classList.add("dragging");
+  });
+  c.addEventListener("dragend", function(){ c.classList.remove("dragging"); });
+  c.addEventListener("click", function(){ picked = (picked === u.id ? null : u.id); renderBoard(); });
+  c.addEventListener("keydown", function(ev){
+    if (ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); picked = (picked === u.id ? null : u.id); renderBoard(); }
+  });
+  return c;
+}
+function fixedChip(s){
+  var c = el("div","chip fixed");
+  c.appendChild(el("h4", null, s.name));
+  var m = el("div","meta");
+  m.appendChild(el("span", null, loadWord(s.load)));
+  m.appendChild(el("span", null, "Fixed"));
+  c.appendChild(m);
+  if (s.note) c.appendChild(el("p","why", s.note));
+  return c;
+}
+
+function renderBoard(){
+  var days = frameDays(), ladder = document.getElementById("ladder");
+  ladder.textContent = "";
+  days.forEach(function(day){
+    var card = el("div","day");
+    var rail = el("div","day-rail");
+    rail.appendChild(el("div","day-dow", DOW[day.dow]));
+    rail.appendChild(el("div","day-date", MON[day.date.getMonth()] + " " + day.date.getDate()));
+    if (day.kind !== "core")
+      rail.appendChild(el("div","day-tag", day.kind === "arrival" ? "Arrival" : "Departure"));
+    var wxb = el("div","wx");
+    [["cold","C","Cold"],["wind","W","Wind"],["rain","R","Rain"]].forEach(function(k){
+      var b = el("button", null, k[1]);
+      b.title = k[2] + " on " + fmt(day);
+      b.setAttribute("aria-label", k[2] + " on " + fmt(day));
+      b.setAttribute("aria-pressed", wxFor(day)[k[0]] ? "true" : "false");
+      b.addEventListener("click", function(){
+        var w = Object.assign({}, wxFor(day));
+        w[k[0]] = !w[k[0]];
+        state.wx[day.iso] = w; save(); renderAll();
+      });
+      wxb.appendChild(b);
+    });
+    rail.appendChild(wxb);
+
+    var bat = el("div","battery"), total = 0;
+    ["day","night"].forEach(function(s){ var o = occupantAt(days, day, s); if (o) total += LOADN[o.load] + 1; });
+    for (var i = 0; i < 4; i++){
+      var pip = el("i");
+      if (i < total) pip.className = total > 4 ? "over" : "on";
+      bat.appendChild(pip);
+    }
+    bat.title = "Day load: " + total + " of 4";
+    rail.appendChild(bat);
+    card.appendChild(rail);
+
+    var slots = el("div","slots");
+    ["day","night"].forEach(function(slot){
+      var box = el("div","slot");
+      box.dataset.day = day.i; box.dataset.slot = slot;
+      var lab = el("div","slot-label");
+      lab.appendChild(el("span", null, slot === "day" ? "Daytime" : "After dark"));
+      var o = occupantAt(days, day, slot);
+      if (o && o.ideal) { var h = el("span","hrs", hrs(o.ideal)); lab.appendChild(h); }
+      box.appendChild(lab);
+
+      var fixed = structuralAt(day, slot);
+      if (fixed){ box.appendChild(fixedChip(fixed)); }
+      else if (o){
+        var flags = [];
+        var cl = closedOn(o, day);
+        if (cl) flags.push({k:"", t:"closed"});
+        if (weatherFit(o, wxFor(day)) <= -6) flags.push({k:"warn", t:"weather"});
+        var open = o.members.filter(function(v){ return byId[v].resv !== "none" && !state.resv[v]; });
+        if (open.length) flags.push({k:"warn", t:"needs booking"});
+        if (!flags.length) flags.push({k:"ok", t:"clear"});
+        box.appendChild(chip(o, {remove:true, flags:flags}));
+      } else {
+        if (picked && unitById[picked] && unitById[picked].period === slot){
+          box.classList.add("armed");
+          var pb = el("button","place","Place " + unitById[picked].name + " here");
+          pb.addEventListener("click", function(){ place(picked, day.i, slot); });
+          box.appendChild(pb);
+        } else {
+          box.appendChild(el("div","slot-empty", slot === "day" ? "Open — nothing scheduled" : "Dinner, nothing scheduled"));
+        }
+      }
+      box.addEventListener("dragover", function(ev){
+        var id = dragId; if (!id) return;
+        var u = unitById[id];
+        if (!u || u.period !== slot || structuralAt(day, slot)) return;
+        ev.preventDefault(); ev.dataTransfer.dropEffect = "move";
+        box.classList.add("drop");
+      });
+      box.addEventListener("dragleave", function(){ box.classList.remove("drop"); });
+      box.addEventListener("drop", function(ev){
+        ev.preventDefault(); box.classList.remove("drop");
+        var id = ev.dataTransfer.getData("text/plain");
+        place(id, day.i, slot);
+      });
+      slots.appendChild(box);
+    });
+    card.appendChild(slots);
+    ladder.appendChild(card);
+  });
+
+  // bench
+  var bench = document.getElementById("bench");
+  bench.textContent = "";
+  var order = planningOrder(), must = order.slice(0, MUST_SEE);
+  var benched = order.filter(function(id){ return !state.placements[id]; });
+  benched.forEach(function(id){
+    var u = unitById[id];
+    var flags = [];
+    var rank = order.indexOf(id) + 1;
+    if (must.indexOf(id) > -1) flags.push({k:"", t:"must-see #" + rank});
+    else flags.push({k:"warn", t:"#" + rank + " overall"});
+    bench.appendChild(chip(u, {why:true, flags:flags}));
+  });
+  if (!benched.length) bench.appendChild(el("p","hint","Everything is on the board. That has never once happened on a first pass."));
+  document.getElementById("benchn").textContent = benched.length + " left over";
+
+  // checks
+  var cs = checks(), box = document.getElementById("checks");
+  box.textContent = "";
+  cs.forEach(function(c){
+    var row = el("div","check " + c.level);
+    row.appendChild(el("div","bar"));
+    var t = el("div");
+    t.appendChild(el("b", null, c.t));
+    t.appendChild(el("span", null, c.s));
+    row.appendChild(t);
+    box.appendChild(row);
+  });
+  var stops = cs.filter(function(c){ return c.level === "stop"; }).length;
+  document.getElementById("checkn").textContent = stops ? stops + " blocking" : "all clear";
+  document.getElementById("tabwarn").textContent = stops ? "● " + stops : "";
+
+  var placed = Object.keys(state.placements).length;
+  document.getElementById("planhint").textContent =
+    placed + " of " + UNITS.length + " outings placed, planning from " +
+    (state.planFrom === "tally" ? "the family tally" : "the seeded order") +
+    ". Drag a chip, or tap it and tap a slot.";
+  document.getElementById("nightsn").textContent = state.config.nights;
+  document.getElementById("nights").value = state.config.nights;
+  document.getElementById("nights").disabled = !isDispatcher();
+  document.getElementById("nightshint").textContent = isDispatcher()
+    ? "Nights are yours to set. Shortening the trip cuts from the bottom of the order first."
+    : "Dates and nights are Bart's. Everything else on this page is yours.";
+}
+
+function renderRank(){
+  document.getElementById("rankwho").textContent = CREW.filter(function(p){ return p.id === me; })[0].name;
+  if (!draft) draft = (state.ballots[me] || SEEDED).slice();
+  var list = document.getElementById("ranklist");
+  list.textContent = "";
+  draft.forEach(function(id, i){
+    var u = unitById[id];
+    var row = el("div","rankrow" + (i < FINAL_FOUR ? " top4" : i < MUST_SEE ? " top13" : ""));
+    row.setAttribute("draggable","true");
+    row.dataset.idx = i;
+    row.appendChild(el("div","pos", String(i+1)));
+    var nm = el("div","nm", u.name);
+    row.appendChild(nm);
+    var ar = el("div","arrows");
+    var up = el("button", null, "▲"); up.setAttribute("aria-label","Move " + u.name + " up");
+    var dn = el("button", null, "▼"); dn.setAttribute("aria-label","Move " + u.name + " down");
+    up.disabled = i === 0; dn.disabled = i === draft.length - 1;
+    up.addEventListener("click", function(){ move(i, i-1); });
+    dn.addEventListener("click", function(){ move(i, i+1); });
+    ar.appendChild(up); ar.appendChild(dn);
+    row.appendChild(ar);
+    row.addEventListener("dragstart", function(ev){ ev.dataTransfer.setData("text/plain", String(i)); row.classList.add("dragging"); });
+    row.addEventListener("dragend", function(){ row.classList.remove("dragging"); });
+    row.addEventListener("dragover", function(ev){ ev.preventDefault(); row.classList.add("over"); });
+    row.addEventListener("dragleave", function(){ row.classList.remove("over"); });
+    row.addEventListener("drop", function(ev){
+      ev.preventDefault(); row.classList.remove("over");
+      move(parseInt(ev.dataTransfer.getData("text/plain"), 10), i);
+    });
+    list.appendChild(row);
+  });
+  function move(from, to){
+    if (isNaN(from) || to < 0 || to >= draft.length) return;
+    var x = draft.splice(from,1)[0];
+    draft.splice(to,0,x);
+    renderRank();
+  }
+
+  var t = tally(), tbl = document.getElementById("tally");
+  tbl.textContent = "";
+  var thead = el("thead"), hr = el("tr");
+  hr.appendChild(el("th","nm","Outing"));
+  CREW.forEach(function(p){ hr.appendChild(el("th", null, p.name.slice(0,4))); });
+  hr.appendChild(el("th", null, "Pts"));
+  hr.appendChild(el("th", null, "Split"));
+  thead.appendChild(hr); tbl.appendChild(thead);
+  var tb = el("tbody");
+  t.rows.forEach(function(r, i){
+    var tr = el("tr", r.spread >= 8 ? "split" : "");
+    var nm = el("td","nm", (i+1) + ". " + r.name);
+    tr.appendChild(nm);
+    CREW.forEach(function(p){ tr.appendChild(el("td", null, r.pos[p.id] ? String(r.pos[p.id]) : "—")); });
+    tr.appendChild(el("td","pts", t.voters ? String(r.pts) : "—"));
+    tr.appendChild(el("td", null, t.voters > 1 ? String(r.spread) : "—"));
+    tb.appendChild(tr);
+  });
+  tbl.appendChild(tb);
+  document.getElementById("tallyn").textContent = t.voters === 0
+    ? "no ballots in — seeded order"
+    : t.voters + " of 4 ballots in";
+}
+
+function renderRoster(){
+  var g = document.getElementById("roster");
+  g.textContent = "";
+  VENUES.forEach(function(v){
+    var c = el("div","vcard");
+    var h = el("div","vhead");
+    h.appendChild(el("h4", null, v.name));
+    h.appendChild(el("span","seedno","#" + v.seed));
+    c.appendChild(h);
+    c.appendChild(el("p","why", v.why));
+    var dl = el("dl");
+    function row(k, val){ dl.appendChild(el("dt", null, k)); dl.appendChild(el("dd", null, val)); }
+    row("Effort", loadWord(v.load) + " · " + v.period);
+    row("Time", hrs(v.min) + " short, " + hrs(v.ideal) + " full");
+    row("Booking", v.resv === "none" ? "Walk up" : v.resv === "required" ? "Required" : "Recommended");
+    row("Weather", "Cold " + v.w.cold + ", rain " + v.w.rain);
+    if (v.bundle) row("Goes with", BUNDLES[v.bundle].name);
+    if (v.closed && v.closed.wd && v.closed.wd.length) row("Closed", "Sundays and federal holidays");
+    c.appendChild(dl);
+    g.appendChild(c);
+  });
+}
+
+function renderLogi(){
+  var g = document.getElementById("logi");
+  g.textContent = "";
+
+  var trains = el("div","card");
+  trains.appendChild(head("The train"));
+  var tw = el("div","tablewrap"), tt = el("table","tt");
+  tt.innerHTML =
+    "<thead><tr><th>Train</th><th>From</th><th>To</th><th>When</th></tr></thead><tbody>" +
+    "<tr><td>Crescent&nbsp;20 north</td><td>Anniston, AL</td><td>Washington Union</td><td class='m'>Board Sat 8:04 pm &middot; in ~2:12 pm</td></tr>" +
+    "<tr><td>Crescent&nbsp;19 south</td><td>Washington Union</td><td>Anniston, AL</td><td class='m'>Out 6:30 pm &middot; home ~10:30 am CT</td></tr>" +
+    "</tbody>";
+  tw.appendChild(tt); trains.appendChild(tw);
+  var b = el("div","body");
+  b.appendChild(el("p","hint","Two roomettes across the hall. Beds fold down, dinner comes to the room, and Anniston lets us leave at a civilized hour instead of waiting up in Atlanta. Home base is aimed at L'Enfant Plaza: walking distance to Air and Space, Natural History and the Monument, one seat on the Metro to Arlington."));
+  trains.appendChild(b);
+  g.appendChild(trains);
+
+  var rcard = el("div","card");
+  rcard.appendChild(head("Bookings"));
+  var needed = VENUES.filter(function(v){ return v.resv !== "none"; });
+  needed.forEach(function(v){
+    var placedHere = Object.keys(state.placements).some(function(uid){ return unitById[uid].members.indexOf(v.id) > -1; });
+    var row = el("div","resv" + (state.resv[v.id] ? " done" : ""));
+    var cb = document.createElement("input");
+    cb.type = "checkbox"; cb.checked = !!state.resv[v.id];
+    cb.setAttribute("aria-label","Booked: " + v.name);
+    cb.addEventListener("change", function(){
+      if (cb.checked) state.resv[v.id] = true; else delete state.resv[v.id];
+      save(); renderAll();
+    });
+    row.appendChild(cb);
+    var t = el("div","t");
+    t.appendChild(el("b", null, v.name));
+    t.appendChild(el("span", null,
+      (v.resv === "required" ? "Required" : "Recommended") +
+      (placedHere ? " · on the board" : " · not scheduled yet") +
+      (v.id === "washington-monument" ? " · tickets drop 30 days out at 10 am" : "") +
+      (v.id === "us-capitol" ? " · go through a member of Congress for the good slot" : "")));
+    row.appendChild(t);
+    rcard.appendChild(row);
+  });
+  g.appendChild(rcard);
+
+  var rules = el("div","card");
+  rules.appendChild(head("House rules"));
+  var rl = el("div","rules");
+  [["Art. I","Cold can shorten an outing. It can't ruin the trip.",
+    "If it is 28° and blowing at the Korean War Memorial, we call an Uber XL, get warm, and reshuffle. Nobody pushes through misery to check a box. That is what the C/W/R switches on each day are for."],
+   ["Art. II","This is not a death march.",
+    "One Big thing a day, and a Big day earns an Easy night. The board refuses to stack two Bigs, and it will tell you when you try."],
+   ["Art. III","Spend the twenty bucks.",
+    "Metro when it is convenient, walking when the walk is nice, and a car the second it saves a thousand cold steps at the end of a day."],
+   ["Art. IV","We stay together.",
+    "One family unit, the whole week. Every day has something worth doing and the load is budgeted across the whole day so all four of us can do all of it."],
+   ["Art. V","Nothing consequential lands silently.",
+    "Every cut this board makes shows up in Checks with the name of the thing it cost. If it costs a must-see thing, you see that before it happens, not after."]
+  ].forEach(function(r){
+    var d = el("div","rule");
+    d.appendChild(el("div","art", r[0]));
+    d.appendChild(el("b", null, r[1]));
+    d.appendChild(el("p", null, r[2]));
+    rl.appendChild(d);
+  });
+  rules.appendChild(rl);
+  g.appendChild(rules);
+
+  var pack = el("div","card");
+  pack.appendChild(head("Packing, the short version"));
+  var pb = el("div","body");
+  var tw2 = el("div","tablewrap"), t2 = el("table","tt");
+  t2.innerHTML =
+    "<thead><tr><th>Item</th><th>Why</th></tr></thead><tbody>" +
+    "<tr><td>Real gloves and a hat</td><td>The memorial loop is an hour outdoors after dark in December.</td></tr>" +
+    "<tr><td>Broken-in shoes</td><td>An Arlington day is roughly five miles, most of it uphill.</td></tr>" +
+    "<tr><td>Photo ID for everyone</td><td>Capitol and Archives security, and Amtrak at Anniston.</td></tr>" +
+    "<tr><td>A day bag that closes</td><td>Every museum on the Mall runs bag check at the door.</td></tr>" +
+    "<tr><td>Battery pack</td><td>Cold eats phones, and the tickets are on the phones.</td></tr>" +
+    "<tr><td>Printed tickets, once</td><td>Union Station Wi-Fi is a rumor. Print the timed passes.</td></tr>" +
+    "</tbody>";
+  tw2.appendChild(t2); pb.appendChild(tw2);
+  pack.appendChild(pb);
+  g.appendChild(pack);
+
+  function head(txt){ var h = el("header"); h.appendChild(el("h3", null, txt)); return h; }
+}
+
+function renderCrew(){
+  var box = document.getElementById("crew");
+  box.textContent = "";
+  CREW.forEach(function(p){
+    var b = el("button", null, p.name);
+    b.setAttribute("aria-pressed", p.id === me ? "true" : "false");
+    b.addEventListener("click", function(){
+      me = p.id; localStorage.setItem("cd.me", me); draft = null;
+      if (db) watchBallot();
+      renderAll();
+    });
+    box.appendChild(b);
+  });
+  document.getElementById("rolelabel").textContent = role();
+}
+
+function renderAll(){ renderCrew(); renderBoard(); renderRank(); renderRoster(); renderLogi(); }
+
+/* ── Interaction ────────────────────────────────────────────────────── */
+var dragId = null;
+document.addEventListener("dragstart", function(ev){
+  var c = ev.target.closest ? ev.target.closest(".chip") : null;
+  dragId = c ? c.dataset.unit : null;
+});
+document.addEventListener("dragend", function(){ dragId = null; });
+
+function place(uid, dayIdx, slot){
+  var u = unitById[uid];
+  if (!u || u.period !== slot) return;
+  var days = frameDays(), day = days[dayIdx];
+  if (!day || structuralAt(day, slot)) return;
+  for (var id in state.placements){
+    var p = state.placements[id];
+    if (p.d === dayIdx && p.slot === slot && id !== uid) delete state.placements[id];
+  }
+  state.placements[uid] = {d:dayIdx, slot:slot};
+  picked = null;
+  var cl = closedOn(u, day);
+  save(); renderAll();
+  if (cl) toast(cl + ".");
+  else toast(u.name + " → " + fmt(day) + ", " + (slot === "day" ? "daytime" : "after dark") + ".");
+}
+
+var toastTimer;
+function toast(msg){
+  var t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("on");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.classList.remove("on"); }, 2600);
+}
+
+document.getElementById("tablist").addEventListener("click", function(ev){
+  var b = ev.target.closest("button[data-tab]");
+  if (!b) return;
+  Array.prototype.forEach.call(this.querySelectorAll("button"), function(x){
+    x.setAttribute("aria-selected", x === b ? "true" : "false");
+  });
+  ["board","rank","roster","logi"].forEach(function(t){
+    document.getElementById("p-" + t).hidden = (t !== b.dataset.tab);
+  });
+});
+document.getElementById("autofill").addEventListener("click", autoFill);
+document.getElementById("clearboard").addEventListener("click", function(){
+  state.placements = {}; picked = null; save(); renderAll(); toast("Board cleared.");
+});
+document.getElementById("nights").addEventListener("input", function(){
+  if (!isDispatcher()) return;
+  state.config.nights = parseInt(this.value, 10);
+  var max = state.config.nights;
+  Object.keys(state.placements).forEach(function(id){
+    if (state.placements[id].d > max) delete state.placements[id];
+  });
+  save(); renderAll();
+});
+document.getElementById("submitballot").addEventListener("click", function(){
+  state.ballots[me] = draft.slice();
+  saveBallot(); renderAll();
+  toast("Ballot in. " + tally().voters + " of 4 counted.");
+});
+document.getElementById("resetballot").addEventListener("click", function(){
+  draft = SEEDED.slice(); renderRank();
+});
+document.getElementById("useconsensus").addEventListener("click", function(){
+  var t = tally();
+  if (!t.voters){ toast("No ballots in yet — nothing to plan from."); return; }
+  state.planFrom = "tally"; autoFill();
+});
+
+/* ── Export ─────────────────────────────────────────────────────────── */
+function buildICS(){
+  var days = frameDays(), L = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Crescent Dispatch//EN","CALSCALE:GREGORIAN"];
+  function stamp(d, h, m){
+    return d.getFullYear() + String(d.getMonth()+1).padStart(2,"0") + String(d.getDate()).padStart(2,"0") +
+      "T" + String(h).padStart(2,"0") + String(m).padStart(2,"0") + "00";
+  }
+  days.forEach(function(day){
+    ["day","night"].forEach(function(slot){
+      var o = occupantAt(days, day, slot);
+      if (!o) return;
+      var s = slot === "day" ? [10,0] : [17,30], e = slot === "day" ? [16,0] : [21,0];
+      L.push("BEGIN:VEVENT");
+      L.push("UID:" + day.iso + "-" + slot + "@crescent-dispatch");
+      L.push("DTSTART;TZID=America/New_York:" + stamp(day.date, s[0], s[1]));
+      L.push("DTEND;TZID=America/New_York:" + stamp(day.date, e[0], e[1]));
+      L.push("SUMMARY:" + String(o.name).replace(/&amp;/g,"and"));
+      if (o.why) L.push("DESCRIPTION:" + String(o.why).replace(/\n/g," "));
+      L.push("END:VEVENT");
+    });
+  });
+  L.push("END:VCALENDAR");
+  return L.join("\r\n");
+}
+document.getElementById("ics").addEventListener("click", function(){
+  var text = buildICS(), name = "washington-for-christmas.ics";
+  if (window.claude && window.claude.use){
+    window.claude.use("downloads").then(function(d){
+      if (!d) return fallbackDownload(text, name);
+      d.save({filename:name, data:text}).then(function(){ toast("Calendar saved."); })
+       .catch(function(err){ if (err && err.code === "declined") return; fallbackDownload(text, name); });
+    }).catch(function(){ fallbackDownload(text, name); });
+  } else fallbackDownload(text, name);
+});
+function fallbackDownload(text, name){
+  try{
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([text], {type:"text/calendar"}));
+    a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    toast("Calendar downloaded.");
+  }catch(e){ toast("Downloads are blocked here — open the page on its own domain to export."); }
+}
+
+/* ── Countdown ──────────────────────────────────────────────────────── */
+(function tick(){
+  var t = new Date(TRIP.board) - new Date();
+  var f = ["cd-d","cd-h","cd-m","cd-s"];
+  if (t <= 0){ f.forEach(function(i){ document.getElementById(i).textContent = "0"; }); return; }
+  var s = Math.floor(t/1000);
+  var v = [Math.floor(s/86400), Math.floor(s/3600)%24, Math.floor(s/60)%60, s%60];
+  f.forEach(function(id,i){ document.getElementById(id).textContent = v[i]; });
+  setTimeout(tick, 1000);
+})();
+
+/* ── Boot: local first, live if the store answers ───────────────────── */
+localLoad();
+if (!Object.keys(state.placements).length){
+  autoFillQuiet();
+}
+function autoFillQuiet(){ var t = toast; toast = function(){}; autoFill(); toast = t; }
+renderAll();
+
+var unwatchBallot = null;
+function watchBallot(){
+  if (unwatchBallot) unwatchBallot();
+  unwatchBallot = db.doc("votes/" + me).onSnapshot(function(snap){
+    if (snap.exists && Array.isArray(snap.data().order)){
+      state.ballots[me] = snap.data().order.slice();
+      if (!draft) draft = snap.data().order.slice();
+      renderRank();
+    }
+  }, function(){});
+}
+setSync("", "working on this device");
+if (window.claude && window.claude.use){
+  window.claude.use("db").then(function(store){
+    if (!store){ setSync("local","this device only"); return; }
+    db = store; remote = true;
+    setSync("live","live for the family");
+    db.doc("trip/board").onSnapshot(function(snap){
+      if (!snap.exists) { save(); return; }
+      var d = snap.data();
+      if (d.by === me && snap.metadata.hasPendingWrites) return;
+      if (d.config) state.config = d.config;
+      if (d.placements) state.placements = d.placements;
+      if (d.wx) state.wx = d.wx;
+      if (d.resv) state.resv = d.resv;
+      if (d.planFrom) state.planFrom = d.planFrom;
+      localSave(); renderAll();
+    }, function(){ setSync("local","this device only"); });
+    CREW.forEach(function(p){
+      db.doc("votes/" + p.id).onSnapshot(function(snap){
+        if (snap.exists && Array.isArray(snap.data().order)){
+          state.ballots[p.id] = snap.data().order.slice();
+          renderRank(); renderBoard();
+        }
+      }, function(){});
+    });
+    watchBallot();
+  }).catch(function(){ setSync("local","this device only"); });
+} else {
+  setSync("local","this device only");
+}
+</script>
+</body>
+</html>
