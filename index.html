@@ -444,8 +444,8 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
     <h1 class="title">Crescent <em>Dispatch</em></h1>
     <p class="deck">The fifteen things I want to do in Washington, and the week that makes all
       fifteen fit. Not a wish list &mdash; a real schedule, budgeted in hours with the UberXL rides
-      counted, that survives the Sunday closures and a cold December evening. When a night gets long
-      we call a car and get warm on the way home, and the plan still works. Everyone else can build
+      counted, that survives the Sunday closures and does not flinch at a cold December evening — half of this
+      list is better in the cold anyway. Everyone else can build
       theirs beside it and we'll compare.</p>
     <div class="rules-row"><hr><span class="mark">&#9670;</span><hr></div>
     <div class="clock" aria-label="Time until boarding">
@@ -487,8 +487,8 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
       <div class="secthead">
         <h2>Fifteen things, in the order I want them</h2>
         <p>This is the trip I am asking for. Everything below is the arithmetic that says it works &mdash;
-          which day each one lands on, how long it takes, and what the ride there costs. The cold is
-          budgeted for. So is the hot chocolate.</p>
+          which day each one lands on, how long it takes, and what the ride there costs. We are dressed for the cold, so it barely
+          counts against a plan here — rain and wind are the only weather that moves anything.</p>
       </div>
       <div class="asklist" id="asklist"></div>
       <div id="asknote" style="margin-top:20px"></div>
@@ -951,12 +951,15 @@ function planningOrder(){
   if (!starred.length) return base;
   return starred.concat(base.filter(function(id){ return starred.indexOf(id) < 0; }));
 }
+/* Cold is not the enemy — we are dressed for it, and half this list is
+   better cold. Rain and wind are what actually ruin an evening, so they
+   carry their full weight and cold carries a third of it. */
+var COND_WEIGHT = {rain:1, wind:1, heat:1, cold:0.3};
 function weatherFit(u, cond){
   var active = ["rain","cold","wind","heat"].filter(function(k){ return cond[k]; });
   if (!active.length) return 0;
-  var worst = "excellent";
-  active.forEach(function(k){ if (FITN[u.w[k]] < FITN[worst]) worst = u.w[k]; });
-  return FITS[worst];
+  var vals = active.map(function(k){ return FITS[u.w[k]] * COND_WEIGHT[k]; });
+  return Math.min.apply(null, vals);
 }
 function structuralAt(day, slot){
   if (day.kind === "arrival") return slot === "day"
@@ -1151,8 +1154,8 @@ function checks(){
         var cl = closedOn(x.u, day);
         if (cl) out.push({level:"stop", t:x.u.name + " on " + fmt(day),
           s:cl + ". Move it, or the day is wasted at the door."});
-        if (weatherFit(x.u, wxFor(day)) <= -6) out.push({level:"warn", t:x.u.name + " in this weather",
-          s:"Rated poor for the conditions set on " + fmt(day) + ". Fine to keep. If it turns miserable that is an UberXL and a hot chocolate, not a test of character."});
+        if (weatherFit(x.u, wxFor(day)) <= -6) out.push({level:"warn", t:x.u.name + " in the wet",
+          s:"Rated poor for the conditions set on " + fmt(day) + ". Worth knowing, not worth moving for. Cold barely counts against a plan here — this flag is about rain and wind, which actually do ruin a night outdoors."});
       });
       if (!list.length) return;
       var cap = budgetFor(day, slot), used = usedHours(board, day, slot);
@@ -1932,12 +1935,12 @@ function renderLogi(){
   var rules = el("div","card");
   rules.appendChild(head("House rules"));
   var rl = el("div","rules");
-  [["Art. I","Cold can shorten an outing. It can't ruin the trip.",
-    "If it is 28° and blowing sideways at the Korean War Memorial, we do not tough it out. We look at each other, agree we have seen it, and call an UberXL. Four of us in the back, warm, watching the lit-up city slide past on the way home. Nobody has ever once regretted leaving ten minutes early."],
+  [["Art. I","We dress for it and we stay.",
+    "We are coming from Alabama in December to see a city that is better in the cold. Lincoln lit from below, the Wall at dusk, the tree on the Ellipse, Dr. King over the black water — the cold is not in the way of that, it is part of it. So we bring the real gloves and the layers and we do not bail out fifteen minutes in because somebody's hands got chilly. The UberXL is the ride home at the end of a good night, not an escape hatch from the middle of one. If it runs long for Nanny, that is a different thing and we call it early for her — but nobody is cutting the memorial loop short on my account."],
    ["Art. II","Stack the day, but count the hours.",
     "More than one thing a day is the whole point — that is why we are on a train and not a schedule. A day is a budget: about seven hours of daylight and four after dark, and the board counts the riding as well as the looking. When it says a day is full, what it means is that we would be walking back in the dark, hungry, wishing we had stopped an hour ago."],
    ["Art. III","No rental car. We call an UberXL.",
-    "The Crescent gets us there and home again, and nobody is parking in this city. Metro when it happens to be easy, and an UberXL the second it is not — six blocks in December with cold hands is worth twenty dollars every single time. Every hop on the board is already priced in minutes, so a museum across town costs a ride, not an argument."],
+    "The Crescent gets us there and home again, and nobody is parking in this city. Metro when it happens to be easy, an UberXL when the distance is real — the Cathedral is not a walk from the Mall and pretending otherwise costs an hour. That is about miles, not about being cold. Every hop on the board is already priced in minutes, so a museum across town costs a ride, not an argument."],
    ["Art. IV","We stay together.",
     "One family unit, the whole week. Every day has something worth doing and the load is budgeted across the whole day so all four of us can do all of it."],
    ["Art. V","Everyone gets one veto.",
@@ -1959,7 +1962,8 @@ function renderLogi(){
   var tw2 = el("div","tablewrap"), t2 = el("table","tt");
   t2.innerHTML =
     "<thead><tr><th>Item</th><th>Why</th></tr></thead><tbody>" +
-    "<tr><td>Real gloves and a hat</td><td>The memorial loop is an hour outdoors after dark in December.</td></tr>" +
+    "<tr><td>Layers, not one big coat</td><td>Museums run hot and the Mall runs cold; you want to shed and re-add all day.</td></tr>" +
+    "<tr><td>Real gloves and a hat</td><td>The memorial loop is an hour outdoors after dark and we are not cutting it short.</td></tr>" +
     "<tr><td>Broken-in shoes</td><td>An Arlington day runs about five miles, most of it uphill.</td></tr>" +
     "<tr><td>Photo ID for everyone</td><td>Capitol and Archives security, and Amtrak at Anniston.</td></tr>" +
     "<tr><td>A day bag that closes</td><td>Every museum on the Mall runs bag check at the door.</td></tr>" +
