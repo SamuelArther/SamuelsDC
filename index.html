@@ -442,8 +442,8 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
   <div class="wrap">
     <p class="route">Amtrak Crescent 20 &amp; 19 &nbsp;&middot;&nbsp; Anniston, Alabama &#8646; Washington Union</p>
     <h1 class="title">Crescent <em>Dispatch</em></h1>
-    <p class="deck">The fifteen things I want to do in Washington, and the week that makes all
-      fifteen fit. Not a wish list &mdash; a real schedule, budgeted in hours with the UberXL rides
+    <p class="deck">The seventeen things I want to do in Washington, and the week that makes all
+      seventeen fit. Not a wish list &mdash; a real schedule, budgeted in hours with the UberXL rides
       counted, that survives the Sunday closures and does not flinch at a cold December evening — half of this
       list is better in the cold anyway. Everyone else can build
       theirs beside it and we'll compare.</p>
@@ -485,7 +485,7 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
     <section class="panel" id="p-ask">
       <div class="verdict" id="verdict"></div>
       <div class="secthead">
-        <h2>Fifteen things, in the order I want them</h2>
+        <h2>Seventeen things, in the order I want them</h2>
         <p>This is the trip I am asking for. Everything below is the arithmetic that says it works &mdash;
           which day each one lands on, how long it takes, and what the ride there costs. We are dressed for the cold, so it barely
           counts against a plan here — rain and wind are the only weather that moves anything.</p>
@@ -637,6 +637,7 @@ var MEM  = {rain:"poor",      cold:"acceptable", wind:"poor",      heat:"good"};
 var OUT  = {rain:"poor",      cold:"good",       wind:"acceptable", heat:"good"};
 var FED  = {wd:[0], hol:["thanksgiving","christmas","newyear"]};
 var SMI  = {wd:[],  hol:["christmas"]};
+var BASE_LL = [38.8845,-77.0255];          /* the hotel, needed by the catalog below */
 
 var VENUES = [
  {id:"us-capitol",name:"U.S. Capitol",seed:1,tier:"protected",period:"day",load:"hi",env:"mixed",min:2.5,ideal:4,resv:"recommended",w:{rain:"good",cold:"good",wind:"good",heat:"good"},bundle:"capitol-hill",closed:FED,ll:[38.8899,-77.0091],
@@ -690,7 +691,11 @@ var VENUES = [
  {id:"spy-museum",name:"International Spy Museum",seed:25,tier:"bonus",period:"day",load:"mid",env:"indoor",min:2,ideal:3,resv:"recommended",w:IN,bundle:null,ll:[38.8837,-77.0250],
   why:"Paid, off the Mall, and the one Samuel will still be talking about in January."},
  {id:"national-mall",name:"The National Mall",seed:26,tier:"high",period:"day",load:"mid",env:"outdoor",min:1,ideal:2.5,resv:"none",w:{rain:"poor",cold:"acceptable",wind:"poor",heat:"acceptable"},bundle:null,ll:[38.8899,-77.0231],
-  why:"The lawn itself: two miles of it, Capitol steps to the Lincoln Memorial, Monument in the middle and the museums down both sides."}
+  why:"The lawn itself: two miles of it, Capitol steps to the Lincoln Memorial, Monument in the middle and the museums down both sides."},
+ {id:"mine-turtle",name:"Mine Turtle at the hotel",seed:27,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:BASE_LL,lastNight:true,
+  why:"Truth or dare with a turtle that explodes. Two to six players, so all four of us plus whoever wanders over. Last night, in the room, bags already packed."},
+ {id:"muffin-time",name:"Muffin Time at the hotel",seed:28,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:BASE_LL,lastNight:true,
+  why:"Two hundred cards of chaos where one card flips the whole game. Two to eight players, so nobody sits out. The other half of the last night."}
 ];
 
 var BUNDLES = {
@@ -752,6 +757,12 @@ var WANTS = [
  {ask:"The Martin Luther King Jr. Memorial", unit:"tidal-basin-loop",
   why:"The Stone of Hope, cut straight out of the mountain of despair and pushed forward toward the water. Lit from below at night, and quiet enough to actually stand there a minute.",
   rides:"Same walk as the Jefferson — the loop goes Jefferson, then FDR's waterfalls, then Dr. King facing out over the basin. One outing, three stops, and hot chocolate after."},
+ {ask:"Mine Turtle, last night at the hotel", unit:"mine-turtle",
+  why:"Truth or dare where the loser presses the turtle's button and hopes it does not go off. 2 to 6 players, 13 and up, about 20 minutes a round — so realistically two hours, because nobody stops after one round.",
+  rides:"Pinned to the last night in the hotel and it will not schedule anywhere else. Bags packed, shoes off, nothing to walk to. The one thing on this list that costs no Uber and no ticket."},
+ {ask:"Muffin Time, same night", unit:"muffin-time",
+  why:"Two hundred cards, 2 to 8 players, and a single card can flip the whole thing on its head. Twenty minutes on the box, which is a lie in the same way it is a lie for every good card game.",
+  rides:"Also pinned to the last night. Two games and four people is about the right amount of last night — the board budgets three hours of the evening for the pair of them."},
  {ask:"The National Mall", unit:"national-mall",
   why:"The lawn itself. Two miles from the Capitol steps to Lincoln, the Monument standing in the middle of it, and the Reflecting Pool at the far end.",
   rides:"Free, open, never closed, no ticket. It is also the thread the rest of this list hangs on — half of what I want is already strung along it, so this is the walk between them as much as a stop of its own."}
@@ -778,7 +789,7 @@ var CREW = [
  {id:"nanny", name:"Nanny", role:"Full stakeholder"}
 ];
 var BOARD_KEYS = ["family","bart","jess","sam","nanny"];
-var BASE = {name:"L'Enfant Plaza base", ll:[38.8845,-77.0255]};
+var BASE = {name:"L'Enfant Plaza base", ll:BASE_LL};
 var TRIP = {start:"2026-11-29", nights:7, board:"2026-11-28T20:04:00-06:00", backAtWork:"2026-12-10"};
 
 /* ── Units ──────────────────────────────────────────────────────────── */
@@ -837,7 +848,7 @@ var UNITS = (function(){
     if (seen[v.id]) return;
     out.push({id:v.id, name:v.name, why:v.why, members:[v.id], bundle:false,
       seed:v.seed, tier:v.tier, period:v.period, load:v.load, env:v.env,
-      min:v.min, ideal:v.ideal, resv:v.resv, w:v.w, ll:v.ll});
+      min:v.min, ideal:v.ideal, resv:v.resv, w:v.w, ll:v.ll, lastNight:v.lastNight});
   });
   out.sort(function(a,b){ return a.seed - b.seed; });
   return out;
@@ -1003,10 +1014,15 @@ function legsFor(list){
   for (var i = 0; i < pts.length - 1; i++) out.push(distMi(pts[i], pts[i+1]));
   return out;
 }
+function rideCount(list){
+  var n = 0;
+  legsFor(list).forEach(function(d){ if (d > 0.05) n++; });   /* the hotel is not a ride */
+  return n;
+}
 function travelHours(list){
-  var legs = legsFor(list), mi = 0;
-  legs.forEach(function(d){ mi += d; });
-  return mi / UBER_MPH + legs.length * UBER_WAIT_MIN / 60;
+  var mi = 0;
+  legsFor(list).forEach(function(d){ if (d > 0.05) mi += d; });
+  return mi / UBER_MPH + rideCount(list) * UBER_WAIT_MIN / 60;
 }
 function usedHours(board, day, slot){
   var list = occupantsAt(board, day, slot), h = 0;
@@ -1034,6 +1050,7 @@ function bestSpot(board, uid, days){
     var cap = budgetFor(day, u.period);
     if (!cap || structuralAt(day, u.period)) return;
     if (closedOn(u, day)) return;
+    if (u.lastNight && day.i !== days.length - 2) return;   /* the hotel, the last night, or not at all */
     var list = occupantsAt(board, day, u.period);
     [false, true].forEach(function(sh){
       if (sh && u.min >= u.ideal) return;
@@ -1070,6 +1087,10 @@ function addBest(board, uid, nights){
 function autoFillInto(board, nights, only){
   var days = frameDays(nights), order = planningOrder();
   if (only) order = only.filter(function(id){ return unitById[id]; });
+  /* Anything with exactly one possible home goes first, or the flexible
+     outings take its slot and it has nowhere else to land. */
+  order = order.filter(function(id){ return unitById[id] && unitById[id].lastNight; })
+    .concat(order.filter(function(id){ return !(unitById[id] && unitById[id].lastNight); }));
   for (var k in board) delete board[k];
   order.forEach(function(uid){
     var u = unitById[uid];
@@ -1079,6 +1100,7 @@ function autoFillInto(board, nights, only){
       var cap = budgetFor(day, u.period);
       if (!cap || structuralAt(day, u.period)) return;
       if (closedOn(u, day)) return;
+      if (u.lastNight && day.i !== days.length - 2) return;
       var list = occupantsAt(board, day, u.period);
       [false, true].forEach(function(sh){
         if (sh && u.min >= u.ideal) return;            /* nothing to shorten */
@@ -1130,7 +1152,7 @@ function nopeIds(){
 function askPlan(nights){ return autoFillInto({}, nights, wantUnits(true)); }
 
 /* Bump when WANTS/MAYBES change, so saved plans pick up the new outings. */
-var ASK_VERSION = 5;
+var ASK_VERSION = 7;
 /* Drop anything no longer in the catalog, append anything new, keep the order. */
 function normalizeBallot(arr){
   var seen = {}, out = [];
@@ -1164,11 +1186,11 @@ function checks(){
           s:used.toFixed(1) + " hours of visiting and riding against about " + cap +
             ". Shorten one — every chip has a full/short toggle — or move it to another day. Better to do three things properly and get warm than four things badly."});
       dayMiles += slotMiles(board, day, slot);
-      dayRides += legsFor(list).length;
+      dayRides += rideCount(list);
     });
     if (dayRides > 6 || dayMiles > 16)
       out.push({level:"warn", t:fmt(day) + " is a lot of riding",
-        s:dayRides + " Uber hops, " + dayMiles.toFixed(1) + " miles. Not impossible, just worth knowing before it is nine at night, everyone is cold, and we are still three stops from anywhere warm."});
+        s:dayRides + " UberXL hops, " + dayMiles.toFixed(1) + " miles. Not impossible, just worth knowing before it is nine at night, everyone is cold, and we are still three stops from anywhere warm."});
   });
 
   var unplaced = must.filter(function(id){ return !board[id]; });
@@ -1447,7 +1469,7 @@ function renderBoard(){
         });
         if (list.length > 1){
           var mi = slotMiles(board, day, slot);
-          box.appendChild(el("div","ridenote", legsFor(list).length + " Uber hops · " +
+          box.appendChild(el("div","ridenote", rideCount(list) + " UberXL hops · " +
             mi.toFixed(1) + " mi · about " + Math.round(travelHours(list)*60) + " min riding"));
         }
       }
@@ -1969,6 +1991,7 @@ function renderLogi(){
     "<tr><td>A day bag that closes</td><td>Every museum on the Mall runs bag check at the door.</td></tr>" +
     "<tr><td>Battery pack</td><td>Cold eats phones, and the tickets are on the phones.</td></tr>" +
     "<tr><td>Printed tickets, once</td><td>Union Station Wi-Fi is a rumor. Print the timed passes.</td></tr>" +
+    "<tr><td>Mine Turtle + Muffin Time</td><td>Both go in a bag on the way up and come out the last night. The turtle takes AAAs — check them at home, not at the hotel.</td></tr>" +
     "</tbody>";
   tw2.appendChild(t2); pack.appendChild(tw2);
   g.appendChild(pack);
