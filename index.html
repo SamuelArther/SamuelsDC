@@ -311,6 +311,7 @@ span.who{cursor:default}
 @media (max-width:700px){.ask .when{text-align:left}}
 .ask .when b{font-family:var(--f-disp);font-weight:600;font-size:17px;letter-spacing:-.015em}
 .ask .when b.cut{color:var(--stop-ink)}
+.ask .when .byask{color:var(--orange-ink)}
 .ask .when span{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.12em;
   text-transform:uppercase;color:var(--ink-3)}
 
@@ -749,9 +750,9 @@ var WANTS = [
  {ask:"The Jefferson Memorial and the Tidal Basin", unit:"tidal-basin-loop",
   why:"Jefferson lit across the water is the best-looking thing in the city after dark, and the walk around the basin is the quiet one.",
   rides:"Comes as a loop: Jefferson, then FDR's waterfalls and rooms, then Dr. King facing the water."},
- {ask:"The National Air and Space Museum", unit:"air-space",
+ {ask:"The National Air and Space Museum", unit:"air-space", short:true,
   why:"The Wright Flyer, the Spirit of St. Louis, and an Apollo capsule you can stand under.",
-  rides:"Free timed passes, and they have to be booked ahead."},
+  rides:"Two and a half hours, not the full five — the greatest hits and out, which leaves the rest of that day for something else. Free timed passes, and they have to be booked ahead."},
  {ask:"The Vietnam Veterans Memorial", unit:"main-memorial-loop",
   why:"Reach the Wall at dusk while the names still read, then let it get dark.",
   rides:"Comes as the memorial night: the Wall, then WWII, then up the steps to Lincoln, then Korea under the lights."},
@@ -1132,7 +1133,8 @@ function bestSpot(board, uid, days){
     if (closedOn(u, day)) return;
     if (u.lastNight && !day.lastHotelNight) return;   /* the hotel, the last night, or not at all */
     var list = occupantsAt(board, day, u.period);
-    [false, true].forEach(function(sh){
+    [prefersShort(u.id) ? true : false, true].forEach(function(sh, si){
+      if (si === 1 && prefersShort(u.id)) return;
       if (sh && u.min >= u.ideal) return;
       board[u.id] = {d:day.i, slot:u.period, i:list.length, short:sh};
       var after = usedHours(board, day, u.period);
@@ -1182,7 +1184,8 @@ function autoFillInto(board, nights, only){
       if (closedOn(u, day)) return;
       if (u.lastNight && !day.lastHotelNight) return;
       var list = occupantsAt(board, day, u.period);
-      [false, true].forEach(function(sh){
+      [prefersShort(u.id) ? true : false, true].forEach(function(sh, si){
+        if (si === 1 && prefersShort(u.id)) return;    /* asked for short: never offer full */
         if (sh && u.min >= u.ideal) return;            /* nothing to shorten */
         /* Try it in place, so travel time is measured, not guessed. */
         board[u.id] = {d:day.i, slot:u.period, i:list.length, short:sh};
@@ -1223,6 +1226,10 @@ function wantUnits(includeMaybes){
     MAYBES.forEach(function(w){ if (out.indexOf(w.unit) < 0) out.push(w.unit); });
   return out;
 }
+/* Outings Samuel has asked for at the shortened length on purpose. */
+function prefersShort(uid){
+  return WANTS.concat(MAYBES).some(function(w){ return w.unit === uid && w.short; });
+}
 function nopeIds(){
   return NOPES.map(function(n){
     var v = VENUES.filter(function(x){ return x.name === n.name; })[0];
@@ -1232,7 +1239,7 @@ function nopeIds(){
 function askPlan(nights){ return autoFillInto({}, nights, wantUnits(true)); }
 
 /* Bump when WANTS/MAYBES change, so saved plans pick up the new outings. */
-var ASK_VERSION = 8;
+var ASK_VERSION = 9;
 /* Drop anything no longer in the catalog, append anything new, keep the order. */
 function normalizeBallot(arr){
   var seen = {}, out = [];
@@ -1737,6 +1744,7 @@ function renderAsk(){
       when.appendChild(el("b", null, day ? fmt(day) : "—"));
       when.appendChild(el("span", null, at.slot === "day" ? "daytime" : "after dark"));
       when.appendChild(el("span", null, (at.short ? "short · " : "") + hrs(hoursOf(u, at))));
+      if (w.short) when.appendChild(el("span","byask","asked short"));
     } else {
       when.appendChild(el("b","cut","Not scheduled"));
       when.appendChild(el("span", null, "on the bench"));
@@ -2397,13 +2405,21 @@ if (!Object.keys(pl("sam")).length){
 /* The ask grew since this browser last saw it: fold the new outings in
    without disturbing anything already arranged by hand. */
 if (state.askVersion !== ASK_VERSION){
-  var added = [];
+  var added = [], shortened = [];
   wantUnits(true).forEach(function(id){
     if (!pl("sam")[id] && addBest(pl("sam"), id)) added.push(unitById[id].name);
+    /* A length asked for on purpose beats whatever was scheduled before. */
+    if (pl("sam")[id] && prefersShort(id) && !pl("sam")[id].short){
+      pl("sam")[id].short = true;
+      shortened.push(unitById[id].name + " to " + hrs(unitById[id].min));
+    }
   });
   state.askVersion = ASK_VERSION;
   localSave();
-  if (added.length) setTimeout(function(){ toast("Added to your plan: " + added.join(", ") + "."); }, 900);
+  var msg = [];
+  if (added.length) msg.push("added " + added.join(", "));
+  if (shortened.length) msg.push("cut " + shortened.join(", "));
+  if (msg.length) setTimeout(function(){ toast("Your plan: " + msg.join("; ") + "."); }, 900);
 }
 /* A ballot from an older catalog is missing the newer outings — repair it
    rather than silently dropping the vote for being the wrong length. */
