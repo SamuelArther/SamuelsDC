@@ -396,6 +396,10 @@ table.tt th{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.13em;text-
   color:var(--ink-3);text-align:left;padding:9px 11px 9px 0;border-bottom:1px solid var(--ink);font-weight:400}
 table.tt td{padding:10px 11px 10px 0;border-bottom:1px solid var(--rule-soft);vertical-align:top}
 table.tt td.m{font-family:var(--f-mono);font-size:11.5px;color:var(--ink-2)}
+table.tt td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+table.tt tr.total td{border-top:1px solid var(--ink);border-bottom:0;padding-top:10px;
+  font-family:var(--f-disp);font-weight:600;font-size:17px;color:var(--ink)}
+table.tt tr.total td.num{font-family:var(--f-mono);font-size:15px}
 table.tt tr:last-child td{border-bottom:0}
 .resv{display:flex;align-items:flex-start;gap:11px;padding:10px 0;border-bottom:1px solid var(--rule-soft)}
 .resv:last-child{border-bottom:0}
@@ -804,6 +808,17 @@ var CREW = [
 var BOARD_KEYS = ["family","bart","jess","sam","nanny"];
 var BASE = {name:"L'Enfant Plaza base", ll:BASE_LL};
 var TRIP = {start:"2026-11-29", nights:7, board:"2026-11-28T20:04:00-06:00", backAtWork:"2026-12-10"};
+
+/* Game night is bought before we leave, so it is not a trip cost.
+   4% Georgia state + 3% Douglas County = 7% at 30134. */
+var GAMES_COST = {
+  items:["Mine Turtle","Muffin Time","Monopoly Deal","Uno"],
+  subtotal:64.43, taxRate:0.07, shipping:0,
+  where:"Douglasville, GA 30134", ship:"Prime, free"
+};
+function money(n){ return "$" + n.toFixed(2); }
+function gamesTax(){ return Math.round(GAMES_COST.subtotal * GAMES_COST.taxRate * 100) / 100; }
+function gamesTotal(){ return GAMES_COST.subtotal + gamesTax() + GAMES_COST.shipping; }
 
 /* ── Units ──────────────────────────────────────────────────────────── */
 var TIERN = {protected:0, high:1, medium:2, bonus:3};
@@ -1673,6 +1688,7 @@ function renderAsk(){
   });
   if (bookings.length)
     note.appendChild(el("p","hint","Still to book for this list: " + bookings.join(", ") + "."));
+  note.appendChild(el("p","hint","The four games run " + money(gamesTotal()) + " delivered — " + money(GAMES_COST.subtotal) + " plus " + money(gamesTax()) + " Georgia sales tax, free Prime shipping. Bought before we leave, so none of it comes out of the trip."));
   note.appendChild(el("p","hint","Some of these arrive together: the Wall comes with the whole memorial night, "
     + "Jefferson with the Tidal Basin loop, the White House with the Christmas tree, and the Capitol with the "
     + "Library of Congress across the street. Days can hold more than one outing — the board budgets each one "
@@ -2001,6 +2017,27 @@ function renderLogi(){
   });
   rules.appendChild(rl);
   g.appendChild(rules);
+
+  var games = el("div","card");
+  games.appendChild(head("Game night, bought before we go"));
+  games.appendChild(el("p","hint", GAMES_COST.items.join(" · ") +
+    ". Ordered to " + GAMES_COST.where + ", so this is spent at home in November — it is not trip money."));
+  var gw = el("div","tablewrap"), gt = el("table","tt"), gb = el("tbody");
+  function costRow(k, v, cls){
+    var tr = el("tr", cls || "");
+    tr.appendChild(el("td", null, k));
+    tr.appendChild(el("td","m num", v));
+    gb.appendChild(tr);
+  }
+  costRow("Subtotal, four games", money(GAMES_COST.subtotal));
+  costRow("Sales tax · 7% (4% state + 3% Douglas County)", money(gamesTax()));
+  costRow("Shipping · " + GAMES_COST.ship, money(GAMES_COST.shipping));
+  costRow("Total", money(gamesTotal()), "total");
+  gt.appendChild(gb); gw.appendChild(gt); games.appendChild(gw);
+  games.appendChild(el("p","hint","Works out to about " +
+    money(gamesTotal() / GAMES_COST.items.length) + " a game for the last night of the trip, which is "
+    + "the cheapest thing on this entire page."));
+  g.appendChild(games);
 
   var pack = el("div","card");
   pack.appendChild(head("Packing, the short version"));
