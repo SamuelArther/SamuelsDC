@@ -1067,15 +1067,29 @@ function syncPull(){
         changed = true;
       });
       firstPull = false;
-      seed.forEach(function(path){ syncPush(path); });
       if (changed){ localSave(); renderAll(); }
       if (!syncOn){ syncOn = true; setSync("live","live for the family"); }
+      seed.forEach(function(path){ syncPush(path); });
+      /* Anything that failed to send while the connection was gone. */
+      Object.keys(syncDirty).forEach(function(path){
+        if (!syncPending[path]) syncPush(path);
+      });
     })
     .catch(function(){ syncOn = false; setSync("local","offline — this device"); });
+}
+var syncDirty = {}, savedTimer = null;
+function flashSaved(){
+  if (!syncOn) return;
+  setSync("live","saved");
+  clearTimeout(savedTimer);
+  savedTimer = setTimeout(function(){
+    if (syncOn) setSync("live","live for the family");
+  }, 1800);
 }
 function syncPush(path){
   if (!SYNC_URL) return;
   syncPending[path] = true;
+  if (syncOn) setSync("live","saving…");
   fetch(SYNC_URL + "/doc/" + path, {
     method:"PUT", headers:{"content-type":"application/json"},
     body: JSON.stringify({data: bodyFor(path), version: syncVersions[path] || 0, by: me})
@@ -1092,8 +1106,16 @@ function syncPush(path){
       }
       if (res.j && res.j.version) syncVersions[path] = res.j.version;
       syncPending[path] = false;
+      delete syncDirty[path];
+      flashSaved();
     })
-    .catch(function(){ syncPending[path] = false; setSync("local","offline — this device"); });
+    .catch(function(){
+      /* Kept, not lost: it goes up on the next pull that succeeds. */
+      syncPending[path] = false;
+      syncDirty[path] = true;
+      syncOn = false;
+      setSync("local","offline — saved here, will sync");
+    });
 }
 function startSync(){
   if (!SYNC_URL) { setSync("local","this device only"); return; }
