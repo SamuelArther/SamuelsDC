@@ -292,6 +292,9 @@ main{padding:30px 0 50px}
 .ask h3{font-family:var(--f-disp);font-weight:600;font-size:22px;letter-spacing:-.02em;line-height:1.15}
 .askwhy{font-size:16px;color:var(--ink-2);margin-top:6px;line-height:1.5;max-width:60ch}
 .rides{font-size:14.5px;color:var(--ink-3);margin-top:7px;font-style:italic;max-width:60ch}
+.includes{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.05em;color:var(--ink-3);
+  margin-top:9px;padding-top:8px;border-top:1px solid var(--rule-soft);max-width:60ch;line-height:1.7}
+.includes b{color:var(--orange-ink);font-weight:500;letter-spacing:.12em;text-transform:uppercase;font-size:9.5px}
 .ask .when{display:flex;flex-direction:column;gap:1px;text-align:right}
 @media (max-width:700px){.ask .when{text-align:left}}
 .ask .when b{font-family:var(--f-disp);font-weight:600;font-size:17px;letter-spacing:-.015em}
@@ -448,8 +451,8 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
   <div class="wrap">
     <p class="route">Amtrak Crescent 20 &amp; 19 &nbsp;&middot;&nbsp; Anniston, Alabama &#8646; Washington Union</p>
     <h1 class="title">Crescent <em>Dispatch</em></h1>
-    <p class="deck">The nineteen things I want to do in Washington, and the week that makes all
-      nineteen fit. Not a wish list &mdash; a real schedule, budgeted in hours with the UberXL rides
+    <p class="deck">The twenty-two things I want to do in Washington, and the week that makes all
+      twenty-two fit. Not a wish list &mdash; a real schedule, budgeted in hours with the UberXL rides
       counted, that survives the Sunday closures and does not flinch at a cold December evening — half of this
       list is better in the cold anyway. Everyone else can build
       theirs beside it and we'll compare.</p>
@@ -491,7 +494,7 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
     <section class="panel" id="p-ask">
       <div class="verdict" id="verdict"></div>
       <div class="secthead">
-        <h2>Nineteen things, in the order I want them</h2>
+        <h2>Twenty-two things, in the order I want them</h2>
         <p>This is the trip I am asking for. Everything below is the arithmetic that says it works &mdash;
           which day each one lands on, how long it takes, and what the ride there costs. We are dressed for the cold, so it barely
           counts against a plan here — rain and wind are the only weather that moves anything.</p>
@@ -767,6 +770,15 @@ var WANTS = [
  {ask:"The Martin Luther King Jr. Memorial", unit:"tidal-basin-loop",
   why:"The Stone of Hope, cut straight out of the mountain of despair and pushed forward toward the water. Lit from below at night, and quiet enough to actually stand there a minute.",
   rides:"Same walk as the Jefferson — the loop goes Jefferson, then FDR's waterfalls, then Dr. King facing out over the basin. One outing, three stops, and hot chocolate after."},
+ {ask:"The Lincoln Memorial", unit:"main-memorial-loop",
+  why:"Nineteen feet of him, lit from below, at the top of the steps with the Reflecting Pool running back toward the Monument. The one everybody pictures when they picture Washington.",
+  rides:"Already in the memorial night — it is the third stop, after the Wall and the WWII fountain, and the walk up those steps in the dark is the point of doing them in that order."},
+ {ask:"The Library of Congress", unit:"capitol-hill",
+  why:"The Great Hall of the Jefferson Building. Marble, mosaic and gold up every surface, and a reading room under a dome that does not look real.",
+  rides:"Already in the Capitol day — it is across the street, and the free timed passes need booking ahead."},
+ {ask:"The Franklin Delano Roosevelt Memorial", unit:"tidal-basin-loop",
+  why:"Four open-air rooms, one per term, with waterfalls running through them and his words cut into the granite. The only memorial on the Mall with a dog in it.",
+  rides:"Already in the Tidal Basin loop — it is the middle stop between Jefferson and Dr. King."},
  {ask:"Mine Turtle, last night at the hotel", unit:"mine-turtle",
   why:"Truth or dare where the loser presses the turtle's button and hopes it does not go off. 2 to 6 players, 13 and up, about 20 minutes a round — so realistically two hours, because nobody stops after one round.",
   rides:"Pinned to the last night in the hotel and it will not schedule anywhere else. Bags packed, shoes off, nothing to walk to. The one thing on this list that costs no Uber and no ticket."},
@@ -1638,6 +1650,15 @@ function renderAsk(){
     body.appendChild(el("h3", null, w.ask));
     body.appendChild(el("p","askwhy", w.why));
     body.appendChild(el("p","rides", w.rides));
+    /* Bundles are single outings with several stops. Name them, so nothing
+       on this page is quietly scheduled under a heading it does not match. */
+    if (u && u.members.length > 1){
+      var inc = el("p","includes");
+      inc.appendChild(el("b", null, u.name + ":"));
+      inc.appendChild(document.createTextNode(" " +
+        u.members.map(function(id){ return byId[id].name; }).join(" · ")));
+      body.appendChild(inc);
+    }
     row.appendChild(body);
     var when = el("div","when");
     if (at){
