@@ -674,8 +674,8 @@ var VENUES = [
   why:"Arrive at dusk while the names still read. Then let it get dark."},
  {id:"air-space",name:"National Air and Space Museum",seed:6,tier:"high",period:"day",load:"hi",env:"indoor",min:2.5,ideal:5,resv:"required",w:IN,bundle:null,closed:SMI,ll:[38.8882,-77.0199],
   why:"The Wright Flyer, the Spirit of St. Louis, an Apollo capsule. Free timed passes required."},
- {id:"arlington",name:"Arlington National Cemetery",seed:7,tier:"high",period:"day",load:"hi",env:"outdoor",min:2.5,ideal:5,resv:"none",w:{rain:"poor",cold:"acceptable",wind:"poor",heat:"acceptable"},bundle:null,ll:[38.8783,-77.0687],closesAt:17,onTheHour:true,
-  why:"Blue Line straight from L'Enfant, then three quarters of a mile uphill to the Tomb. The guard changes on the hour in winter and the ceremony runs about fifteen minutes. Short version is the Tomb and back; the full one adds Kennedy's eternal flame and Arlington House."},
+ {id:"arlington",name:"Arlington National Cemetery",seed:7,tier:"high",period:"day",load:"mid",env:"outdoor",min:2,ideal:5,resv:"none",w:{rain:"poor",cold:"acceptable",wind:"poor",heat:"acceptable"},bundle:null,ll:[38.8783,-77.0687],closesAt:17,onTheHour:true,
+  why:"Blue Line straight from L'Enfant, then three quarters of a mile uphill to the Tomb of the Unknown Soldier. The guard changes on the hour in winter and the ceremony runs about fifteen minutes. Short version is the Tomb and straight back down; the full one adds Kennedy's eternal flame and Arlington House on the hill."},
  {id:"wwii-memorial",name:"World War II Memorial",seed:8,tier:"protected",period:"night",load:"hi",env:"outdoor",min:.5,ideal:.75,resv:"none",w:MEM,bundle:"main-memorial-loop",ll:[38.8894,-77.0405],
   why:"The fountain lit, the two arches, and a short walk on to Lincoln."},
  {id:"korean-memorial",name:"Korean War Veterans Memorial",seed:9,tier:"protected",period:"night",load:"hi",env:"outdoor",min:.5,ideal:.75,resv:"none",w:MEM,bundle:"main-memorial-loop",ll:[38.8877,-77.0475],
@@ -741,9 +741,9 @@ var BUNDLES = {
    the Capitol comes alone is a plan that runs out of afternoon.
    ─────────────────────────────────────────────────────────────────────── */
 var WANTS = [
- {ask:"Arlington National Cemetery", unit:"arlington",
-  why:"The Changing of the Guard on the hour, Kennedy's eternal flame, and the view back over the whole city from Arlington House.",
-  rides:"A full day on its own. Cold hill, real shoes."},
+ {ask:"The Tomb of the Unknown Soldier", unit:"arlington", short:true,
+  why:"Guarded every minute of every day since 1937, through hurricanes and everything else. The guard changes on the hour in winter, the ceremony runs about fifteen minutes, and it is the reason I am going to Arlington at all.",
+  rides:"Two hours: security, three quarters of a mile uphill, the ceremony, and back down. Not Kennedy's flame, not Arlington House, not the rest of the cemetery — those are a different, longer day and I am not asking for it. Blue Line straight from the hotel, no change."},
  {ask:"ZooLights", unit:"zoolights",
   why:"The whole National Zoo strung with lights, hot drinks, and the one night of the trip with nothing to learn.",
   rides:"Downhill going in, uphill coming out. Worth it."},
@@ -1255,7 +1255,7 @@ function excludedIds(){
 function isExcluded(id){ return excludedIds().indexOf(id) > -1; }
 
 /* Bump when WANTS/MAYBES change, so saved plans pick up the new outings. */
-var ASK_VERSION = 11;
+var ASK_VERSION = 12;
 /* Drop anything no longer in the catalog, append anything new, keep the order. */
 function normalizeBallot(arr){
   var seen = {}, out = [];
