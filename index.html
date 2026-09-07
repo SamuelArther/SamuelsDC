@@ -956,7 +956,7 @@ var state = {
 };
 /* Shared state. Empty string = this device only; set to the worker's URL
    and all five plans go live for the whole family. See worker/deploy.sh. */
-var SYNC_URL = "";
+var SYNC_URL = "https://crescent-dispatch.samuel-arther.workers.dev";
 var syncVersions = {}, syncTimer = null, syncPending = {}, syncOn = false;
 
 var me = localStorage.getItem("cd.me") || "sam";
@@ -1038,20 +1038,36 @@ function bodyFor(path){
   }
   return {config:state.config, wx:state.wx, resv:state.resv, planFrom:state.planFrom};
 }
+/* Is there anything here worth uploading for this document? An empty local
+   board must never be published, or it would wipe whoever fills theirs in
+   next. */
+function hasLocalContent(path){
+  if (path.indexOf("boards/") === 0) return Object.keys(pl(path.slice(7))).length > 0;
+  if (path.indexOf("votes/") === 0) return !!state.ballots[path.slice(6)];
+  return path === "trip/shared";
+}
+var firstPull = true;
 function syncPull(){
   if (!SYNC_URL) return Promise.resolve();
   return fetch(SYNC_URL + "/all", {cache:"no-store"}).then(function(r){ return r.json(); })
     .then(function(j){
-      var changed = false;
+      var changed = false, seed = [];
       Object.keys(j.docs || {}).forEach(function(path){
         var doc = j.docs[path];
-        if (!doc || !doc.data) { syncVersions[path] = doc ? doc.version : 0; return; }
+        if (!doc || !doc.data){
+          syncVersions[path] = doc ? doc.version : 0;
+          /* Nothing up there yet. If this device has it, it goes first. */
+          if (firstPull && hasLocalContent(path)) seed.push(path);
+          return;
+        }
         if (syncVersions[path] === doc.version) return;   /* already have it */
         if (syncPending[path]) return;                    /* mid-write, do not stomp */
         syncVersions[path] = doc.version;
         docFor(path, doc.data);
         changed = true;
       });
+      firstPull = false;
+      seed.forEach(function(path){ syncPush(path); });
       if (changed){ localSave(); renderAll(); }
       if (!syncOn){ syncOn = true; setSync("live","live for the family"); }
     })
