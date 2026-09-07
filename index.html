@@ -674,8 +674,8 @@ var VENUES = [
   why:"Arrive at dusk while the names still read. Then let it get dark."},
  {id:"air-space",name:"National Air and Space Museum",seed:6,tier:"high",period:"day",load:"hi",env:"indoor",min:2.5,ideal:5,resv:"required",w:IN,bundle:null,closed:SMI,ll:[38.8882,-77.0199],
   why:"The Wright Flyer, the Spirit of St. Louis, an Apollo capsule. Free timed passes required."},
- {id:"arlington",name:"Arlington National Cemetery",seed:7,tier:"high",period:"day",load:"hi",env:"outdoor",min:3,ideal:5,resv:"none",w:{rain:"poor",cold:"acceptable",wind:"poor",heat:"acceptable"},bundle:null,ll:[38.8783,-77.0687],
-  why:"Changing of the Guard on the hour. Build the day around it and dress for a cold hill."},
+ {id:"arlington",name:"Arlington National Cemetery",seed:7,tier:"high",period:"day",load:"hi",env:"outdoor",min:2.5,ideal:5,resv:"none",w:{rain:"poor",cold:"acceptable",wind:"poor",heat:"acceptable"},bundle:null,ll:[38.8783,-77.0687],closesAt:17,onTheHour:true,
+  why:"Blue Line straight from L'Enfant, then three quarters of a mile uphill to the Tomb. The guard changes on the hour in winter and the ceremony runs about fifteen minutes. Short version is the Tomb and back; the full one adds Kennedy's eternal flame and Arlington House."},
  {id:"wwii-memorial",name:"World War II Memorial",seed:8,tier:"protected",period:"night",load:"hi",env:"outdoor",min:.5,ideal:.75,resv:"none",w:MEM,bundle:"main-memorial-loop",ll:[38.8894,-77.0405],
   why:"The fountain lit, the two arches, and a short walk on to Lincoln."},
  {id:"korean-memorial",name:"Korean War Veterans Memorial",seed:9,tier:"protected",period:"night",load:"hi",env:"outdoor",min:.5,ideal:.75,resv:"none",w:MEM,bundle:"main-memorial-loop",ll:[38.8877,-77.0475],
@@ -1291,6 +1291,28 @@ function checks(){
             s:mine.toFixed(1) + " hours of visiting and riding against about " + cap +
               ". Shorten one — every chip has a full/short toggle — or move it to another day. Better to do three things properly and get warm than four things badly."});
       });
+      /* A place that shuts at five, reached uphill, with a ceremony that
+         only happens on the hour, is a timing problem and not a duration. */
+      list.forEach(function(x){
+        var v = byId[x.u.members[0]];
+        if (!v || !v.onTheHour) return;
+        var start = slot === "day" ? 10 : 17.5, before = 0;
+        occupantsAt(board, day, slot).forEach(function(y){
+          if ((y.p.i || 0) < (x.p.i || 0)) before += hoursOf(y.u, y.p);
+        });
+        var arrive = start + before + travelHours([x]) / 2;
+        var out2 = arrive + hoursOf(x.u, x.p);
+        if (v.closesAt && out2 > v.closesAt)
+          out.push({level:"stop", t:v.name + " closes before you are done",
+            s:"Gates shut at " + v.closesAt + ":00 in winter and this has you there until about " +
+              (Math.floor(out2) + ":" + String(Math.round((out2 % 1) * 60)).padStart(2,"0")) +
+              ". Put it earlier in the day, or take the short version."});
+        else
+          out.push({level:"ok", t:"Time the guard change on " + fmt(day),
+            s:"Arriving around " + (Math.floor(arrive) + ":" + String(Math.round((arrive % 1) * 60)).padStart(2,"0")) +
+              ". The guard changes on the hour, October to March, and the walk up from the Welcome Center is about twenty minutes — so leave the gate at ten past, and you are at the Tomb for the next one."});
+      });
+
       var sp = splitsIn(board, day, slot);
       if (sp.length)
         out.push({level:"ok", t:"Splitting up on " + fmt(day) + (slot === "day" ? ", daytime" : ", evening"),
@@ -2067,6 +2089,8 @@ function renderRoster(){
     row("From base", mi.toFixed(1) + " mi · " + walkMin(mi) + " min walk");
     row("Weather", "Cold " + v.w.cold + ", rain " + v.w.rain);
     if (v.bundle) row("Goes with", BUNDLES[v.bundle].name);
+    if (v.closesAt) row("Gates", "Open 8:00 to " + v.closesAt + ":00, October to March");
+    if (v.onTheHour) row("Ceremony", "Changing of the Guard, on the hour, about 15 min");
     if (v.closed && v.closed.wd && v.closed.wd.length) row("Closed", "Sundays and federal holidays");
     c.appendChild(dl);
     g.appendChild(c);
