@@ -464,8 +464,8 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
   <div class="wrap">
     <p class="route">Amtrak Crescent 20 &amp; 19 &nbsp;&middot;&nbsp; Anniston, Alabama &#8646; Washington Union</p>
     <h1 class="title">Crescent <em>Dispatch</em></h1>
-    <p class="deck">The twenty-two things I want to do in Washington, and the week that makes all
-      twenty-two fit. Not a wish list &mdash; a real schedule, budgeted in hours with the UberXL rides
+    <p class="deck">The twenty-one things I want to do in Washington, and the week that makes all
+      twenty-one fit. Not a wish list &mdash; a real schedule, budgeted in hours with the UberXL rides
       counted, that survives the Sunday closures and does not flinch at a cold December evening — half of this
       list is better in the cold anyway. Everyone else can build
       theirs beside it and we'll compare.</p>
@@ -507,7 +507,7 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
     <section class="panel" id="p-ask">
       <div class="verdict" id="verdict"></div>
       <div class="secthead">
-        <h2>Twenty-two things, in the order I want them</h2>
+        <h2>Twenty-one things, in the order I want them</h2>
         <p>This is the trip I am asking for. Everything below is the arithmetic that says it works &mdash;
           which day each one lands on, how long it takes, and what the ride there costs. We are dressed for the cold, so it barely
           counts against a plan here — rain and wind are the only weather that moves anything.</p>
@@ -750,9 +750,6 @@ var WANTS = [
  {ask:"The Jefferson Memorial and the Tidal Basin", unit:"tidal-basin-loop",
   why:"Jefferson lit across the water is the best-looking thing in the city after dark, and the walk around the basin is the quiet one.",
   rides:"Comes as a loop: Jefferson, then FDR's waterfalls and rooms, then Dr. King facing the water."},
- {ask:"The National Air and Space Museum", unit:"air-space", short:true,
-  why:"The Wright Flyer, the Spirit of St. Louis, and an Apollo capsule you can stand under.",
-  rides:"Two and a half hours, not the full five — the greatest hits and out, which leaves the rest of that day for something else. Free timed passes, and they have to be booked ahead."},
  {ask:"The Vietnam Veterans Memorial", unit:"main-memorial-loop",
   why:"Reach the Wall at dusk while the names still read, then let it get dark.",
   rides:"Comes as the memorial night: the Wall, then WWII, then up the steps to Lincoln, then Korea under the lights."},
@@ -821,8 +818,12 @@ var NOPES = [
  {name:"National Museum of Natural History", why:"Not this trip."},
  {name:"African American History & Culture", why:"Not this trip."},
  {name:"International Spy Museum", why:"Not this trip."},
- {name:"Classic Monopoly", why:"Three hours minimum, on the night the bags are already packed. Monopoly Deal is on the list instead."}
+ {name:"Classic Monopoly", why:"Three hours minimum, on the night the bags are already packed. Monopoly Deal is on the list instead."},
+ {name:"National Air and Space Museum", why:"Cut, and cut late. Hands back a Mall afternoon and one of the two timed passes this trip needed."}
 ];
+
+/* Removed from the ask after a plan may already have been saved. */
+var CUT_UNITS = ["air-space"];
 
 var CREW = [
  {id:"bart",  name:"Bart",  role:"Dispatcher — owns dates and nights"},
@@ -1239,7 +1240,7 @@ function nopeIds(){
 function askPlan(nights){ return autoFillInto({}, nights, wantUnits(true)); }
 
 /* Bump when WANTS/MAYBES change, so saved plans pick up the new outings. */
-var ASK_VERSION = 9;
+var ASK_VERSION = 10;
 /* Drop anything no longer in the catalog, append anything new, keep the order. */
 function normalizeBallot(arr){
   var seen = {}, out = [];
@@ -2405,7 +2406,12 @@ if (!Object.keys(pl("sam")).length){
 /* The ask grew since this browser last saw it: fold the new outings in
    without disturbing anything already arranged by hand. */
 if (state.askVersion !== ASK_VERSION){
-  var added = [], shortened = [];
+  var added = [], shortened = [], dropped = [];
+  /* Something cut from the ask comes off the plan too, or the cut is
+     only a cut on the page it is written on. */
+  CUT_UNITS.forEach(function(id){
+    if (pl("sam")[id]){ delete pl("sam")[id]; dropped.push(unitById[id].name); }
+  });
   wantUnits(true).forEach(function(id){
     if (!pl("sam")[id] && addBest(pl("sam"), id)) added.push(unitById[id].name);
     /* A length asked for on purpose beats whatever was scheduled before. */
@@ -2417,8 +2423,9 @@ if (state.askVersion !== ASK_VERSION){
   state.askVersion = ASK_VERSION;
   localSave();
   var msg = [];
+  if (dropped.length) msg.push("dropped " + dropped.join(", "));
   if (added.length) msg.push("added " + added.join(", "));
-  if (shortened.length) msg.push("cut " + shortened.join(", "));
+  if (shortened.length) msg.push("shortened " + shortened.join(", "));
   if (msg.length) setTimeout(function(){ toast("Your plan: " + msg.join("; ") + "."); }, 900);
 }
 /* A ballot from an older catalog is missing the newer outings — repair it
