@@ -822,7 +822,8 @@ var NOPES = [
  {name:"National Air and Space Museum", why:"Cut, and cut late. Hands back a Mall afternoon and one of the two timed passes this trip needed."}
 ];
 
-/* Removed from the ask after a plan may already have been saved. */
+/* Removed from the ask after a plan may already have been saved. Kept
+   separate from NOPES because a cut is a different thing from a never. */
 var CUT_UNITS = ["air-space"];
 
 var CREW = [
@@ -1214,9 +1215,14 @@ function autoFillInto(board, nights, only){
 }
 function autoFill(){
   if (!canEdit()) return;
-  autoFillInto(cur());
+  /* Samuel's plan fills from Samuel's ask. Filling it from the whole
+     catalogue would quietly re-add the things he has said no to. */
+  var only = (viewing === "sam") ? wantUnits(true) : null;
+  autoFillInto(cur(), null, only);
   save(); renderAll();
-  toast(boardName(viewing) + " filled from " + (state.planFrom === "tally" ? "the family tally" : "the seeded order") + ".");
+  toast(viewing === "sam"
+    ? "Your plan rebuilt from your list — nothing from the no list."
+    : boardName(viewing) + " filled from " + (state.planFrom === "tally" ? "the family tally" : "the seeded order") + ".");
 }
 
 /* The ask, as scheduler input. Musts first, maybes last so they cut first. */
@@ -1239,8 +1245,17 @@ function nopeIds(){
 }
 function askPlan(nights){ return autoFillInto({}, nights, wantUnits(true)); }
 
+/* Things Samuel has said no to. Off his plan, and off the auto-filler for
+   his plan — they stay in the catalog so anyone else can schedule them. */
+function excludedIds(){
+  var out = nopeIds().slice();
+  CUT_UNITS.forEach(function(id){ if (out.indexOf(id) < 0) out.push(id); });
+  return out.filter(function(id){ return unitById[id]; });
+}
+function isExcluded(id){ return excludedIds().indexOf(id) > -1; }
+
 /* Bump when WANTS/MAYBES change, so saved plans pick up the new outings. */
-var ASK_VERSION = 10;
+var ASK_VERSION = 11;
 /* Drop anything no longer in the catalog, append anything new, keep the order. */
 function normalizeBallot(arr){
   var seen = {}, out = [];
@@ -1289,6 +1304,14 @@ function checks(){
       out.push({level:"warn", t:fmt(day) + " is a lot of riding",
         s:dayRides + " UberXL hops, " + dayMiles.toFixed(1) + " miles. Not impossible, just worth knowing before it is nine at night, everyone is cold, and we are still three stops from anywhere warm."});
   });
+
+  if (viewing === "sam"){
+    var strays = excludedIds().filter(function(id){ return board[id]; });
+    if (strays.length)
+      out.push({level:"stop", t:strays.length === 1 ? "Something on the no list is scheduled" : "Things on the no list are scheduled",
+        s:strays.map(function(i){ return unitById[i].name; }).join(", ") +
+          " — on the not-this-trip list, but sitting on your plan. Drag it off, or take it off the no list if you have changed your mind."});
+  }
 
   var unplaced = must.filter(function(id){ return !board[id]; });
   if (unplaced.length)
@@ -1634,7 +1657,8 @@ function renderBoard(){
   benched.forEach(function(id){
     var flags = [], rank = order.indexOf(id) + 1;
     CREW.forEach(function(p){ if (state.musts[p.id] === id) flags.push({k:"must", t:p.name + "'s must-do"}); });
-    if (must.indexOf(id) > -1) flags.push({k:"", t:"must-see #" + rank});
+    if (viewing === "sam" && isExcluded(id)) flags.push({k:"", t:"not this trip"});
+    else if (must.indexOf(id) > -1) flags.push({k:"", t:"must-see #" + rank});
     else flags.push({k:"warn", t:"#" + rank + " overall"});
     bench.appendChild(chip(unitById[id], {why:true, flags:flags, editable:editable}));
   });
@@ -2409,7 +2433,7 @@ if (state.askVersion !== ASK_VERSION){
   var added = [], shortened = [], dropped = [];
   /* Something cut from the ask comes off the plan too, or the cut is
      only a cut on the page it is written on. */
-  CUT_UNITS.forEach(function(id){
+  excludedIds().forEach(function(id){
     if (pl("sam")[id]){ delete pl("sam")[id]; dropped.push(unitById[id].name); }
   });
   wantUnits(true).forEach(function(id){
