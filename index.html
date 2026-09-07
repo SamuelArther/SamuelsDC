@@ -535,6 +535,7 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
               <button class="btn" id="printbtn">Print</button>
             </div>
             <p class="hint" style="margin-top:11px" id="planhint"></p>
+            <p class="hint" style="margin-top:7px" id="farehint"></p>
             <div class="nights">
               <span>Nights</span>
               <input type="range" id="nights" min="3" max="10" step="1" value="7">
@@ -1112,6 +1113,43 @@ function usedHours(board, day, slot){
 function splitsIn(board, day, slot){
   return occupantsAt(board, day, slot).filter(function(x){ return isSplit(x.p); });
 }
+
+/* ── What the riding costs ──────────────────────────────────────────────
+   Uber charges per vehicle, not per head, which is the whole argument for
+   staying together: one XL with four people in it beats two cars every
+   time. Rough DC numbers — the point is the comparison, not the cent.
+   ─────────────────────────────────────────────────────────────────────── */
+var UBER = {base:7.50, perMile:2.60};
+function fareForLegs(legs){
+  var t = 0;
+  legs.forEach(function(d){ if (d > 0.05) t += UBER.base + UBER.perMile * d; });
+  return t;
+}
+function partyKey(p){ return partyOf(p).slice().sort().join("+"); }
+/* Each distinct group of people needs its own car. */
+function groupsIn(board, day, slot){
+  var g = {};
+  occupantsAt(board, day, slot).forEach(function(x){
+    var k = partyKey(x.p);
+    (g[k] = g[k] || []).push(x);
+  });
+  return g;
+}
+function slotFare(board, day, slot){
+  var g = groupsIn(board, day, slot), total = 0;
+  Object.keys(g).forEach(function(k){ total += fareForLegs(legsFor(g[k])); });
+  return total;
+}
+/* The same stops with everybody in one car — the counterfactual. */
+function slotFareTogether(board, day, slot){
+  return fareForLegs(legsFor(occupantsAt(board, day, slot)));
+}
+function dayFare(board, day){ return slotFare(board, day, "day") + slotFare(board, day, "night"); }
+function weekFare(board){
+  var t = 0;
+  frameDays().forEach(function(d){ t += dayFare(board, d); });
+  return t;
+}
 function slotMiles(board, day, slot){
   var legs = legsFor(occupantsAt(board, day, slot)), mi = 0;
   legs.forEach(function(d){ mi += d; });
@@ -1314,11 +1352,18 @@ function checks(){
       });
 
       var sp = splitsIn(board, day, slot);
-      if (sp.length)
-        out.push({level:"ok", t:"Splitting up on " + fmt(day) + (slot === "day" ? ", daytime" : ", evening"),
+      if (sp.length){
+        var apart = slotFare(board, day, slot), together = slotFareTogether(board, day, slot);
+        var extra = apart - together;
+        var cars = Object.keys(groupsIn(board, day, slot)).length;
+        out.push({level:extra > 25 ? "warn" : "ok",
+          t:"Splitting up on " + fmt(day) + (slot === "day" ? ", daytime" : ", evening"),
           s:sp.map(function(x){
             return partyOf(x.p).map(function(i){ return crewOf(i).name; }).join(" and ") + " at " + x.u.name;
-          }).join("; ") + ". Everyone's hours are counted separately, so nobody is double-booked."});
+          }).join("; ") + ". " + cars + " cars instead of one, so about " + money(apart) +
+            " of fares rather than " + money(together) + " — " + money(extra) +
+            " for the privilege. Everyone's hours are counted separately, so nobody is double-booked."});
+      }
       dayMiles += slotMiles(board, day, slot);
       dayRides += rideCount(list);
     });
@@ -1592,7 +1637,7 @@ function renderBoard(){
     var dayMi = slotMiles(board, day, "day") + slotMiles(board, day, "night");
     if (dayStops)
       rail.appendChild(el("div","walk", dayStops + (dayStops === 1 ? " outing" : " outings") +
-        (dayMi > 0.2 ? " · " + dayMi.toFixed(1) + " mi by Uber" : "")));
+        (dayMi > 0.2 ? " · " + dayMi.toFixed(1) + " mi · ~" + money(dayFare(board, day)) : "")));
 
     var capAll = budgetFor(day,"day") + budgetFor(day,"night");
     var usedAll = usedHours(board, day, "day") + usedHours(board, day, "night");
@@ -1706,6 +1751,9 @@ function renderBoard(){
     boardName(viewing) + " — " + Object.keys(board).length + " of " + UNITS.length +
     " outings placed, planning from " + (state.planFrom === "tally" ? "the family tally" : "the seeded order") +
     (editable ? ". Drag a chip, or tap it and tap a slot." : ". Read only — copy it to your own plan to change it.");
+  document.getElementById("farehint").textContent =
+    "About " + money(weekFare(board)) + " of UberXL across the week, at roughly " +
+    money(UBER.base) + " a pickup plus " + money(UBER.perMile) + " a mile. One car for four beats two cars for two, every time.";
 
   document.getElementById("autofill").disabled = !editable;
   document.getElementById("clearboard").disabled = !editable;
@@ -2151,6 +2199,8 @@ function renderLogi(){
     "More than one thing a day is the whole point — that is why we are on a train and not a schedule. A day is a budget: about seven hours of daylight and four after dark, and the board counts the riding as well as the looking. When it says a day is full, what it means is that we would be walking back in the dark, hungry, wishing we had stopped an hour ago."],
    ["Art. III","No rental car. We call an UberXL.",
     "The Crescent gets us there and home again, and nobody is parking in this city. Metro when it happens to be easy, an UberXL when the distance is real — the Cathedral is not a walk from the Mall and pretending otherwise costs an hour. That is about miles, not about being cold. Every hop on the board is already priced in minutes, so a museum across town costs a ride, not an argument."],
+   ["Art. III½","Four in one car is the cheapest thing we do.",
+    "Uber charges per vehicle, not per head. One XL with all four of us in it is one fare; the same trip split two ways is two fares, and the second one buys nothing but the ability to be in different buildings. That is the real argument for staying together, and it is a better argument than any of the sentimental ones. The board prices every split so the cost of separating is a number on the page and not a feeling."],
    ["Art. IV","Together by default, split when it is obviously better.",
     "Most of this is worth doing as four people — Arlington, the memorial night, the tree, game night. But there is no rule that says we all have to stand in the same museum. If Jess wants Natural History and I do not, that is one afternoon, three blocks apart, everybody with a phone, and we meet for lunch having both had a better day. Every outing on the board says who is on it, and the hours are counted per person, so a split reads as two afternoons rather than one impossible one. We split for daytime museums. We do not split after dark."],
    ["Art. V","Everyone gets one veto.",
