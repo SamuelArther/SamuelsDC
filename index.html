@@ -179,6 +179,18 @@ main{padding:30px 0 50px}
 .slot-label .hrs.over{color:var(--stop-ink)}
 .ridenote{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.07em;color:var(--ink-3);
   border-top:1px dashed var(--rule);padding-top:7px;margin-top:1px}
+.party{display:flex;gap:4px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.plabel{font-family:var(--f-mono);font-size:9px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);margin-right:3px}
+.who{font-family:var(--f-mono);font-size:10px;width:20px;height:20px;line-height:18px;padding:0;
+  border:1px solid var(--rule);background:transparent;color:var(--ink-3);border-radius:50%;
+  text-align:center;cursor:pointer;display:inline-block}
+span.who{cursor:default}
+.who.on{color:var(--surface);border-color:transparent}
+.who.w-bart.on{background:var(--p-bart)}
+.who.w-jess.on{background:var(--p-jess)}
+.who.w-sam.on{background:var(--p-sam)}
+.who.w-nanny.on{background:var(--p-nanny)}
 .ctl{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
 .ctlbtn{font-family:var(--f-mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;
   padding:3px 8px;border:1px solid var(--rule);background:transparent;color:var(--ink-3);
@@ -1068,10 +1080,34 @@ function travelHours(list){
   legsFor(list).forEach(function(d){ if (d > 0.05) mi += d; });
   return mi / UBER_MPH + rideCount(list) * UBER_WAIT_MIN / 60;
 }
-function usedHours(board, day, slot){
-  var list = occupantsAt(board, day, slot), h = 0;
+/* Who is actually going. Absent means all four — the common case. */
+function partyOf(p){
+  return (p && Array.isArray(p.who) && p.who.length) ? p.who : CREW.map(function(c){ return c.id; });
+}
+function isSplit(p){ return partyOf(p).length < CREW.length; }
+function occupantsFor(board, day, slot, person){
+  return occupantsAt(board, day, slot).filter(function(x){
+    return !person || partyOf(x.p).indexOf(person) > -1;
+  });
+}
+/* One person's own hours: only what they are on, and only their own riding. */
+function usedHoursFor(board, day, slot, person){
+  var list = occupantsFor(board, day, slot, person), h = 0;
   list.forEach(function(x){ h += hoursOf(x.u, x.p); });
   return h + travelHours(list);
+}
+/* A slot costs whatever the busiest person in it costs. When the family
+   splits, two outings at once are two people's afternoons, not one long one. */
+function usedHours(board, day, slot){
+  var max = 0;
+  CREW.forEach(function(c){
+    var v = usedHoursFor(board, day, slot, c.id);
+    if (v > max) max = v;
+  });
+  return max;
+}
+function splitsIn(board, day, slot){
+  return occupantsAt(board, day, slot).filter(function(x){ return isSplit(x.p); });
 }
 function slotMiles(board, day, slot){
   var legs = legsFor(occupantsAt(board, day, slot)), mi = 0;
@@ -1224,11 +1260,20 @@ function checks(){
           s:"Rated poor for the conditions set on " + fmt(day) + ". Worth knowing, not worth moving for. Cold barely counts against a plan here — this flag is about rain and wind, which actually do ruin a night outdoors."});
       });
       if (!list.length) return;
-      var cap = budgetFor(day, slot), used = usedHours(board, day, slot);
-      if (used > cap + 0.01)
-        out.push({level:"warn", t:(slot === "day" ? "Daytime" : "The evening") + " on " + fmt(day) + " runs long",
-          s:used.toFixed(1) + " hours of visiting and riding against about " + cap +
-            ". Shorten one — every chip has a full/short toggle — or move it to another day. Better to do three things properly and get warm than four things badly."});
+      var cap = budgetFor(day, slot);
+      CREW.forEach(function(c){
+        var mine = usedHoursFor(board, day, slot, c.id);
+        if (mine > cap + 0.01)
+          out.push({level:"warn", t:c.name + "'s " + (slot === "day" ? "day" : "evening") + " on " + fmt(day) + " runs long",
+            s:mine.toFixed(1) + " hours of visiting and riding against about " + cap +
+              ". Shorten one — every chip has a full/short toggle — or move it to another day. Better to do three things properly and get warm than four things badly."});
+      });
+      var sp = splitsIn(board, day, slot);
+      if (sp.length)
+        out.push({level:"ok", t:"Splitting up on " + fmt(day) + (slot === "day" ? ", daytime" : ", evening"),
+          s:sp.map(function(x){
+            return partyOf(x.p).map(function(i){ return crewOf(i).name; }).join(" and ") + " at " + x.u.name;
+          }).join("; ") + ". Everyone's hours are counted separately, so nobody is double-booked."});
       dayMiles += slotMiles(board, day, slot);
       dayRides += rideCount(list);
     });
@@ -1337,6 +1382,32 @@ function chip(u, opts){
       delete cur()[u.id]; reindex(); save(); renderAll();
     });
     c.appendChild(r);
+  }
+  if (opts.placement){
+    var party = partyOf(opts.placement);
+    var who = el("div","party");
+    who.appendChild(el("span","plabel", party.length === CREW.length ? "All four" : "Just"));
+    CREW.forEach(function(c){
+      var on = party.indexOf(c.id) > -1;
+      var b = el(editable ? "button" : "span", "who w-" + c.id + (on ? " on" : ""), c.name[0]);
+      b.title = c.name + (on ? " is going" : " is not");
+      if (editable){
+        b.setAttribute("aria-pressed", on ? "true" : "false");
+        b.setAttribute("aria-label", c.name + (on ? ": going" : ": not going"));
+        b.addEventListener("click", function(ev){
+          ev.stopPropagation();
+          var cp = cur()[u.id];
+          if (!cp) return;
+          var list = partyOf(cp).slice(), at = list.indexOf(c.id);
+          if (at > -1) list.splice(at, 1); else list.push(c.id);
+          if (!list.length){ toast("Somebody has to go. Take it off the board instead."); return; }
+          cp.who = list.length === CREW.length ? null : list;
+          save(); renderAll();
+        });
+      }
+      who.appendChild(b);
+    });
+    c.appendChild(who);
   }
   if (opts.placement && editable){
     var ctl = el("div","ctl"), p = opts.placement;
@@ -2023,8 +2094,8 @@ function renderLogi(){
     "More than one thing a day is the whole point — that is why we are on a train and not a schedule. A day is a budget: about seven hours of daylight and four after dark, and the board counts the riding as well as the looking. When it says a day is full, what it means is that we would be walking back in the dark, hungry, wishing we had stopped an hour ago."],
    ["Art. III","No rental car. We call an UberXL.",
     "The Crescent gets us there and home again, and nobody is parking in this city. Metro when it happens to be easy, an UberXL when the distance is real — the Cathedral is not a walk from the Mall and pretending otherwise costs an hour. That is about miles, not about being cold. Every hop on the board is already priced in minutes, so a museum across town costs a ride, not an argument."],
-   ["Art. IV","We stay together.",
-    "One family unit, the whole week. Every day has something worth doing and the load is budgeted across the whole day so all four of us can do all of it."],
+   ["Art. IV","Together by default, split when it is obviously better.",
+    "Most of this is worth doing as four people — Arlington, the memorial night, the tree, game night. But there is no rule that says we all have to stand in the same museum. If Jess wants Natural History and I do not, that is one afternoon, three blocks apart, everybody with a phone, and we meet for lunch having both had a better day. Every outing on the board says who is on it, and the hours are counted per person, so a split reads as two afternoons rather than one impossible one. We split for daytime museums. We do not split after dark."],
    ["Art. V","Everyone gets one veto.",
     "Star your one must-do on the Ranking tab. It gets placed before anything else, and any plan missing somebody's star gets flagged in Checks. Getting outvoted is fine; getting steamrolled is not."],
    ["Art. VI","Nothing consequential lands silently.",
@@ -2199,7 +2270,11 @@ function encodeState(){
     b:{}, w:state.wx, r:Object.keys(state.resv), m:state.musts[me] || null,
     o:state.ballots[me] || null};
   var src = pl(me);
-  Object.keys(src).forEach(function(k){ payload.b[k] = [src[k].d, src[k].slot === "day" ? 0 : 1]; });
+  Object.keys(src).forEach(function(k){
+    var p = src[k];
+    payload.b[k] = [p.d, p.slot === "day" ? 0 : 1, p.short ? 1 : 0, p.i || 0,
+      isSplit(p) ? partyOf(p) : 0];
+  });
   return btoa(JSON.stringify(payload)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
 }
 function applyShared(str){
@@ -2209,7 +2284,11 @@ function applyShared(str){
     var dst = pl(p.who), k;
     for (k in dst) delete dst[k];
     Object.keys(p.b || {}).forEach(function(id){
-      if (unitById[id]) dst[id] = {d:p.b[id][0], slot:p.b[id][1] ? "night" : "day"};
+      if (!unitById[id]) return;
+      var a = p.b[id];                       /* older links carry only [day, slot] */
+      dst[id] = {d:a[0], slot:a[1] ? "night" : "day",
+        short: !!a[2], i: a[3] || 0,
+        who: Array.isArray(a[4]) && a[4].length ? a[4] : null};
     });
     if (p.n) state.config.nights = p.n;
     if (p.s) state.config.start = p.s;
