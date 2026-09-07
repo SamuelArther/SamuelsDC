@@ -194,7 +194,9 @@ main{padding:30px 0 50px}
   background:var(--surface);margin-bottom:16px}
 .nopes h3{font-family:var(--f-disp);font-weight:600;font-size:18px;letter-spacing:-.015em}
 .nopes ul{margin:8px 0 8px;padding-left:20px}
-.nopes li{font-size:15px;color:var(--ink-2)}
+.nopes li{font-size:15px;color:var(--ink-2);margin-bottom:5px;line-height:1.45}
+.nopes li b{font-family:var(--f-disp);font-weight:600;color:var(--ink)}
+.nopes li span{color:var(--ink-3)}
 .nopes p{font-size:14px;color:var(--ink-3);line-height:1.5}
 .slots{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media (max-width:640px){.slots{grid-template-columns:1fr;gap:12px}}
@@ -442,8 +444,8 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
   <div class="wrap">
     <p class="route">Amtrak Crescent 20 &amp; 19 &nbsp;&middot;&nbsp; Anniston, Alabama &#8646; Washington Union</p>
     <h1 class="title">Crescent <em>Dispatch</em></h1>
-    <p class="deck">The seventeen things I want to do in Washington, and the week that makes all
-      seventeen fit. Not a wish list &mdash; a real schedule, budgeted in hours with the UberXL rides
+    <p class="deck">The nineteen things I want to do in Washington, and the week that makes all
+      nineteen fit. Not a wish list &mdash; a real schedule, budgeted in hours with the UberXL rides
       counted, that survives the Sunday closures and does not flinch at a cold December evening — half of this
       list is better in the cold anyway. Everyone else can build
       theirs beside it and we'll compare.</p>
@@ -485,7 +487,7 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
     <section class="panel" id="p-ask">
       <div class="verdict" id="verdict"></div>
       <div class="secthead">
-        <h2>Seventeen things, in the order I want them</h2>
+        <h2>Nineteen things, in the order I want them</h2>
         <p>This is the trip I am asking for. Everything below is the arithmetic that says it works &mdash;
           which day each one lands on, how long it takes, and what the ride there costs. We are dressed for the cold, so it barely
           counts against a plan here — rain and wind are the only weather that moves anything.</p>
@@ -695,7 +697,11 @@ var VENUES = [
  {id:"mine-turtle",name:"Mine Turtle at the hotel",seed:27,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:BASE_LL,lastNight:true,
   why:"Truth or dare with a turtle that explodes. Two to six players, so all four of us plus whoever wanders over. Last night, in the room, bags already packed."},
  {id:"muffin-time",name:"Muffin Time at the hotel",seed:28,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:BASE_LL,lastNight:true,
-  why:"Two hundred cards of chaos where one card flips the whole game. Two to eight players, so nobody sits out. The other half of the last night."}
+  why:"Two hundred cards of chaos where one card flips the whole game. Two to eight players, so nobody sits out. The other half of the last night."},
+ {id:"uno",name:"Uno",seed:29,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:BASE_LL,lastNight:true,
+  why:"Weighs nothing, everybody already knows it, and Nanny can play it without a rules explanation. Also the best thing to have in a sleeper car for fifteen hours."},
+ {id:"monopoly-deal",name:"Monopoly Deal",seed:30,tier:"bonus",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:BASE_LL,lastNight:true,
+  why:"Monopoly that fits in a pocket and ends in fifteen minutes instead of three hours. All the dealing and stealing, none of the sitting there bankrupt at midnight."}
 ];
 
 var BUNDLES = {
@@ -763,6 +769,12 @@ var WANTS = [
  {ask:"Muffin Time, same night", unit:"muffin-time",
   why:"Two hundred cards, 2 to 8 players, and a single card can flip the whole thing on its head. Twenty minutes on the box, which is a lie in the same way it is a lie for every good card game.",
   rides:"Also pinned to the last night. Two games and four people is about the right amount of last night — the board budgets three hours of the evening for the pair of them."},
+ {ask:"Uno", unit:"uno",
+  why:"Everyone already knows it, nobody needs the rules read out, and Nanny is in on the first hand. It also lives in a pocket, which matters when the Crescent is fifteen hours each way.",
+  rides:"Last night with the rest of them — but this is the one that comes out on the train too, going up and coming home."},
+ {ask:"Monopoly Deal", unit:"monopoly-deal",
+  why:"Monopoly's good part with none of its bad part. Fifteen minutes a game instead of three hours, and it fits in a jacket pocket.",
+  rides:"This is the Monopoly that belongs on this trip. The board game version is three hours minimum on a night the bags are already packed, and it is the one game guaranteed to end with somebody not speaking to somebody."},
  {ask:"The National Mall", unit:"national-mall",
   why:"The lawn itself. Two miles from the Capitol steps to Lincoln, the Monument standing in the middle of it, and the Reflecting Pool at the far end.",
   rides:"Free, open, never closed, no ticket. It is also the thread the rest of this list hangs on — half of what I want is already strung along it, so this is the walk between them as much as a stop of its own."}
@@ -779,7 +791,10 @@ var MAYBES = [
 var NOPES = [
  {name:"National Museum of Natural History", why:"Not this trip."},
  {name:"African American History & Culture", why:"Not this trip."},
- {name:"International Spy Museum", why:"Not this trip."}
+ {name:"International Spy Museum", why:"Not this trip."},
+ {name:"Classic Monopoly", why:"Three hours minimum, on the night the bags are already packed. Monopoly Deal is on the list instead."},
+ {name:"Cards Against Humanity", why:"Nanny is on this trip. Not the base game, and the Family Edition is aimed at eight-year-olds, so it misses in both directions."},
+ {name:"What Do You Meme", why:"Same problem. The Family Edition is genuinely clean, but it only works if everyone in the room reads the same memes, and that is not four people spanning sixty years."}
 ];
 
 var CREW = [
@@ -875,6 +890,7 @@ function frameDays(nights){
   for (var i = 0; i <= n; i++){
     var d = addDays(s,i);
     out.push({i:i, date:d, iso:iso(d), dow:d.getDay(),
+      lastHotelNight: i === n - 1,
       kind: i === 0 ? "arrival" : (i === n ? "departure" : "core")});
   }
   return out;
@@ -989,6 +1005,9 @@ var DAY_HOURS = 7, NIGHT_HOURS = 4, DEPART_HOURS = 4;
 var UBER_MPH = 18, UBER_WAIT_MIN = 6;
 
 function budgetFor(day, slot){
+  /* The last night is the one evening with nothing to get up for: the
+     southbound train does not leave until 6:30 the next day. */
+  if (slot === "night" && day.lastHotelNight) return NIGHT_HOURS + 1.5;
   if (slot === "night") return day.kind === "departure" ? 0 : NIGHT_HOURS;
   if (day.kind === "arrival") return 0;
   if (day.kind === "departure") return DEPART_HOURS;
@@ -1050,7 +1069,7 @@ function bestSpot(board, uid, days){
     var cap = budgetFor(day, u.period);
     if (!cap || structuralAt(day, u.period)) return;
     if (closedOn(u, day)) return;
-    if (u.lastNight && day.i !== days.length - 2) return;   /* the hotel, the last night, or not at all */
+    if (u.lastNight && !day.lastHotelNight) return;   /* the hotel, the last night, or not at all */
     var list = occupantsAt(board, day, u.period);
     [false, true].forEach(function(sh){
       if (sh && u.min >= u.ideal) return;
@@ -1100,7 +1119,7 @@ function autoFillInto(board, nights, only){
       var cap = budgetFor(day, u.period);
       if (!cap || structuralAt(day, u.period)) return;
       if (closedOn(u, day)) return;
-      if (u.lastNight && day.i !== days.length - 2) return;
+      if (u.lastNight && !day.lastHotelNight) return;
       var list = occupantsAt(board, day, u.period);
       [false, true].forEach(function(sh){
         if (sh && u.min >= u.ideal) return;            /* nothing to shorten */
@@ -1152,7 +1171,7 @@ function nopeIds(){
 function askPlan(nights){ return autoFillInto({}, nights, wantUnits(true)); }
 
 /* Bump when WANTS/MAYBES change, so saved plans pick up the new outings. */
-var ASK_VERSION = 7;
+var ASK_VERSION = 8;
 /* Drop anything no longer in the catalog, append anything new, keep the order. */
 function normalizeBallot(arr){
   var seen = {}, out = [];
@@ -1636,9 +1655,14 @@ function renderAsk(){
     var no = el("div","nopes");
     no.appendChild(el("h3", null, "Not this trip"));
     var ul = el("ul");
-    NOPES.forEach(function(n){ ul.appendChild(el("li", null, n.name)); });
+    NOPES.forEach(function(n){
+      var li = el("li");
+      li.appendChild(el("b", null, n.name));
+      if (n.why) li.appendChild(el("span", null, " — " + n.why));
+      ul.appendChild(li);
+    });
     no.appendChild(ul);
-    no.appendChild(el("p", null, "These are off the list on purpose. They stay in the roster so the rest of the family can put them on their own plan, but they will not be scheduled on mine."));
+    no.appendChild(el("p", null, "Off the list on purpose, with the reason written down so it does not get re-litigated at the hotel. The museums stay in the roster, so anyone else can put them on their own plan."));
     note.appendChild(no);
   }
   var bookings = [];
@@ -1926,6 +1950,7 @@ function renderLogi(){
   tw.appendChild(tt); trains.appendChild(tw);
   trains.appendChild(el("p","hint","Two roomettes across the hall. Beds fold down, dinner comes to the room, and Anniston lets us leave at a civilized hour instead of waiting up in Atlanta. Home base is aimed at L'Enfant Plaza: walking distance to Air and Space, Natural History and the Monument, one seat on the Metro to Arlington."));
   trains.appendChild(el("p","hint","No rental car, either way. The Crescent is the ride up and the ride home, and inside the city it is Metro when that is simplest and an UberXL whenever it is not. Four of us fit in one with room for coats, which matters more than it sounds like it does at nine at night in December. Every leg on the board is costed at about " + UBER_MPH + " mph plus a few minutes standing on a corner, which is why a Cathedral-and-Georgetown day reads as expensive and a day on the Mall reads as nearly free."));
+  trains.appendChild(el("p","hint","Fifteen hours each way in a sleeper car is a lot of hours. Uno lives in a pocket and comes out somewhere around Atlanta going up and again in the Carolinas coming home; the rest of the games stay in the bag until the last night."));
   g.appendChild(trains);
 
   var rcard = el("div","card");
@@ -1991,7 +2016,7 @@ function renderLogi(){
     "<tr><td>A day bag that closes</td><td>Every museum on the Mall runs bag check at the door.</td></tr>" +
     "<tr><td>Battery pack</td><td>Cold eats phones, and the tickets are on the phones.</td></tr>" +
     "<tr><td>Printed tickets, once</td><td>Union Station Wi-Fi is a rumor. Print the timed passes.</td></tr>" +
-    "<tr><td>Mine Turtle + Muffin Time</td><td>Both go in a bag on the way up and come out the last night. The turtle takes AAAs — check them at home, not at the hotel.</td></tr>" +
+    "<tr><td>The games</td><td>Mine Turtle, Muffin Time, Monopoly Deal and Uno all fit in one bag. The turtle takes AAAs — check them at home, not at the hotel.</td></tr>" +
     "</tbody>";
   tw2.appendChild(t2); pack.appendChild(tw2);
   g.appendChild(pack);
