@@ -954,6 +954,11 @@ var state = {
   boards:{family:{}, bart:{}, jess:{}, sam:{}, nanny:{}},
   wx:{}, resv:{}, ballots:{}, musts:{}, planFrom:"seed"
 };
+/* Shared state. Empty string = this device only; set to the worker's URL
+   and all five plans go live for the whole family. See worker/deploy.sh. */
+var SYNC_URL = "";
+var syncVersions = {}, syncTimer = null, syncPending = {}, syncOn = false;
+
 var me = localStorage.getItem("cd.me") || "sam";
 var viewing = "family";
 var draft = null, picked = null, mapDay = 1;
@@ -982,10 +987,11 @@ function localLoad(){
 }
 function save(which){
   localSave();
-  if (!db) return;
   var key = which || viewing;
   clearTimeout(saveTimer);
   saveTimer = setTimeout(function(){
+    if (SYNC_URL){ syncPush("boards/" + key); syncPush("trip/shared"); }
+    if (!db) return;
     db.doc("boards/" + key).set({placements:pl(key), by:me, at:Date.now()}).catch(noop);
     db.doc("trip/shared").set({config:state.config, wx:state.wx, resv:state.resv,
       planFrom:state.planFrom, at:Date.now()}).catch(noop);
@@ -993,6 +999,7 @@ function save(which){
 }
 function saveBallot(){
   localSave();
+  if (SYNC_URL) syncPush("votes/" + me);
   if (!db) return;
   db.doc("votes/" + me).set({order:draft ? draft.slice() : (state.ballots[me] || SEEDED).slice(),
     must:state.musts[me] || null, at:Date.now()}).catch(noop);
@@ -1001,6 +1008,86 @@ function setSync(kind, msg){
   var d = document.getElementById("syncdot");
   d.className = "dot" + (kind ? " " + kind : "");
   document.getElementById("syncmsg").textContent = msg;
+}
+
+/* ── Shared state over the worker ───────────────────────────────────────
+   Small documents, one per plan and one per ballot. Every write carries
+   the version it was based on; the worker refuses a stale write rather
+   than letting two people silently overwrite each other, and we re-read
+   and re-send. Polling, not sockets — four people editing a trip plan do
+   not need a socket, and polling survives a phone going to sleep.
+   ─────────────────────────────────────────────────────────────────────── */
+function docFor(path, d){
+  if (path.indexOf("boards/") === 0) state.boards[path.slice(7)] = d.placements || {};
+  else if (path.indexOf("votes/") === 0){
+    var who = path.slice(6);
+    if (Array.isArray(d.order)) state.ballots[who] = d.order.slice();
+    if (d.must !== undefined) state.musts[who] = d.must;
+  } else if (path === "trip/shared"){
+    if (d.config) state.config = d.config;
+    if (d.wx) state.wx = d.wx;
+    if (d.resv) state.resv = d.resv;
+    if (d.planFrom) state.planFrom = d.planFrom;
+  }
+}
+function bodyFor(path){
+  if (path.indexOf("boards/") === 0) return {placements: pl(path.slice(7))};
+  if (path.indexOf("votes/") === 0){
+    var who = path.slice(6);
+    return {order: state.ballots[who] || [], must: state.musts[who] || null};
+  }
+  return {config:state.config, wx:state.wx, resv:state.resv, planFrom:state.planFrom};
+}
+function syncPull(){
+  if (!SYNC_URL) return Promise.resolve();
+  return fetch(SYNC_URL + "/all", {cache:"no-store"}).then(function(r){ return r.json(); })
+    .then(function(j){
+      var changed = false;
+      Object.keys(j.docs || {}).forEach(function(path){
+        var doc = j.docs[path];
+        if (!doc || !doc.data) { syncVersions[path] = doc ? doc.version : 0; return; }
+        if (syncVersions[path] === doc.version) return;   /* already have it */
+        if (syncPending[path]) return;                    /* mid-write, do not stomp */
+        syncVersions[path] = doc.version;
+        docFor(path, doc.data);
+        changed = true;
+      });
+      if (changed){ localSave(); renderAll(); }
+      if (!syncOn){ syncOn = true; setSync("live","live for the family"); }
+    })
+    .catch(function(){ syncOn = false; setSync("local","offline — this device"); });
+}
+function syncPush(path){
+  if (!SYNC_URL) return;
+  syncPending[path] = true;
+  fetch(SYNC_URL + "/doc/" + path, {
+    method:"PUT", headers:{"content-type":"application/json"},
+    body: JSON.stringify({data: bodyFor(path), version: syncVersions[path] || 0, by: me})
+  }).then(function(r){ return r.json().then(function(j){ return {status:r.status, j:j}; }); })
+    .then(function(res){
+      if (res.status === 409){
+        /* Somebody wrote first. Take theirs, re-apply ours on top, send again. */
+        syncVersions[path] = res.j.version;
+        if (res.j.data) docFor(path, res.j.data);
+        localSave(); renderAll();
+        syncPending[path] = false;
+        setTimeout(function(){ syncPush(path); }, 250 + Math.random() * 400);
+        return;
+      }
+      if (res.j && res.j.version) syncVersions[path] = res.j.version;
+      syncPending[path] = false;
+    })
+    .catch(function(){ syncPending[path] = false; setSync("local","offline — this device"); });
+}
+function startSync(){
+  if (!SYNC_URL) { setSync("local","this device only"); return; }
+  setSync("", "connecting");
+  syncPull().then(function(){
+    setInterval(syncPull, 5000);
+    document.addEventListener("visibilitychange", function(){
+      if (!document.hidden) syncPull();
+    });
+  });
 }
 
 /* ── Scheduler ──────────────────────────────────────────────────────── */
@@ -1307,7 +1394,9 @@ function normalizeBallot(arr){
 /* ── Checks ─────────────────────────────────────────────────────────── */
 function checks(){
   var days = frameDays(), board = cur(), out = [], order = planningOrder();
-  var must = order.slice(0, MUST_SEE);
+  /* On Samuel's plan the things that must fit are the things he asked for —
+     not the top of a catalogue-wide seed order that still contains his nos. */
+  var must = (viewing === "sam") ? wantUnits(false) : order.slice(0, MUST_SEE);
 
   days.forEach(function(day){
     var dayMiles = 0, dayRides = 0;
@@ -1719,7 +1808,8 @@ function renderBoard(){
 
   var bench = document.getElementById("bench");
   bench.textContent = "";
-  var order = planningOrder(), must = order.slice(0, MUST_SEE);
+  var order = planningOrder();
+  var must = (viewing === "sam") ? wantUnits(false) : order.slice(0, MUST_SEE);
   var benched = order.filter(function(id){ return !board[id]; });
   benched.forEach(function(id){
     var flags = [], rank = order.indexOf(id) + 1;
@@ -2556,8 +2646,8 @@ function watchBallot(){
     renderRank();
   }, noop);
 }
-setSync("", "working on this device");
-if (window.claude && window.claude.use){
+startSync();
+if (!SYNC_URL && window.claude && window.claude.use){
   window.claude.use("db").then(function(store){
     if (!store){ setSync("local","this device only"); return; }
     db = store;
@@ -2590,7 +2680,7 @@ if (window.claude && window.claude.use){
     });
     watchBallot();
   }).catch(function(){ setSync("local","this device only"); });
-} else setSync("local","this device only");
+} else if (!SYNC_URL) setSync("local","this device only");
 </script>
 </body>
 </html>
