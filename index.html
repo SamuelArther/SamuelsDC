@@ -224,6 +224,26 @@ span.who{cursor:default}
 .ctlbtn[aria-pressed="true"]{background:var(--gold-soft);border-color:var(--gold);color:var(--gold-ink)}
 .ctlbtn.ord{width:24px;padding:3px 0;text-align:center}
 .ctlbtn[disabled]{opacity:.3;cursor:not-allowed}
+/* ── The Christmas list ───────────────────────────────────────────── */
+.wishcard.mine{border-color:var(--ink-3)}
+.wishitems{margin-top:10px}
+.wish{display:flex;gap:10px;align-items:flex-start;padding:9px 0;
+  border-top:1px solid var(--rule)}
+.wish:first-child{border-top:0}
+.wish .wtext{flex:1;min-width:0}
+.wish .wtext b{display:block;font-size:14px;line-height:1.35}
+.wish .wtext p{margin:3px 0 0}
+.wish.taken .wtext{opacity:.55;text-decoration:line-through}
+.wish.taken .wtext p{text-decoration:none}
+.wprice{display:inline-block;margin-top:3px;font-family:var(--f-mono);
+  font-size:11px;color:var(--ink-3)}
+.btn.tiny{padding:4px 9px;font-size:11px;white-space:nowrap;flex:none}
+.btn.tiny.on{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.wishadd{display:flex;flex-direction:column;gap:7px;margin-top:12px;
+  padding-top:12px;border-top:1px solid var(--rule)}
+.wishadd input{font:inherit;font-size:13px;padding:7px 9px;border-radius:2px;
+  border:1px solid var(--rule);background:var(--surface);color:var(--ink)}
+@media (max-width:640px){ .wish{flex-wrap:wrap} }
 .asksub{border-top:1px solid var(--rule);padding:22px 0 4px}
 .asksub h3{font-family:var(--f-disp);font-weight:600;font-size:19px;letter-spacing:-.018em}
 .asksub p{font-size:14.5px;color:var(--ink-3);margin-top:4px;font-style:italic}
@@ -538,6 +558,7 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
     <button role="tab" data-tab="rank" aria-selected="false">Ranking</button>
     <button role="tab" data-tab="roster" aria-selected="false">Roster</button>
     <button role="tab" data-tab="logi" aria-selected="false">Logistics</button>
+    <button role="tab" data-tab="wish" aria-selected="false">Christmas list</button>
   </div>
 </nav>
 
@@ -663,6 +684,14 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
       <div class="logi" id="logi"></div>
     </section>
 
+    <section class="panel" id="p-wish" hidden>
+      <div class="secthead">
+        <h2>What everybody actually wants</h2>
+        <p id="wishdeck"></p>
+      </div>
+      <div class="roster" id="wishlist"></div>
+    </section>
+
   </div>
 </main>
 
@@ -726,7 +755,7 @@ var RAILS = {
 var SEENS = {
  home:{
   "sweetwater-creek":{when:"Many times. Fifteen miles of it over the years, all the trails.", recent:true},
-  "georgia-aquarium":{when:"About a year ago.", recent:false},
+  "georgia-aquarium":{when:"Samuel went about a year ago, on his own. Bart, Jess and Nanny have not been in five years.", who:["sam"], recent:false},
   "world-of-coke":{when:"Over three years ago.", recent:false},
   "arbor-place":{when:"Constantly. It is the local mall.", recent:true}
  }
@@ -852,6 +881,7 @@ var WORTH = {
   "christmas-in-the-park":{w:"high", s:"Two acres of it, four blocks away, free, and open every night we are there. It has never charged anybody anything in seventy years."},
   "santana-row":{w:"thin", s:"A shopping centre with a very large tree. It is free and it is pleasant and it is an hour we could spend somewhere that is actually San Jose. It only earns its place as the second half of the Winchester evening, because it is across the road."},
   "monterey-aquarium":{w:"high", s:"Worth every dollar and it is still a maybe, because the problem with it is the seventy-five miles and the rental car, not the ticket."},
+  "georgia-aquarium":{w:"high", s:"Forty-nine dollars a head is the most expensive ticket in this city, and three of the four of us have not been in five years. Samuel going on his own last year does not make it a repeat for anybody else."},
   "golden-gate":{w:"high", s:"Free to walk out onto, and the one thing here nobody can do from a photograph."}
  },
  sea:{
@@ -1811,7 +1841,7 @@ var HOME_VENUES = [
   why:"The local park, and we have walked all of it — fifteen miles of those trails over the years. The mill is still the mill: five storeys of brick shell on the whitewater, burned by Sherman's cavalry in 1864 and never rebuilt. None of that is new to us, which is exactly why it sits down here now rather than at the top. It is a good morning, in December, in the cold, when the leaves are off and you can actually see the creek — not a thing to build a week around."},
  {id:"downtown-lights",name:"The Celebration of Lights downtown",seed:11,tier:"high",period:"night",load:"lo",env:"outdoor",min:.75,ideal:1.5,resv:"none",w:COLD_OUT,bundle:null,ll:[33.7515,-84.7477],
   why:"O'Neal Plaza and Jessie Davis Park lit for the season, ten minutes down the road, free, and out every night in December. It is not the Rockefeller tree and it is four minutes of driving instead of nineteen hours on a train."},
- {id:"christmas-parade",name:"Miracle on Main Street",seed:12,tier:"high",period:"night",load:"lo",env:"outdoor",min:1,ideal:2,resv:"none",w:{rain:"poor",cold:"good",wind:"acceptable",heat:"good"},bundle:null,closed:{wd:[0,1,2,3,4,6],hol:[]},ll:[33.7512,-84.7469],preferDow:5,
+ {id:"christmas-parade",name:"Miracle on Main Street",seed:12,tier:"protected",period:"night",load:"lo",env:"outdoor",min:1,ideal:2,resv:"none",w:{rain:"poor",cold:"good",wind:"acceptable",heat:"good"},bundle:null,closed:{wd:[0,1,2,3,4,6],hol:[]},ll:[33.7512,-84.7469],preferDow:5,
   why:"Douglasville's own Christmas parade down Main Street with the tree lighting straight after it, in front of the conference center. It has run on the first Friday of December for years, so it should land inside our week — but the 2026 date is not posted yet and it is the one thing here that cannot be moved to suit us."},
  {id:"cinema-trip",name:"Actually going to the cinema",seed:13,tier:"medium",period:"night",load:"lo",env:"indoor",min:2,ideal:2.75,resv:"none",w:IN,bundle:null,ll:[33.7290,-84.7180],
   why:"Whatever the big December release turns out to be, on a real screen, with the seats that recline. Ten minutes away. Distinct from the movie run at home, which is old films on the sofa — this is the one where somebody else makes the popcorn."},
@@ -1824,7 +1854,7 @@ var HOME_VENUES = [
  {id:"garden-lights",name:"Garden Lights at the Botanical Garden",seed:16,tier:"protected",period:"night",load:"mid",env:"outdoor",min:2,ideal:3,resv:"required",w:COLD_OUT,bundle:null,ll:[33.7905,-84.3733],
   why:"Atlanta Botanical Garden lit end to end, nightly from November 14 to January 10, so every night of our week is inside it. The orchestral light show, the tunnel, and the mosaiculture dragon back in the Skyline Garden this year. Forty minutes up I-20 and the best after-dark thing within an hour of the house. Tickets went on sale October 1 and December dates go."},
  {id:"georgia-aquarium",name:"Georgia Aquarium",seed:17,tier:"protected",period:"day",load:"hi",env:"indoor",min:3,ideal:4.5,resv:"required",w:IN,bundle:"pemberton-place",ll:[33.7634,-84.3951],
-  why:"Whale sharks. Four of them, in six million gallons, thirty-five minutes from the house, with the Ocean Voyager tunnel putting them over your head. We were last here about a year ago, which is a long enough gap that it is a trip again rather than a repeat — and the December galleries are not the ones we saw. Timed tickets, and it is busy all month."},
+  why:"Whale sharks. Four of them, in six million gallons, thirty-five minutes from the house, with the Ocean Voyager tunnel putting them over your head. I went about a year ago but I went on my own — Bart, Jess and Nanny have not been in five years, so for three of the four of us this is not a repeat at all. Timed tickets, and it is busy all month."},
  {id:"world-of-coke",name:"World of Coca-Cola",seed:18,tier:"medium",period:"day",load:"mid",env:"indoor",min:1.5,ideal:2.5,resv:"recommended",w:IN,bundle:"pemberton-place",ll:[33.7629,-84.3925],
   why:"Directly across the same plaza from the aquarium, which is most of why it is on this list — the tasting room with a hundred drinks from everywhere in the world, the vault, and the bottling line. It has been over three years since we went, which is long enough that Nanny will not have to hear about the one from last time. Ninety minutes, two minutes from the whale sharks."},
  {id:"fantasy-in-lights",name:"Fantasy In Lights at Callaway",seed:19,tier:"high",period:"night",load:"hi",env:"indoor",min:1.5,ideal:2.5,resv:"required",w:INCAR,bundle:null,ll:[32.8443,-84.8480],
@@ -1915,6 +1945,9 @@ var HOME_WANTS = [
  {ask:"Minecraft night", unit:"minecraft-night",
   why:"One world, on the server, running all week — not one evening of it. Something is actually finished by Sunday, which is the difference between a week at home and a week of evenings at home.",
   rides:"Three hours a go, no travel, no ticket, and the board will hand it several nights because it is a project and not a session."},
+ {ask:"Miracle on Main Street", unit:"christmas-parade",
+  why:"Our own town's Christmas parade down Main Street, with the tree lighting in front of the conference center straight after it. It is ten minutes away, it is free, and it is the one thing on this whole page that is actually ours.",
+  rides:"Two hours and no ticket. It is also the only outing in any of the seven options that happens on exactly one night whether we are free or not — the board pins it to the Friday and schedules everything else around it. The 2026 date is not posted yet, so it is the first thing to check when the city puts its calendar up."},
  {ask:"Rock City's Enchanted Garden of Lights", unit:"rock-city-lights",
   why:"Lookout Mountain above Chattanooga, lit from four in the afternoon, millions of lights through the rock gardens and down Fat Man's Squeeze. It is the one thing on this list that is genuinely somewhere else — a different state, a mountain, and a view over seven of them.",
   rides:"An hour and three quarters each way, so with three hours up there it is about six and a half hours door to door and it takes a whole evening. That is the price and it is worth paying once. Book ahead — it is online-only ticketing and December weekends go."},
@@ -1942,9 +1975,6 @@ var HOME_MAYBES = [
  {ask:"A jigsaw nobody finishes", unit:"jigsaw",
   why:"A thousand pieces on the dining table from day two, four pieces done every time anybody walks past it.",
   rides:"Not really an outing, which is why it is down here. It is still going to happen."},
- {ask:"Miracle on Main Street", unit:"christmas-parade",
-  why:"Douglasville's own Christmas parade down Main Street with the tree lighting straight after.",
-  rides:"It has run on the first Friday of December for years, which should put it inside our week — but the 2026 date is not posted and this is the one thing here that cannot move to suit us. It is a maybe on the calendar, not on the merit."},
  {ask:"The bad ones, on purpose", unit:"bad-movies",
   why:"The made-for-TV ones where a big-city executive inherits a failing Christmas tree farm and learns the meaning of something. They are all the same film. That is the entertainment.",
   rides:"Second half of the week only, once the good list is used up."}
@@ -2710,7 +2740,7 @@ function closedOn(u, day){
 }
 
 /* ── State ──────────────────────────────────────────────────────────── */
-var state = {config:{start:TRIP.start, nights:TRIP.nights}, cities:{}};
+var state = {config:{start:TRIP.start, nights:TRIP.nights}, cities:{}, wishes:{}};
 
 /* One city's half of the state. Boards, ballots, weather switches and
    bookings are per city. The dates are not: it is the same week and the
@@ -2769,6 +2799,7 @@ function localLoad(){
   }catch(e){}
   if (!state.config) state.config = {start:TRIP.start, nights:TRIP.nights};
   if (!state.cities) state.cities = {};
+  if (!state.wishes) state.wishes = {};
   /* A save written before New York existed is Washington's, all of it. */
   if (state.boards || state.ballots || state.wx || state.resv || state.musts){
     var dc = Sof("dc");
@@ -2827,6 +2858,10 @@ function setSync(kind, msg){
    ─────────────────────────────────────────────────────────────────────── */
 function docFor(path, d){
   var q = pathCity(path), s = Sof(q.c);
+  if (path.indexOf("wishes/") === 0){
+    if (Array.isArray(d.items)) state.wishes[path.slice(7)] = d.items.slice();
+    return;
+  }
   if (q.p.indexOf("boards/") === 0) s.boards[q.p.slice(7)] = d.placements || {};
   else if (q.p.indexOf("votes/") === 0){
     var who = q.p.slice(6);
@@ -2847,6 +2882,7 @@ function docFor(path, d){
   }
 }
 function bodyFor(path){
+  if (path.indexOf("wishes/") === 0) return {items: wishesOf(path.slice(7))};
   var q = pathCity(path), s = Sof(q.c);
   if (q.p.indexOf("boards/") === 0) return {placements: s.boards[q.p.slice(7)] || {}};
   if (q.p.indexOf("votes/") === 0){
@@ -2862,6 +2898,7 @@ function bodyFor(path){
    board must never be published, or it would wipe whoever fills theirs in
    next. */
 function hasLocalContent(path){
+  if (path.indexOf("wishes/") === 0) return wishesOf(path.slice(7)).length > 0;
   var q = pathCity(path), s = Sof(q.c);
   if (q.p.indexOf("boards/") === 0) return Object.keys(s.boards[q.p.slice(7)] || {}).length > 0;
   if (q.p.indexOf("votes/") === 0) return !!s.ballots[q.p.slice(6)];
@@ -4227,6 +4264,124 @@ function renderRank(){
 }
 
 /* ── Roster & logistics ─────────────────────────────────────────────── */
+/* ── The Christmas list ───────────────────────────────────────────────
+   Four lists, one per person, and the only thing on this page that is not
+   about the trip at all — so it is the only state that does not hang off a
+   city. Wherever we end up going, everybody wants the same things.
+
+   The rule that makes it worth having: you can see what everybody else has
+   claimed off everybody else's list, and you can never see what has been
+   claimed off your own. `by` is stored on the item, and the renderer
+   simply refuses to draw it for the person the list belongs to. It is a
+   family, not a threat model — hiding it in the UI is the whole job.
+   ─────────────────────────────────────────────────────────────────── */
+function wishesOf(who){
+  if (!state.wishes) state.wishes = {};
+  if (!state.wishes[who]) state.wishes[who] = [];
+  return state.wishes[who];
+}
+function wishId(){ return "w" + Date.now().toString(36) + Math.floor(Math.random()*1e4).toString(36); }
+function saveWishes(who){
+  localSave();
+  if (SYNC_URL) syncPush("wishes/" + who);
+}
+function addWish(text, note, price){
+  text = (text || "").trim();
+  if (!text) return false;
+  wishesOf(me).push({id:wishId(), text:text.slice(0,120),
+                     note:(note || "").trim().slice(0,200),
+                     price:(price || "").trim().slice(0,24), by:null});
+  saveWishes(me);
+  return true;
+}
+function removeWish(id){
+  var list = wishesOf(me), i = -1;
+  list.forEach(function(w, n){ if (w.id === id) i = n; });
+  if (i < 0) return;
+  list.splice(i, 1);
+  saveWishes(me);
+}
+/* Claiming happens on somebody else's list, so the write is to their
+   document. Last write wins, which for "I'll get that one" is correct. */
+function claimWish(who, id){
+  wishesOf(who).forEach(function(w){
+    if (w.id !== id) return;
+    w.by = (w.by === me) ? null : me;
+  });
+  saveWishes(who);
+}
+
+function renderWishes(){
+  var g = document.getElementById("wishlist");
+  if (!g) return;
+  g.textContent = "";
+  var empty = 0;
+
+  CREW.forEach(function(p){
+    var mine = p.id === me, list = wishesOf(p.id);
+    if (!list.length) empty++;
+    var c = el("div", "vcard wishcard" + (mine ? " mine" : ""));
+    var h = el("div", "vhead");
+    h.appendChild(el("h4", null, mine ? p.name + " — yours" : p.name));
+    h.appendChild(el("span", "seedno", list.length + (list.length === 1 ? " thing" : " things")));
+    c.appendChild(h);
+
+    if (mine)
+      c.appendChild(el("p", "hint", "Everyone else can see this list. You cannot see who has "
+        + "claimed anything off it, which is the entire point."));
+    else if (!list.length)
+      c.appendChild(el("p", "hint", p.name + " has not put anything down yet."));
+
+    var ul = el("div", "wishitems");
+    list.forEach(function(w){
+      var row = el("div", "wish" + (!mine && w.by ? " taken" : ""));
+      var main = el("div", "wtext");
+      main.appendChild(el("b", null, w.text));
+      if (w.price) main.appendChild(el("span", "wprice", w.price));
+      if (w.note) main.appendChild(el("p", "hint", w.note));
+      row.appendChild(main);
+
+      if (mine){
+        var x = el("button", "ctlbtn", "×");
+        x.title = "Take it off the list";
+        x.setAttribute("aria-label", "Remove " + w.text);
+        x.dataset.wremove = w.id;
+        row.appendChild(x);
+      } else {
+        /* Never rendered on your own list, so you cannot learn anything
+           from it that spoils Christmas. */
+        var b = el("button", "btn tiny" + (w.by ? " on" : ""),
+          w.by ? (w.by === me ? "You are getting this" : crewOf(w.by).name + " is getting this")
+               : "I'll get this");
+        b.dataset.wclaim = w.id;
+        b.dataset.wwho = p.id;
+        if (w.by && w.by !== me) b.disabled = true;
+        row.appendChild(b);
+      }
+      ul.appendChild(row);
+    });
+    c.appendChild(ul);
+
+    if (mine){
+      var f = el("div", "wishadd");
+      var t = el("input"); t.id = "wtext"; t.type = "text";
+      t.placeholder = "What do you want?"; t.maxLength = 120;
+      var pr = el("input"); pr.id = "wprice"; pr.type = "text";
+      pr.placeholder = "About how much"; pr.maxLength = 24;
+      var n = el("input"); n.id = "wnote"; n.type = "text";
+      n.placeholder = "Which one, what colour, where from"; n.maxLength = 200;
+      var add = el("button", "btn primary", "Add to my list"); add.id = "waddbtn";
+      f.appendChild(t); f.appendChild(pr); f.appendChild(n); f.appendChild(add);
+      c.appendChild(f);
+    }
+    g.appendChild(c);
+  });
+
+  document.getElementById("wishdeck").textContent = empty
+    ? empty + " of us " + (empty === 1 ? "has" : "have") + " not written anything down yet."
+    : "All four lists are in.";
+}
+
 function renderRoster(){
   var g = document.getElementById("roster");
   g.textContent = "";
@@ -4459,7 +4614,7 @@ function renderCrew(){
   });
   document.getElementById("rolelabel").textContent = role();
 }
-function renderAll(){ renderChrome(); renderCrew(); renderAsk(); renderBoard(); renderCompare(); renderMap(); renderRank(); renderRoster(); renderLogi(); }
+function renderAll(){ renderChrome(); renderCrew(); renderAsk(); renderBoard(); renderCompare(); renderMap(); renderRank(); renderRoster(); renderLogi(); renderWishes(); }
 
 /* ── Interaction ────────────────────────────────────────────────────── */
 var dragId = null;
@@ -4583,7 +4738,7 @@ document.getElementById("tablist").addEventListener("click", function(ev){
   Array.prototype.forEach.call(this.querySelectorAll("button"), function(x){
     x.setAttribute("aria-selected", x === b ? "true" : "false");
   });
-  ["ask","board","compare","map","rank","roster","logi"].forEach(function(t){
+  ["ask","board","compare","map","rank","roster","logi","wish"].forEach(function(t){
     document.getElementById("p-" + t).hidden = (t !== b.dataset.tab);
   });
 });
@@ -4596,6 +4751,33 @@ document.getElementById("citylist").addEventListener("click", function(ev){
   picked = null; draft = null; mapDay = 1;
   renderAll();
   toast(C.name + " — same eight days, same four of us.");
+});
+document.getElementById("wishlist").addEventListener("click", function(ev){
+  var t = ev.target.closest ? ev.target.closest("button") : null;
+  if (!t) return;
+  if (t.dataset.wremove){ removeWish(t.dataset.wremove); renderWishes(); return; }
+  if (t.dataset.wclaim){
+    claimWish(t.dataset.wwho, t.dataset.wclaim);
+    renderWishes();
+    return;
+  }
+  if (t.id === "waddbtn"){
+    var tx = document.getElementById("wtext");
+    if (addWish(tx.value, document.getElementById("wnote").value,
+                document.getElementById("wprice").value)){
+      renderWishes();
+      var again = document.getElementById("wtext");
+      if (again && again.focus) again.focus();
+    } else toast("Put something in the box first.");
+  }
+});
+document.getElementById("wishlist").addEventListener("keydown", function(ev){
+  if (ev.key !== "Enter") return;
+  var id = ev.target && ev.target.id;
+  if (id === "wtext" || id === "wnote" || id === "wprice"){
+    ev.preventDefault();
+    document.getElementById("waddbtn").click();
+  }
 });
 document.getElementById("autofill").addEventListener("click", autoFill);
 document.getElementById("clearboard").addEventListener("click", function(){

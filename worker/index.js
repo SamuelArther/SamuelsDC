@@ -35,14 +35,23 @@
 // Washington is the unprefixed set and is not in here; every other city
 // hangs off its own key, matching CITY_KEYS in index.html.
 const CITIES = ["nyc", "wilm", "sj", "sea", "pdx", "home"];
-const DOCS = new RegExp(
-  `^((${CITIES.join("|")})/)?(boards/(family|bart|jess|sam|nanny)|votes/(bart|jess|sam|nanny)|trip/shared)$`
-);
-const NAMES = [
+const WHO = "bart|jess|sam|nanny";
+// Everything the board holds is one city's. The Christmas lists are not —
+// we want the same things wherever we end up going — so they sit outside
+// the per-city prefixes rather than being copied into all seven.
+const PER_CITY = [
   "boards/family", "boards/bart", "boards/jess", "boards/sam", "boards/nanny",
   "votes/bart", "votes/jess", "votes/sam", "votes/nanny",
   "trip/shared",
-].flatMap((n) => [n, ...CITIES.map((c) => `${c}/${n}`)]);
+];
+const GLOBAL = ["wishes/bart", "wishes/jess", "wishes/sam", "wishes/nanny"];
+const DOCS = new RegExp(
+  `^(((${CITIES.join("|")})/)?(boards/(family|${WHO})|votes/(${WHO})|trip/shared)|wishes/(${WHO}))$`
+);
+const NAMES = [
+  ...PER_CITY.flatMap((n) => [n, ...CITIES.map((c) => `${c}/${n}`)]),
+  ...GLOBAL,
+];
 const MAX_BYTES = 128 * 1024;
 
 const CORS = {
