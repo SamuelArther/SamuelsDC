@@ -66,11 +66,22 @@ not marketing copy.
 
 ## New York
 
-The second tab. A deliberately short ask — the 9/11 Memorial, the Empire State
-Building, Central Park, the Rockefeller Center tree — plus the same four game
-nights, on the same eight days. Fourteen venues, twelve outings, two of them
-bundles (the memorial with the museum underneath it; the tree with the Fifth
-Avenue windows on the same walk).
+The second tab: seventeen venues, fifteen outings, on the same eight days. Ten
+things to see plus the same four game nights, and the list leans after dark on
+purpose, because that is when most of it is worth looking at.
+
+Two of the outings are bundles the board always moves together. **Ground Zero
+after dark** is the memorial and One World Observatory — the same plaza, the
+pools lit with the names lit from underneath, then a hundred and two floors up
+the tower standing over them. **Christmas in Midtown** is the tree and the Fifth
+Avenue windows on one walk. The 9/11 museum is deliberately *not* bundled with
+the memorial the way it would be in summer: it shuts hours before the lights come
+on, so it is its own daytime trip.
+
+The two observatories are modelled differently on purpose. The Empire State's
+86th floor is open to the weather and rates poorly for wind and rain; One World
+is entirely behind glass and rates as indoor. On a wet night the board can tell
+you which one still works.
 
 **How we get there is undecided, so the page treats it as a variable.** The
 `How` control beside the city strip switches between:
@@ -82,6 +93,8 @@ Avenue windows on the same walk).
 | Arrives | A little before 7 pm, so the first evening is gone | Around lunchtime |
 | Leaves | Just after 2 pm, so the last day is gone | That evening |
 | The week | Six usable days | Eight |
+
+All fourteen asks fit either way — the difference is the slack, not the list.
 
 Switching redraws the first and last days of the board and moves anything
 standing in a slot the journey now eats. Checks names the trade rather than

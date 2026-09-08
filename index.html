@@ -940,57 +940,81 @@ var NYC_BASE_LL = [40.7497,-73.9880];      /* the hotel, Herald Square: Penn Sta
                                                   one way in, LaGuardia the other */
 
 var NYC_VENUES = [
- {id:"911-memorial",name:"The 9/11 Memorial",seed:1,tier:"protected",period:"day",load:"mid",env:"outdoor",min:.75,ideal:1.25,resv:"none",w:MEM,bundle:"ground-zero",ll:[40.7115,-74.0134],
-  why:"Two pools sunk into the footprints of the towers, with every name cut clean through the bronze around the rim. Free, open, and the water never stops."},
- {id:"911-museum",name:"The 9/11 Memorial Museum",seed:2,tier:"protected",period:"day",load:"hi",env:"indoor",min:2,ideal:3,resv:"required",w:IN,bundle:"ground-zero",closed:{wd:[],hol:["christmas"]},ll:[40.7112,-74.0138],
-  why:"Seventy feet down at the bedrock, with the slurry wall still holding the river out and the last column standing where they left it. Timed tickets, booked ahead."},
- {id:"empire-state",name:"Empire State Building",seed:3,tier:"protected",period:"night",load:"mid",env:"mixed",min:1.5,ideal:2.5,resv:"recommended",w:{rain:"poor",cold:"good",wind:"poor",heat:"good"},bundle:null,ll:[40.7484,-73.9857],
-  why:"The 86th floor is outdoors and open to the wind, with the whole grid lit underneath. The 102nd is behind glass and costs extra. Two blocks from the hotel, so it is the cheapest big thing on the list to get to."},
- {id:"central-park",name:"Central Park",seed:4,tier:"protected",period:"day",load:"mid",env:"outdoor",min:1.5,ideal:3.5,resv:"none",w:{rain:"poor",cold:"good",wind:"acceptable",heat:"good"},bundle:null,ll:[40.7739,-73.9713],
+ {id:"911-memorial",name:"The 9/11 Memorial",seed:1,tier:"protected",period:"night",load:"mid",env:"outdoor",min:.75,ideal:1.5,resv:"none",w:MEM,bundle:"wtc-after-dark",ll:[40.7115,-74.0134],
+  why:"Two pools sunk into the footprints of the towers, with every name cut clean through the bronze around the rim — and lit from underneath after dark, so the names read as light rather than as shadow. The water never stops and it costs nothing."},
+ {id:"one-world-observatory",name:"One World Observatory",seed:2,tier:"protected",period:"night",load:"mid",env:"indoor",min:1,ideal:1.75,resv:"required",w:IN,bundle:"wtc-after-dark",ll:[40.7127,-74.0134],
+  why:"A hundred and two floors up the tower that stands over the pools, and all of it behind glass — which makes it the observatory that still works on the night the wind is up and the Empire State is not worth going out on. Timed tickets. Winter closing time moves, so check it the week we go."},
+ {id:"911-museum",name:"The 9/11 Memorial Museum",seed:3,tier:"high",period:"day",load:"hi",env:"indoor",min:2,ideal:3,resv:"required",w:IN,bundle:null,closed:{wd:[],hol:["christmas"]},ll:[40.7112,-74.0138],
+  why:"Seventy feet down at the bedrock, with the slurry wall still holding the river out and the last column standing where they left it. It shuts long before the lights come on, so it is a daytime trip of its own now rather than something bolted onto the memorial."},
+ {id:"empire-state",name:"Empire State Building",seed:4,tier:"protected",period:"night",load:"mid",env:"mixed",min:1.5,ideal:2.5,resv:"recommended",w:{rain:"poor",cold:"good",wind:"poor",heat:"good"},bundle:null,ll:[40.7484,-73.9857],
+  why:"The 86th floor is outdoors and open to the wind, with the whole grid lit underneath. The 102nd is behind glass and costs extra. Two blocks from the hotel, so it is the cheapest big thing on the list to get to — and the one to move if the night turns wet."},
+ {id:"central-park",name:"Central Park",seed:5,tier:"protected",period:"day",load:"mid",env:"outdoor",min:1.5,ideal:3.5,resv:"none",w:{rain:"poor",cold:"good",wind:"acceptable",heat:"good"},bundle:null,ll:[40.7739,-73.9713],
   why:"In at the south end and north through it: the elm tunnel of the Mall, Bethesda Terrace and the fountain, the boat pond, Bow Bridge. Eight hundred and forty acres, and we are seeing maybe a fifth."},
- {id:"rockefeller-tree",name:"The Rockefeller Center Tree",seed:5,tier:"protected",period:"night",load:"mid",env:"outdoor",min:.5,ideal:1,resv:"none",w:OUT,bundle:"christmas-midtown",ll:[40.7587,-73.9787],
+ {id:"rockefeller-tree",name:"The Rockefeller Center Tree",seed:6,tier:"protected",period:"night",load:"mid",env:"outdoor",min:.5,ideal:1,resv:"none",w:OUT,bundle:"christmas-midtown",ll:[40.7587,-73.9787],
   why:"Seventy-odd feet of Norway spruce over the rink, strung with lights, with the crystal star on top. Ten minutes of looking and half an hour of getting to the front."},
- {id:"fifth-ave-windows",name:"The Fifth Avenue windows",seed:6,tier:"high",period:"night",load:"lo",env:"outdoor",min:.5,ideal:1.25,resv:"none",w:OUT,bundle:"christmas-midtown",ll:[40.7580,-73.9776],
+ {id:"fifth-ave-windows",name:"The Fifth Avenue windows",seed:7,tier:"high",period:"night",load:"lo",env:"outdoor",min:.5,ideal:1.25,resv:"none",w:OUT,bundle:"christmas-midtown",ll:[40.7580,-73.9776],
   why:"Saks doing its light show across the street on the hour, then the windows north up Fifth. Free, outdoors, and it is the walk between the tree and the subway anyway."},
- {id:"times-square",name:"Times Square",seed:7,tier:"bonus",period:"night",load:"lo",env:"outdoor",min:.5,ideal:1,resv:"none",w:OUT,bundle:null,ll:[40.7580,-73.9855],
+ {id:"circle-line",name:"Circle Line, around Manhattan",seed:8,tier:"high",period:"day",load:"mid",env:"mixed",min:1.5,ideal:2.5,resv:"recommended",w:{rain:"poor",cold:"acceptable",wind:"poor",heat:"good"},bundle:null,ll:[40.7625,-73.9995],
+  why:"Out of Pier 83 and round the whole island: the skyline from the water, in under the bridges, past the Statue. Heated cabin below and open deck on top, which in December is the difference between two hours and twenty minutes. The winter timetable is thinner and shorter than the summer one, so the sailing list decides the day rather than the other way round."},
+ {id:"times-square",name:"Times Square",seed:9,tier:"bonus",period:"night",load:"lo",env:"outdoor",min:.5,ideal:1,resv:"none",w:OUT,bundle:null,ll:[40.7580,-73.9855],
   why:"Ten minutes of standing in the middle of it being shouted at by a building. Everybody says it is a tourist trap and everybody goes anyway."},
- {id:"staten-island-ferry",name:"The Staten Island Ferry",seed:8,tier:"bonus",period:"day",load:"lo",env:"mixed",min:1,ideal:1.5,resv:"none",w:{rain:"poor",cold:"acceptable",wind:"poor",heat:"good"},bundle:null,ll:[40.7016,-74.0133],
+ {id:"staten-island-ferry",name:"The Staten Island Ferry",seed:10,tier:"bonus",period:"day",load:"lo",env:"mixed",min:1,ideal:1.5,resv:"none",w:{rain:"poor",cold:"acceptable",wind:"poor",heat:"good"},bundle:null,ll:[40.7016,-74.0133],
   why:"Free, every half hour, and it passes the Statue of Liberty going out and coming back. The cheapest good thing in the city, and it starts a ten-minute walk from the memorial."},
- {id:"grand-central",name:"Grand Central Terminal",seed:9,tier:"bonus",period:"day",load:"lo",env:"indoor",min:.5,ideal:1.25,resv:"none",w:IN,bundle:null,ll:[40.7527,-73.9772],
-  why:"The main concourse, the green ceiling with the constellations painted backwards, and the whispering gallery downstairs outside the Oyster Bar."},
- {id:"bryant-park",name:"Bryant Park Winter Village",seed:10,tier:"bonus",period:"night",load:"lo",env:"outdoor",min:1,ideal:2,resv:"none",w:OUT,bundle:null,ll:[40.7536,-73.9832],
+ {id:"grand-central",name:"Grand Central Terminal",seed:11,tier:"medium",period:"day",load:"lo",env:"indoor",min:.75,ideal:1.5,resv:"none",w:IN,bundle:null,ll:[40.7527,-73.9772],
+  why:"Free, warm, and better than it sounds. The whispering gallery is the reason to go: stand facing into one corner of the arched vault outside the Oyster Bar, talk at the tiles, and somebody in the opposite corner forty feet away hears you as if you were next to them. Then the concourse, the green ceiling with the constellations painted backwards, and in December a holiday market in Vanderbilt Hall and a model train show off the main floor. Three quarters of an hour, on the way to everything else."},
+ {id:"bryant-park",name:"Bryant Park Winter Village",seed:12,tier:"bonus",period:"night",load:"lo",env:"outdoor",min:1,ideal:2,resv:"none",w:OUT,bundle:null,ll:[40.7536,-73.9832],
   why:"Stalls, a rink that is free if you bring your own skates, and hot chocolate. Four blocks from the hotel, so it costs nothing to get to and nothing to leave."},
- {id:"mine-turtle",name:"Mine Turtle at the hotel",seed:11,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:NYC_BASE_LL,lastNight:true,
+ {id:"nyc-ferry",name:"The East River ferry to DUMBO",seed:13,tier:"bonus",period:"day",load:"lo",env:"mixed",min:.75,ideal:1.5,resv:"none",w:{rain:"poor",cold:"acceptable",wind:"poor",heat:"good"},bundle:null,ll:[40.7033,-74.0110],
+  why:"Four dollars and change, out of Pier 11 and under the Brooklyn Bridge to DUMBO. It is a city bus that happens to float, which makes it the cheapest boat ride in the world with a skyline on it."},
+ {id:"mine-turtle",name:"Mine Turtle at the hotel",seed:14,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:NYC_BASE_LL,lastNight:true,
   why:"Truth or dare with a turtle that explodes. Two to six players, so all four of us plus whoever wanders over. Last night, in the room, bags already packed."},
- {id:"muffin-time",name:"Muffin Time at the hotel",seed:12,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:NYC_BASE_LL,lastNight:true,
+ {id:"muffin-time",name:"Muffin Time at the hotel",seed:15,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:NYC_BASE_LL,lastNight:true,
   why:"Two hundred cards of chaos where one card flips the whole game. Two to eight players, so nobody sits out. The other half of the last night."},
- {id:"uno",name:"Uno",seed:13,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:NYC_BASE_LL,lastNight:true,
+ {id:"uno",name:"Uno",seed:16,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:NYC_BASE_LL,lastNight:true,
   why:"Weighs nothing, everybody already knows it, and Nanny can play it without a rules explanation. Also the right thing to have in a pocket whichever way we go — nineteen hours in a sleeper car or a morning spent in two airports."},
- {id:"monopoly-deal",name:"Monopoly Deal",seed:14,tier:"bonus",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:NYC_BASE_LL,lastNight:true,
+ {id:"monopoly-deal",name:"Monopoly Deal",seed:17,tier:"bonus",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:NYC_BASE_LL,lastNight:true,
   why:"Monopoly that fits in a pocket and ends in fifteen minutes instead of three hours. All the dealing and stealing, none of the sitting there bankrupt at midnight."}
 ];
 
 var NYC_BUNDLES = {
- "ground-zero":{name:"Ground Zero",core:["911-memorial","911-museum"],
-   why:"The pools first, outside, in the daylight — then down to the bedrock. In that order, and not the other way around."},
+ "wtc-after-dark":{name:"Ground Zero after dark",core:["911-memorial","one-world-observatory"],
+   why:"The pools lit and every name lit from underneath, then a hundred and two floors up the tower standing over them. Same plaza, one outing, and both of them better in the dark than they are at noon. The timed ticket decides which way round."},
  "christmas-midtown":{name:"Christmas in Midtown",core:["rockefeller-tree","fifth-ave-windows"],preferDow:6,
    why:"The tree, then Saks doing its light show across the street, then the windows north up Fifth. One walk, all of it lit."}
 };
-var NYC_BUNDLE_LOAD = {"ground-zero":"hi","christmas-midtown":"mid"};
+var NYC_BUNDLE_LOAD = {"wtc-after-dark":"hi","christmas-midtown":"mid"};
 
 var NYC_WANTS = [
- {ask:"The 9/11 Memorial", unit:"ground-zero",
-  why:"The two pools in the footprints of the towers, and every name cut through the bronze around them. I have only ever seen it in photographs and the photographs do not tell you how big the holes are.",
-  rides:"Comes with the museum underneath it — seventy feet down at the bedrock, timed tickets, about three hours. Pools first in the daylight, then down."},
+ {ask:"The 9/11 Memorial and One World, after dark", unit:"wtc-after-dark",
+  why:"The two pools in the footprints of the towers, at night, when the names are lit from underneath the bronze and read as light instead of as shadow — and then the top of the tower that stands over them. I have only ever seen the memorial in photographs and the photographs are all taken in daylight, which I think is the wrong time of day for it.",
+  rides:"One outing, two stops, same plaza. About three and a half hours together. One World is timed-ticket and entirely behind glass, so this is also the night that still works when the wind is up."},
+ {ask:"The museum underneath the memorial", unit:"911-museum",
+  why:"Seventy feet down at the bedrock, with the slurry wall still holding the river out and the last column standing where they left it.",
+  rides:"Its own daytime trip now — it shuts long before the lights come on, so it cannot ride along with the memorial the way it would in summer. About three hours, timed tickets, and it can stack with the ferry from the same corner."},
  {ask:"The Empire State Building", unit:"empire-state",
   why:"The 86th floor, outside, at night, with the grid lit all the way to the water in both directions.",
-  rides:"Two blocks from the hotel, which makes it the only big thing on this list that costs nothing to reach. Timed tickets are worth having; the 102nd floor is not."},
+  rides:"Two blocks from the hotel, which makes it the only big thing on this list that costs nothing to reach. Timed tickets are worth having; the 102nd floor is not. It is open to the weather, so if a night turns wet this is the one that moves."},
  {ask:"Central Park", unit:"central-park",
   why:"The elm tunnel, Bethesda Terrace and the fountain, the boat pond, Bow Bridge. A park the size of a town, in the middle of the loudest place in the country, in December.",
   rides:"Half a day if we let it be one, and one train goes straight up the west side to it. Dress for it — there is nowhere indoors in the middle of a park."},
  {ask:"The Rockefeller Center Christmas tree", unit:"christmas-midtown",
   why:"The tree. The actual one. Seventy feet of it over the rink with the star on top, which is the single most Christmas thing in America, and I would like to stand under it.",
   rides:"Comes with the Fifth Avenue windows on the same walk — Saks does its light show across the street on the hour and the windows run north from there. One outing, two stops, and all of it free."},
+ {ask:"Getting out on the water", unit:"circle-line",
+  why:"I want to be on a boat. The skyline from the water is the one view of New York you cannot get by walking, and going round the whole island means getting all of it in one go — under the bridges, past the Statue, the buildings from underneath instead of from the pavement.",
+  rides:"Circle Line out of Pier 83, about two and a half hours, with a heated cabin below deck for the point where standing outside stops being fun. Winter sailings are fewer and shorter than summer ones, so this is one the week gets built around rather than dropped into."},
+ {ask:"The Staten Island Ferry", unit:"staten-island-ferry",
+  why:"Free, every half hour, and it goes right past the Statue of Liberty on the way out and again on the way back. A boat that costs nothing, in a city where nothing costs nothing.",
+  rides:"A ten-minute walk from the memorial, so it stacks onto the museum day for almost nothing. Stand on the right-hand side going out and the left coming back, and stay outside for the middle five minutes even in the cold — that is the whole point of it."},
+ {ask:"Times Square", unit:"times-square",
+  why:"Ten minutes of standing in the middle of it being shouted at by a building. Everybody says it is a tourist trap and everybody goes anyway, and I would like to have stood in it.",
+  rides:"Between the tree and the hotel, so it is a detour and not a trip. Better as the last ten minutes of a Midtown evening than as a destination of its own."},
+ {ask:"Bryant Park Winter Village", unit:"bryant-park",
+  why:"Stalls, a rink, hot chocolate, and an hour of the trip spent not looking up at anything.",
+  rides:"Four blocks from the hotel — it costs nothing to get to and nothing to leave early, which makes it the best thing on the list to point a tired evening at."},
+ {ask:"Grand Central Terminal", unit:"grand-central",
+  why:"The whispering gallery, mostly. Face into a corner of the arched vault outside the Oyster Bar, talk at the tiles, and somebody in the far corner hears you like they are standing next to you. Then the concourse and the ceiling with the constellations painted backwards by mistake.",
+  rides:"Free, indoors, warm, three quarters of an hour, and on the way to almost everything else — so it costs a slot and no travel. In December there is a holiday market in Vanderbilt Hall and a model train show off the main floor as well."},
  {ask:"Mine Turtle, last night at the hotel", unit:"mine-turtle",
   why:"Truth or dare where the loser presses the turtle's button and hopes it does not go off. 2 to 6 players, about 20 minutes a round — so realistically two hours, because nobody stops after one round.",
   rides:"Pinned to the last night in the hotel and it will not schedule anywhere else. Bags packed, shoes off, nothing to walk to."},
@@ -1006,28 +1030,21 @@ var NYC_WANTS = [
 ];
 
 var NYC_MAYBES = [
- {ask:"The Staten Island Ferry", unit:"staten-island-ferry",
-  why:"Free, every half hour, and it goes right past the Statue of Liberty on the way out and again on the way back.",
-  rides:"A ten-minute walk from the memorial, so it stacks onto that day for almost nothing."},
- {ask:"Grand Central Terminal", unit:"grand-central",
-  why:"The concourse, the green ceiling with the constellations painted backwards, and the whispering gallery by the Oyster Bar.",
-  rides:"Indoors, warm, half an hour, and it is on the way to nearly everything else."},
- {ask:"Bryant Park Winter Village", unit:"bryant-park",
-  why:"Stalls, cocoa, a rink, and an hour of the trip spent not looking up at anything.",
-  rides:"Four blocks from the hotel. Costs nothing to get to and nothing to leave early."},
- {ask:"Times Square", unit:"times-square",
-  why:"Ten minutes of being shouted at by a building. It is a tourist trap and I would still like to have stood in it.",
-  rides:"Between the tree and the hotel, so it is a detour and not a trip."}
+ {ask:"The East River ferry to DUMBO", unit:"nyc-ferry",
+  why:"Four dollars and change for a boat under the Brooklyn Bridge, with the skyline behind it the whole way over.",
+  rides:"Out of Pier 11, ten minutes from the memorial. A third helping of boat, and the first two are already on the list — so this is the one that gets cut if the week tightens."}
 ];
 
 var NYC_NOPES = [
  {name:"A Broadway show", why:"Four tickets is more than the rest of the week costs. Not this trip."},
- {name:"The Statue of Liberty crown", why:"Books out months ahead and eats a whole day. The ferry goes past it for free."},
+ {name:"The Statue of Liberty crown", why:"Books out months ahead and eats a whole day. Three different boats on this list go past her for nothing."},
  {name:"The Metropolitan Museum of Art", why:"A full day on its own, and this week does not have a spare one."},
+ {name:"Rowing a boat ourselves in Central Park", why:"The boathouse rents rowboats April to October. In the first week of December the lake is not renting anything, so all the boating on this list is boats somebody else is driving."},
  {name:"Classic Monopoly", why:"Three hours minimum, on the night the bags are already packed. Monopoly Deal is on the list instead."}
 ];
 
-/* ══ The two cities ═════════════════════════════════════════════════════
+/* ══ The two cities
+ ═════════════════════════════════════════════════════
    Everything in here is city-shaped: the catalogue, the hotel, what the
    train does at each end, and the copy that names real places. Everything
    below it — the scheduler, the checks, the ballots, the board — does not
@@ -1102,7 +1119,7 @@ var CITIES = {
   base:{name:"Midtown", ll:NYC_BASE_LL},
   venues:NYC_VENUES, bundles:NYC_BUNDLES, bundleLoad:NYC_BUNDLE_LOAD,
   wants:NYC_WANTS, maybes:NYC_MAYBES, nopes:NYC_NOPES, cutUnits:[],
-  mustSee:8, askVersion:1,
+  mustSee:10, askVersion:3,
   uber:{base:9.00, perMile:3.10, mph:11, waitMin:5},
   axis:["central-park","911-memorial"],
   /* Undecided on purpose. The two ways in shape the week differently
@@ -1179,11 +1196,11 @@ var CITIES = {
    }
   },
   copy:{
-   deck:"The eight things I want to do in New York, on the same eight days as Washington. Four places and the four games — short on purpose.",
-   askDeck:"Four places and the games, and that is the whole ask. Everything below is the same arithmetic — which day it lands on, how long it takes, what it costs to get there — run against a city where nothing on this list shuts in the first week of December. How we get there is still open, and the strip at the top of the page will show you what each way does to the week.",
+   deck:"The fourteen things I want to do in New York, on the same eight days as Washington. Ten of them are places and four of them are card games, and most of the places are better after dark — which is most of the argument for going in December at all.",
+   askDeck:"Ten things to see and the four games, and that is the whole ask. Everything below is the same arithmetic — which day it lands on, how long it takes, what it costs to get there — run against a city where nothing on this list shuts in the first week of December. How we get there is still open, and the strip at the top of the page will show you what each way does to the week.",
    fitTail:"Nothing on this list closes the week we are there, so the only thing deciding the order is what is better after dark.",
-   togetherNote:"Two of these arrive together: the 9/11 Memorial comes with the museum underneath it, and the tree comes with the Fifth Avenue windows on the same walk. Days can hold more than one outing — the board budgets each one in hours, including the time between stops.",
-   bookingNote:"The 9/11 Museum and the Empire State observatory are the two that want timed tickets ahead of the day.",
+   togetherNote:"Two of these arrive together: the memorial and the top of One World are one outing after dark on the same plaza, and the tree comes with the Fifth Avenue windows on the same walk. The museum is deliberately not in with them — it shuts hours before the lights come on, so it is its own daytime trip. Days can hold more than one outing; the board budgets each in hours, including the time between stops.",
+   bookingNote:"One World, the 9/11 Museum, the Empire State observatory and the Circle Line all want tickets ahead of the day — and the Circle Line runs a thinner winter timetable, so check which days it actually sails before the board promises it.",
    fareNote:" In real life most of these are a subway ride — $2.90 a head, tapped with the card already in your pocket — so the figure above is the ceiling and not the bill.",
    mapNote:"Straight-line miles from the hotel at Herald Square, which flatters Manhattan a little: the grid makes you walk two sides of a triangle. Every hop is costed as an UberXL at about 11 mph, because that is what Midtown does to a car at five o'clock. The subway beats it nearly everywhere below the park and costs $2.90. The map is here to tell you when something is genuinely far, not to talk you into a car.",
    artI:"We are coming from Alabama in December to see a city that is better in the cold. The tree lit on Fifth, the 86th floor in the wind, the pools running in the dark — the cold is not in the way of that, it is part of it. So we bring the real gloves and the layers and we do not bail out fifteen minutes in because somebody's hands got chilly. If it runs long for Nanny, that is a different thing and we call it early for her — but nobody is cutting the tree short on my account.",
