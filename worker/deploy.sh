@@ -25,6 +25,9 @@ KV_TITLE="${KV_TITLE:-crescent-dispatch-trip}"
 API="https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID"
 AUTH=(-H "Authorization: Bearer $CF_API_TOKEN")
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Git Bash hands out /c/Users/... paths, which the Windows curl cannot open.
+SCRIPT_FILE="$HERE/index.js"
+if command -v cygpath >/dev/null 2>&1; then SCRIPT_FILE="$(cygpath -m "$SCRIPT_FILE")"; fi
 
 say() { printf '  %s\n' "$*"; }
 ok()  { python -c 'import sys,json;d=json.load(sys.stdin);sys.exit(0 if d.get("success") else 1)' 2>/dev/null; }
@@ -47,22 +50,24 @@ say "2/4  uploading the worker"
 METADATA="{\"main_module\":\"index.js\",\"compatibility_date\":\"2026-01-01\",\"bindings\":[{\"type\":\"kv_namespace\",\"name\":\"TRIP\",\"namespace_id\":\"$NS_ID\"}]}"
 UP="$(curl -sS "${AUTH[@]}" -X PUT "$API/workers/scripts/$SCRIPT_NAME" \
   -F "metadata=$METADATA;type=application/json" \
-  -F "index.js=@$HERE/index.js;type=application/javascript+module")"
-printf '%s' "$UP" | grep -q '"success":true' || { echo "upload failed:"; echo "$UP"; exit 1; }
+  -F "index.js=@$SCRIPT_FILE;type=application/javascript+module")"
+printf '%s' "$UP" | grep -qE '"success":[[:space:]]*true' || { echo "upload failed:"; echo "$UP"; exit 1; }
 say "     uploaded $SCRIPT_NAME"
 
 say "3/4  enabling the workers.dev route"
 SUB="$(curl -sS "${AUTH[@]}" -X POST "$API/workers/scripts/$SCRIPT_NAME/subdomain" \
   -H "content-type: application/json" --data '{"enabled":true}')"
-printf '%s' "$SUB" | grep -q '"success":true' || say "     (subdomain call returned: $SUB)"
+printf '%s' "$SUB" | grep -qE '"success":[[:space:]]*true' || say "     (subdomain call returned: $SUB)"
 
-SUBDOMAIN="$(curl -sS "${AUTH[@]}" "$API/workers/subdomain" | grep -o '"subdomain":"[^"]*"' | cut -d'"' -f4 || true)"
+# Cloudflare pretty-prints some responses and not others; flatten first.
+SUBDOMAIN="$(curl -sS "${AUTH[@]}" "$API/workers/subdomain" | tr -d ' \n' |
+  grep -o '"subdomain":"[^"]*"' | cut -d'"' -f4 || true)"
 URL="https://$SCRIPT_NAME.${SUBDOMAIN:-YOUR-SUBDOMAIN}.workers.dev"
 
 say "4/4  checking it answers"
 sleep 3
 HEALTH="$(curl -sS "$URL/health" || true)"
-printf '%s' "$HEALTH" | grep -q '"ok":true' && say "     $URL/health -> ok" || say "     not answering yet (DNS can take a minute): $HEALTH"
+printf '%s' "$HEALTH" | grep -qE '"ok":[[:space:]]*true' && say "     $URL/health -> ok" || say "     not answering yet (DNS can take a minute): $HEALTH"
 
 echo
 echo "Worker URL:  $URL"
