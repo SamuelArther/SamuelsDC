@@ -764,8 +764,9 @@ var SEENS = {
 var TICKETS = {
  home:{
   "movie-marathon":0, "tree-and-lights":0, "baking-day":0, "big-dinner":0,
-  "fire-pit":0, "video-games":0, "jigsaw":0, "sleep-in":0, "bad-movies":0,
+  "video-games":0, "jigsaw":0, "sleep-in":0, "bad-movies":0,
   "sweetwater-creek":{flat:5}, "downtown-lights":0, "minecraft-night":0,
+  "fire-pit":{flat:90},
   "fabianos":{ad:19, sr:16, yo:19}, "christmas-parade":0,
   "lights-drive":0, "mlk-park":0,
   "cinema-trip":{ad:14, sr:11, yo:14},
@@ -858,7 +859,8 @@ var WORTH = {
   "arbor-place":{w:"fair", s:"It is a shopping centre and it is free and it is ten minutes away. Not every hour of a week off needs to justify itself, and this one does not have to."},
   "rock-city-lights":{w:"high", s:"Three and a half hours of driving is real and so is the fact that it is the only thing on this list in another state, on a mountain, with a view over seven of them. Samuel wants it; it is in. Book it early, it is online-only and December goes."},
   "world-of-coke":{w:"fair", s:"Only earns its place because it is a two-minute walk from the whale sharks. It would not survive its own drive into Atlanta."},
-  "downtown-lights":{w:"high", s:"Free, out every night, six minutes away. Nothing else on this page returns that much for that little."}
+  "downtown-lights":{w:"high", s:"Free, out every night, six minutes away. Nothing else on this page returns that much for that little."},
+  "fire-pit":{w:"fair", s:"It would be the best evening of the at-home week and we do not own one. Ninety dollars turns a maybe into the cheapest good night of the trip, and until somebody spends it this is a plan for a thing we do not have."}
  },
  dc:{
   "spy-museum":{w:"thin", s:"Thirty-five dollars a head in the one city on earth where the Air and Space Museum, the Archives, the National Gallery and eleven Smithsonians are all free. It is a good museum. It is not a good museum for a hundred and thirty dollars on a week this short."},
@@ -1825,8 +1827,8 @@ var HOME_VENUES = [
   why:"Cookies, and a gingerbread house that will not stand up, and the kitchen wrecked for an afternoon. It smells like the whole point of December and it costs the price of flour."},
  {id:"big-dinner",name:"Cooking one proper dinner",seed:4,tier:"high",period:"night",load:"mid",env:"indoor",min:2,ideal:3,resv:"none",w:IN,bundle:null,ll:HOME_BASE_LL,
   why:"Not a meal somebody hands us across a counter — one dinner we plan, shop for and cook together, and then sit at the table for. On a trip this is a restaurant bill; at home it is an evening."},
- {id:"fire-pit",name:"The fire pit",seed:5,tier:"high",period:"night",load:"lo",env:"outdoor",min:1,ideal:2,resv:"none",w:{rain:"poor",cold:"excellent",wind:"poor",heat:"acceptable"},bundle:null,ll:HOME_BASE_LL,
-  why:"Outside in the cold with a fire going, which is the one form of being cold on this entire page that comes with somewhere warm to stand. Georgia in December is about forty degrees at night, which is exactly right for this and no good at all for anything else outdoors."},
+ {id:"fire-pit",name:"The fire pit",seed:5,tier:"medium",period:"night",load:"lo",env:"outdoor",min:1,ideal:2,resv:"required",w:{rain:"poor",cold:"excellent",wind:"poor",heat:"acceptable"},bundle:null,ll:HOME_BASE_LL,
+  why:"We do not own a fire pit. That is the whole problem with this one — everything else in the house version of this week uses something we already have, and this needs about ninety dollars spent before it exists at all. If we do buy one it is the best thing on the list: outside in the cold with a fire going is the only version of being cold on this entire page that comes with a warm house eleven feet away, and forty degrees in a Georgia December is exactly right for it."},
  {id:"video-games",name:"Video games, properly",seed:6,tier:"medium",period:"night",load:"lo",env:"indoor",min:1.5,ideal:3,resv:"none",w:IN,bundle:null,ll:HOME_BASE_LL,
   why:"A whole evening of it rather than the forty minutes you get on a normal Tuesday. The one thing on any version of this week that is genuinely better at home than anywhere else on earth."},
  {id:"jigsaw",name:"A jigsaw nobody finishes",seed:7,tier:"bonus",period:"day",load:"lo",env:"indoor",min:1,ideal:2.5,resv:"none",w:IN,bundle:null,ll:HOME_BASE_LL,
@@ -1915,9 +1917,6 @@ var HOME_WANTS = [
  {ask:"Baking day", unit:"baking-day",
   why:"Cookies and a gingerbread house that will not stand up and the kitchen destroyed for an afternoon. It smells like the entire point of December.",
   rides:"Three and a half hours and the price of flour. Best on a day it is raining, since none of it involves going outside."},
- {ask:"The fire pit", unit:"fire-pit",
-  why:"Outside in the cold with a fire going. Georgia in December is about forty at night, which is exactly right for standing round a fire and completely useless for anything else outdoors.",
-  rides:"Two hours in the back garden. It is the only cold-weather outing on this entire page with a warm house eleven feet away."},
  {ask:"Fantasy In Lights at Callaway", unit:"fantasy-in-lights",
   why:"Seven miles of driving through eighteen lit scenes, and you never get out of the car. It runs November 15 to January 3, so our week is inside it.",
   rides:"An hour and fifteen each way to Pine Mountain, so about four and a half hours and most of an evening. Because it is done from inside the car it is the one big light show here that a wet night cannot touch — which makes it the right thing to move to when the weather ruins something else."},
@@ -1969,6 +1968,9 @@ var HOME_WANTS = [
 ];
 
 var HOME_MAYBES = [
+ {ask:"The fire pit — if we buy a fire pit", unit:"fire-pit",
+  why:"Outside in the cold with a fire going, forty degrees, a warm house eleven feet away. It would be the best evening in the house version of the week and we cannot have it, because we do not own a fire pit.",
+  rides:"About ninety dollars and it has to be bought before we go, so it sits in the booking tracker with the timed tickets rather than in the list of things that just happen. Everything else in the at-home week uses something already in the house; this is the only line with a purchase in front of it. Worth noting that a Christmas present would arrive three weeks too late for this trip."},
  {ask:"Sweetwater Creek and the mill ruins", unit:"sweetwater-creek",
   why:"The mill is still five storeys of burnt brick on the whitewater and it is still fifteen minutes away. But we have walked all of it — fifteen miles of those trails over the years — so it is not a discovery, it is the local park.",
   rides:"Three hours with the drive, and the park shuts at dark, which in December is half past five. It earns a morning if we want a walk in the cold with the leaves off. It does not earn a place near the top of the list any more."},
@@ -2556,8 +2558,8 @@ var CITIES = {
     depart:{at:"2026-11-29T00:00:00-05:00", big:"Sun Nov 29", small:"already here"},
     departHours:0, noJourney:true, dayHours:6,
     cuts:HOME_LOCAL_UNITS.concat(HOME_FAR_UNITS),
-    check:{level:"ok", t:"Nothing on this plan costs a fare or a ticket",
-      s:"Eight days, nobody in a car, and the whole week is the movie list, the tree, the baking, the fire and the games. It is the cheapest version of December by a distance and the only one where the question is what we feel like rather than what we booked. Switch to Around town or Day trips above to put the rest of the catalogue back."},
+    check:{level:"ok", t:"Nobody gets in a car all week",
+      s:"Eight days, no fares, no tickets, and the whole week is the movie list, the tree, the baking, Minecraft and the games. The one thing that does cost money is the fire pit, because we do not own one — about ninety dollars before that evening exists at all. It is still the cheapest version of December by a very long way, and the only one where the question is what we feel like rather than what we booked. Switch to Around town or Day trips above to put the rest of the catalogue back."},
     structural:function(){ return null; },
     logi:{
      head:"Not going",
@@ -2566,13 +2568,13 @@ var CITIES = {
       "<tr><td>Back</td><td>The house</td><td>The house</td><td class='m'>Sun Dec 6 &middot; still no</td></tr>",
      notes:function(){ return [
       "There is no journey, so there is no arrival day and no departure day, and the board hands both of them straight back. That is two entire days more than any other version of this week — the Crescent to New York eats one at each end and never gives them up.",
-      "Nothing here needs a booking, a ticket, a fare or a forecast. Six of the nine things on this list are indoors, and the two that are not are in the back garden.",
+      "Nothing here needs a fare or a forecast, and only one of it needs money: we do not own a fire pit, so that evening costs about ninety dollars before it exists. Everything else uses something already in the house.",
       "Georgia in the first week of December is about fifty-five in the day and forty at night. That is no good for a memorial loop and exactly right for a fire pit, which is the whole trade this version of the week is making.",
       "The games still come out on the last night. They were bought before December in any case, so game night costs the same here as it does in a hotel in Midtown."
      ]; },
      packing:
       "<tr><td>Nothing</td><td>It is all already here. That is the point.</td></tr>" +
-      "<tr><td>Firewood</td><td>The one thing on this list we do not already own enough of.</td></tr>" +
+      "<tr><td>A fire pit, if we are having one</td><td>We do not own one. About ninety dollars, and it has to be bought before we go, not asked for at Christmas.</td></tr>" +
       "<tr><td>AAAs for the turtle</td><td>Check them before the last night, not on it.</td></tr>"
     }
    },
@@ -2643,7 +2645,7 @@ var CITIES = {
    askDeck:"Twenty things, and how many of them are on the board depends entirely on the How strip above. Everything below is the same arithmetic as the other six cities — hours, weather, closing days, what it costs — run against a week where the base is our own house and there is no journey at either end.",
    fitTail:"Nothing here shuts for the season except Stone Mountain, which runs weekends and school holidays rather than nightly, and Sweetwater Creek, which shuts at dark — and dark is half past five.",
    togetherNote:"One of these arrives as a pair: the aquarium and World of Coca-Cola are on opposite sides of the same plaza, so they are one drive into Atlanta and not two. Days can hold more than one outing, and in this version they hold rather a lot, because nothing is eaten by getting here.",
-   bookingNote:"Garden Lights went on sale October 1 and December dates sell; the aquarium is timed entry in its busiest month; Fantasy In Lights sells by the vehicle. Stone Mountain has not published its 2026 calendar and only runs weekends and school holidays, so confirm it before promising it.",
+   bookingNote:"Garden Lights went on sale October 1 and December dates sell; the aquarium is timed entry in its busiest month; Fantasy In Lights sells by the vehicle. Stone Mountain has not published its 2026 calendar and only runs weekends and school holidays, so confirm it before promising it. And the fire pit is in here rather than with the tickets because we do not own one — it is the only line on this page where the booking is a purchase.",
    fareNote:" These are our own miles in our own car, so the figure is fuel and time rather than a fare.",
    mapNote:"Straight-line miles from the house. It is the only map on this page with a genuine mountain on it: Lookout Mountain is ninety miles north and everything else is inside forty. The middle of the map is empty on purpose — that gap between Douglasville and downtown Atlanta is I-20, and it is twenty minutes of nothing.",
    artI:"The rule for this one is that a week at home is not a week of doing nothing, and it turns into one the moment nobody writes anything down. So it goes on the board like everywhere else: the movie list is scheduled, the tree has an afternoon, the fire has an evening, and sleeping in is on the plan on purpose rather than by accident. The failure mode here is not the cold. It is getting to Friday having watched telly for six days.",
@@ -2651,7 +2653,7 @@ var CITIES = {
    artIII:"There is no journey to argue about and no fare to price. Every mile on this board is fuel in a car we already own, and the furthest anything gets is Lookout Mountain at an hour and three quarters. What this version spends instead of money is intent — nothing here has to happen, which is exactly why the ones that matter are written down."
   },
   packing:
-   "<tr><td>Firewood</td><td>The one thing on this list we do not already own enough of.</td></tr>" +
+   "<tr><td>A fire pit, if we are having one</td><td>We do not own one. About ninety dollars, and it has to be bought before we go, not asked for at Christmas.</td></tr>" +
    "<tr><td>A warm coat</td><td>Fifty-five in the day and forty after dark. Fine for a fire pit, no good for standing still at Stone Mountain for three hours.</td></tr>" +
    "<tr><td>Proper shoes</td><td>The Red Trail down to the mill is rocky, and wet next to the water.</td></tr>" +
    "<tr><td>The movie list, written down</td><td>Otherwise it is half an hour of scrolling and then nobody picks one.</td></tr>" +
@@ -3304,6 +3306,13 @@ function autoFill(){
 }
 
 /* The ask, as scheduler input. Musts first, maybes last so they cut first. */
+/* The things a plan is judged against. Anything this way in has cut is
+   not a must-see that got left behind; it is not on the table. */
+function mustFor(order){
+  var cut = excludedIds();
+  var base = (viewing === "sam") ? wantUnits(false) : order.slice(0, MUST_SEE);
+  return base.filter(function(id){ return cut.indexOf(id) < 0; });
+}
 /* Everything asked for that this city and this way in actually allow. */
 function askableUnits(){
   var cut = excludedIds();
@@ -3354,7 +3363,7 @@ function checks(){
   var days = frameDays(), board = cur(), out = [], order = planningOrder();
   /* On Samuel's plan the things that must fit are the things he asked for —
      not the top of a catalogue-wide seed order that still contains his nos. */
-  var must = (viewing === "sam") ? wantUnits(false) : order.slice(0, MUST_SEE);
+  var must = mustFor(order);
 
   days.forEach(function(day){
     var dayMiles = 0, dayRides = 0;
@@ -3858,7 +3867,7 @@ function renderBoard(){
   var bench = document.getElementById("bench");
   bench.textContent = "";
   var order = planningOrder();
-  var must = (viewing === "sam") ? wantUnits(false) : order.slice(0, MUST_SEE);
+  var must = mustFor(order);
   var benched = order.filter(function(id){ return !board[id]; });
   benched.forEach(function(id){
     var flags = [], rank = order.indexOf(id) + 1;
@@ -3908,7 +3917,7 @@ function renderBoard(){
 /* What a shorter trip would actually cost, named, before it happens. */
 function nightsPreview(n){
   var trial = autoFillInto({}, n);
-  var must = planningOrder().slice(0, MUST_SEE);
+  var must = mustFor(planningOrder());
   var cut = must.filter(function(id){ return !trial[id]; });
   if (!cut.length) return n + " nights fits all thirteen must-see things.";
   return n + " nights cuts " + cut.map(function(i){ return unitById[i].name; }).join(", ") + ".";
