@@ -112,7 +112,7 @@ h1.title em{font-style:italic;font-weight:400;color:var(--orange-ink)}
 .dot.local{background:var(--gold)}
 
 /* ── Cities ─────────────────────────────────────────────────────────────
-   Two trips on the same eight days. The city strip sits above everything
+   Six trips on the same eight days. The city strip sits above everything
    else because it changes what every tab below it is talking about.
    ─────────────────────────────────────────────────────────────────────── */
 .cities{background:var(--surface-2);border-bottom:1px solid var(--rule)}
@@ -508,6 +508,10 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
     <span class="label">Trip</span>
     <button data-city="dc" aria-pressed="true">Washington</button>
     <button data-city="nyc" aria-pressed="false">New York</button>
+    <button data-city="wilm" aria-pressed="false">Wilmington</button>
+    <button data-city="sj" aria-pressed="false">San Jose</button>
+    <button data-city="sea" aria-pressed="false">Seattle</button>
+    <button data-city="pdx" aria-pressed="false">Portland</button>
     <span class="sep" id="waysep" aria-hidden="true"></span>
     <span class="label" id="waylabel">How</span>
     <span class="way" id="waypick" role="group" aria-label="How we get there"></span>
@@ -664,7 +668,7 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
 <footer><div class="wrap">
   <div class="fmark">&#9670;&#9670;&#9670;</div>
   <p>Bart &middot; Jess &middot; Samuel &middot; Nanny<br>
-     Anniston to Washington and back on the Crescent<br>
+     <span id="footline"></span><br>
      dc.sambonius.net</p>
 </div></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -678,6 +682,167 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
    Venue attributes are planning facts, not opinions: how much of a day
    something eats, what weather ruins it, where it is, and when it shuts.
    ═══════════════════════════════════════════════════════════════════════ */
+
+
+/* ══ What it costs to get in, and whether it is worth it ════════════════
+   Kept out of the venue lines on purpose: those are already long, and a
+   price is a different kind of fact from a closing day. Two tables per
+   city, both keyed by venue id.
+
+   ticket — 0 is free and proven free. A missing entry means nobody has
+   priced it yet, and the page says so rather than quietly counting it as
+   nothing. {ad,sr,yo} is per head by rate; {flat:n} is one charge for the
+   whole party, which is how a carload light show and a car ferry work.
+   Figures are published list rates to check before booking, not quotes.
+
+   worth — the honest answer to "is this actually worth the ticket and the
+   slot". Everything is "fair" unless it is named here. It is an opinion,
+   which is why it is written down where it can be argued with instead of
+   being buried in whether something got scheduled.
+   ═══════════════════════════════════════════════════════════════════════ */
+/* ── The hops that are a train ────────────────────────────────────────
+   Everything on the board is costed as a car at the city's own speed,
+   which is the honest worst case for a hop across town. It is the wrong
+   answer for a fixed rail run: Caltrain takes an hour and ten to San
+   Francisco whatever the 101 is doing, and pricing that as forty-two
+   miles of traffic says a San Francisco day cannot fit in a day. Where a
+   number is given here it is one-way hours on the train, and it replaces
+   the road estimate for any leg touching that venue.
+   Same shape as `follows`: a real-world fact one city needed, inert
+   everywhere it is not declared.
+   ─────────────────────────────────────────────────────────────────── */
+var RAILS = {
+ sj:{  "ferry-building":1.2, "golden-gate":1.6, "computer-history":0.6 },
+ sea:{ "museum-of-flight":0.7 },
+ pdx:{ "zoolights":0.5, "grotto":0.5 }
+};
+
+var TICKETS = {
+ dc:{
+  "us-capitol":0, "national-archives":0, "lincoln-memorial":0, "library-of-congress":0,
+  "vietnam-memorial":0, "air-space":0, "arlington":0, "wwii-memorial":0,
+  "korean-memorial":0, "white-house":0, "national-christmas-tree":0, "natural-history":0,
+  "american-history":0, "african-american-history":0, "jefferson-memorial":0,
+  "mlk-memorial":0, "fdr-memorial":0, "national-gallery":0, "georgetown":0,
+  "national-mall":0, "holiday-market":0,
+  "washington-monument":{ad:1, sr:1, yo:1},
+  "fords-theatre":{ad:3.50, sr:3.50, yo:3.50},
+  "national-cathedral":{ad:15, sr:10, yo:10},
+  "spy-museum":{ad:35, sr:32, yo:26},
+  "mine-turtle":0, "muffin-time":0, "uno":0, "monopoly-deal":0
+ },
+ nyc:{
+  "911-memorial":0, "central-park":0, "rockefeller-tree":0, "fifth-ave-windows":0,
+  "times-square":0, "staten-island-ferry":0, "grand-central":0, "bryant-park":0,
+  "dumbo":0, "brooklyn-bridge-walk":0,
+  "one-world-observatory":{ad:48, sr:46, yo:41},
+  "911-museum":{ad:36, sr:30, yo:26},
+  "empire-state":{ad:48, sr:46, yo:42},
+  "circle-line":{ad:47, sr:42, yo:37},
+  "mine-turtle":0, "muffin-time":0, "uno":0, "monopoly-deal":0
+ },
+ wilm:{
+  "fort-fisher":0, "kure-beach":0, "riverwalk":0, "front-street":0,
+  "wrightsville":0, "carolina-beach-boardwalk":0,
+  "battleship":{ad:14, sr:10, yo:14},
+  "enchanted-airlie":{flat:35},
+  "southport-ferry":{flat:7},
+  "cape-fear-museum":{ad:10, sr:9, yo:6},
+  "bellamy-mansion":{ad:15, sr:14, yo:8},
+  "burgwin-wright":{ad:15, sr:14, yo:8},
+  "airlie-oak":{ad:9, sr:9, yo:5},
+  "mine-turtle":0, "muffin-time":0, "uno":0, "monopoly-deal":0
+ },
+ sj:{
+  "christmas-in-the-park":0, "ferry-building":0, "golden-gate":0, "santana-row":0,
+  "japanese-garden":0, "cathedral-st-joseph":0,
+  "winchester":{ad:44, sr:41, yo:39},
+  "the-tech":{ad:29, sr:26, yo:24},
+  "computer-history":{ad:22, sr:18, yo:15},
+  "sj-museum-art":{ad:12, sr:10, yo:0},
+  "monterey-aquarium":{ad:60, sr:55, yo:50},
+  "mine-turtle":0, "muffin-time":0, "uno":0, "monopoly-deal":0
+ },
+ sea:{
+  "pike-place":0, "gum-wall":0, "christmas-ship":0, "central-library":0, "kerry-park":0,
+  "space-needle":{ad:39, sr:33, yo:30},
+  "chihuly":{ad:35, sr:30, yo:28},
+  "bainbridge-ferry":{ad:10.15, sr:5.05, yo:10.15},
+  "mopop":{ad:35, sr:31, yo:26},
+  "museum-of-flight":{ad:28, sr:24, yo:19},
+  "great-wheel":{ad:18, sr:18, yo:13},
+  "pacific-science":{ad:25, sr:21, yo:18},
+  "mine-turtle":0, "muffin-time":0, "uno":0, "monopoly-deal":0
+ },
+ pdx:{
+  "powells":0, "christmas-ships":0, "saturday-market":0,
+  "zoolights":{ad:14, sr:12, yo:10},
+  "omsi":{ad:27, sr:24, yo:22},
+  "grotto":{ad:19, sr:17, yo:12},
+  "japanese-garden":{ad:23, sr:20, yo:18},
+  "pittock-mansion":{ad:16, sr:14, yo:11},
+  "aerial-tram":{ad:7.10, sr:3.55, yo:3.55},
+  "lan-su-garden":{ad:14, sr:13, yo:11},
+  "multnomah-falls":{flat:2},
+  "mine-turtle":0, "muffin-time":0, "uno":0, "monopoly-deal":0
+ }
+};
+
+var WORTH = {
+ dc:{
+  "spy-museum":{w:"thin", s:"Thirty-five dollars a head in the one city on earth where the Air and Space Museum, the Archives, the National Gallery and eleven Smithsonians are all free. It is a good museum. It is not a good museum for a hundred and thirty dollars on a week this short."},
+  "lincoln-memorial":{w:"high", s:"Free, open all night, and the single best thing in the city after dark."},
+  "air-space":{w:"high", s:"Free, and the only place any of us will stand under the actual Wright Flyer."}
+ },
+ nyc:{
+  "times-square":{w:"thin", s:"Ten minutes of being shouted at by a building. It costs nothing, which is the only reason it survives the cut — but it still costs a slot, and slots are the scarce thing this week, not money."},
+  "empire-state":{w:"fair", s:"Forty-eight dollars a head for the 86th floor, and it is open to the weather. Worth it on the right night and a waste on the wrong one, which is exactly why the board watches the wind for it."},
+  "staten-island-ferry":{w:"high", s:"Free, goes past the Statue twice, and runs every half hour. Nothing else in the city gives that much back for nothing."},
+  "911-memorial":{w:"high", s:"Free, and the reason for the trip."}
+ },
+ wilm:{
+  "battleship":{w:"high", s:"Fourteen dollars for three hours inside a real battleship, open every day of the year including the holidays. Nothing else on this trip returns that much for that little."},
+  "airlie-oak":{w:"thin", s:"A second ticket to the same sixty-seven acres we are already paying to walk through after dark. Only sensible if the lights sell out before we book."},
+  "burgwin-wright":{w:"fair", s:"Genuinely good and genuinely optional, and shut on both of our Sundays and Mondays."},
+  "enchanted-airlie":{w:"high", s:"Thirty-five dollars for the whole car, not each. Four of us through a million lights for the price of one museum ticket."}
+ },
+ sj:{
+  "christmas-in-the-park":{w:"high", s:"Two acres of it, four blocks away, free, and open every night we are there. It has never charged anybody anything in seventy years."},
+  "santana-row":{w:"thin", s:"A shopping centre with a very large tree. It is free and it is pleasant and it is an hour we could spend somewhere that is actually San Jose. It only earns its place as the second half of the Winchester evening, because it is across the road."},
+  "monterey-aquarium":{w:"high", s:"Worth every dollar and it is still a maybe, because the problem with it is the seventy-five miles and the rental car, not the ticket."},
+  "golden-gate":{w:"high", s:"Free to walk out onto, and the one thing here nobody can do from a photograph."}
+ },
+ sea:{
+  "great-wheel":{w:"thin", s:"Eighteen dollars a head for fifteen minutes and a hundred and seventy-five feet, in a city where Kerry Park is free, higher, and has the Needle in the shot."},
+  "gum-wall":{w:"thin", s:"It is a wall of chewed gum. It is free and it is ten minutes and it is directly under the market, which is the only reason it is on the page at all."},
+  "bainbridge-ferry":{w:"high", s:"You pay one way and the ride back is free, for thirty-five minutes of Puget Sound each direction. It is the Staten Island Ferry with somewhere to get off."},
+  "central-library":{w:"high", s:"Free, indoors, warm, four blocks away, and the best building in the city."}
+ },
+ pdx:{
+  "zoolights":{w:"high", s:"A million and a half lights on the end of a train line, which is the rare big display that does not need a car."},
+  "powells":{w:"high", s:"Free, indoors, open late, and three hours vanish in it. In the wettest month of the year that is worth more than it sounds."},
+  "aerial-tram":{w:"fair", s:"Seven dollars because it is public transit rather than an attraction, which is the whole trick of it."},
+  "multnomah-falls":{w:"fair", s:"The waterfall is not the problem. Forty minutes each way with no transit, on a road that closes for ice, is the problem."}
+ }
+};
+
+/* ── Eating ───────────────────────────────────────────────────────────
+   Four people eat three times a day for eight days and it takes real
+   hours out of the board, not just money. Lunch comes out of the daytime
+   slot and dinner out of the evening one, so a day that looked like it
+   held three outings holds two once everybody has eaten. Breakfast is at
+   the hotel before the board starts, so it costs money and no hours.
+   Per-head figures are a sit-down lunch and an ordinary dinner, not a
+   good restaurant and not a petrol station.
+   ─────────────────────────────────────────────────────────────────── */
+var FOODS = {
+ dc:   {breakfast:{h:0,   head:11}, lunch:{h:1,    head:19}, dinner:{h:1.25, head:33}},
+ nyc:  {breakfast:{h:0,   head:13}, lunch:{h:1,    head:23}, dinner:{h:1.25, head:41}},
+ wilm: {breakfast:{h:0,   head:9},  lunch:{h:0.75, head:15}, dinner:{h:1.25, head:27}},
+ sj:   {breakfast:{h:0,   head:12}, lunch:{h:1,    head:21}, dinner:{h:1.25, head:37}},
+ sea:  {breakfast:{h:0,   head:12}, lunch:{h:1,    head:21}, dinner:{h:1.25, head:38}},
+ pdx:  {breakfast:{h:0,   head:11}, lunch:{h:0.75, head:18}, dinner:{h:1.25, head:32}}
+};
 
 var IN   = {rain:"excellent", cold:"excellent", wind:"excellent", heat:"excellent"};
 var MEM  = {rain:"poor",      cold:"acceptable", wind:"poor",      heat:"good"};
@@ -852,10 +1017,10 @@ var DC_NOPES = [
 var DC_CUT_UNITS = ["air-space"];
 
 var CREW = [
- {id:"bart",  name:"Bart",  role:"Dispatcher — owns dates and nights"},
- {id:"jess",  name:"Jess",  role:"Full stakeholder"},
- {id:"sam",   name:"Samuel",   role:"Full stakeholder"},
- {id:"nanny", name:"Nanny", role:"Full stakeholder"}
+ {id:"bart",  name:"Bart",  role:"Dispatcher — owns dates and nights", rate:"ad"},
+ {id:"jess",  name:"Jess",  role:"Full stakeholder", rate:"ad"},
+ {id:"sam",   name:"Samuel",   role:"Full stakeholder", rate:"ad"},
+ {id:"nanny", name:"Nanny", role:"Full stakeholder", rate:"sr"}
 ];
 var BOARD_KEYS = ["family","bart","jess","sam","nanny"];
 var TRIP = {start:"2026-11-29", nights:7, board:"2026-11-28T20:04:00-06:00", backAtWork:"2026-12-10"};
@@ -870,6 +1035,65 @@ var GAMES_COST = {
 function money(n){ return "$" + n.toFixed(2); }
 function gamesTax(){ return Math.round(GAMES_COST.subtotal * GAMES_COST.taxRate * 100) / 100; }
 function gamesTotal(){ return GAMES_COST.subtotal + gamesTax() + GAMES_COST.shipping; }
+
+/* ── What the week costs ──────────────────────────────────────────────
+   Three things take money out of this trip: getting to a thing, getting
+   into it, and eating between them. The board has always priced the
+   rides. These price the other two — and they are honest about what is
+   not known yet, because an outing nobody has priced is not the same as
+   an outing that is free, and totalling them together would be a lie.
+   ─────────────────────────────────────────────────────────────────── */
+var TICKET, WORTHS, FOOD, RAIL;        /* the selected city's own tables */
+
+function ticketOf(id){ return TICKET ? TICKET[id] : undefined; }
+function worthOf(id){ return (WORTHS && WORTHS[id]) || {w:"fair", s:null}; }
+function worthWord(w){ return w === "high" ? "Worth it" : w === "thin" ? "Thin" : "Fair"; }
+
+/* Admission for all four of us. null means something in it is unpriced,
+   which the callers report rather than quietly rounding down to nothing. */
+function ticketFor(u){
+  var total = 0, known = true;
+  u.members.forEach(function(id){
+    var t = ticketOf(id);
+    if (t === undefined){ known = false; return; }
+    if (t === 0) return;
+    if (t.flat != null){ total += t.flat; return; }   /* one charge, whole car */
+    CREW.forEach(function(p){ var r = t[p.rate]; total += (r == null ? t.ad : r); });
+  });
+  return known ? total : null;
+}
+function admissionsOn(board){
+  var total = 0, unpriced = [];
+  Object.keys(board).forEach(function(uid){
+    var u = unitById[uid]; if (!u) return;
+    var t = ticketFor(u);
+    if (t === null) unpriced.push(u.name); else total += t;
+  });
+  return {total:total, unpriced:unpriced};
+}
+/* Meals for the whole trip. Breakfast every morning after a hotel night;
+   lunch and dinner every day including the travel ones, because a
+   sandwich at Peachtree costs the same as a sandwich anywhere else. */
+function mealPlan(){
+  var n = frameDays().length, c = CREW.length;
+  var b = FOOD.breakfast.head * c * (n - 1),
+      l = FOOD.lunch.head * c * n,
+      d = FOOD.dinner.head * c * n;
+  return {n:n, breakfasts:n-1, lunches:n, dinners:n,
+          b:b, l:l, d:d, total:b + l + d};
+}
+function faresOn(board){
+  var t = 0;
+  frameDays().forEach(function(day){
+    ["day","night"].forEach(function(s){ t += slotFare(board, day, s); });
+  });
+  return t;
+}
+function weekCost(board){
+  var a = admissionsOn(board), m = mealPlan(), f = faresOn(board);
+  return {adm:a.total, unpriced:a.unpriced, meals:m, fares:f,
+          total:a.total + m.total + f};
+}
 
 /* ── Units ──────────────────────────────────────────────────────────── */
 var TIERN = {protected:0, high:1, medium:2, bonus:3};
@@ -1051,7 +1275,447 @@ var NYC_NOPES = [
  {name:"Classic Monopoly", why:"Three hours minimum, on the night the bags are already packed. Monopoly Deal is on the list instead."}
 ];
 
-/* ══ The two cities
+
+/* ══ Wilmington ═════════════════════════════════════════════════════════
+   The first city on this page the Crescent cannot reach. Wilmington has no
+   passenger rail at all — the nearest Amtrak platform is Charlotte, two
+   hundred miles inland — so the train that names this whole site is not an
+   option here, and neither is the no-rental-car rule that both the other
+   cities are built on. The battleship is across the river, the coast is
+   fifteen miles south, and the lights are eight miles east. Something has
+   to drive.
+   ═══════════════════════════════════════════════════════════════════════ */
+var WILM_BASE_LL = [34.2352,-77.9487];     /* the hotel, downtown by the Riverwalk:
+                                                  the battleship is straight across */
+var COAST = {rain:"poor", cold:"acceptable", wind:"poor", heat:"good"};
+
+var WILM_VENUES = [
+ {id:"battleship",name:"Battleship NORTH CAROLINA",seed:1,tier:"protected",period:"day",load:"hi",env:"mixed",min:2,ideal:3.5,resv:"none",w:{rain:"acceptable",cold:"good",wind:"acceptable",heat:"good"},bundle:null,closed:null,ll:[34.2367,-77.9542],
+  why:"Thirty-five thousand tons of it moored across the Cape Fear River from downtown, and nine levels of it open to walk. Gun turrets, the engine rooms, the bunks, the sixteen-inch guns pointing back at the town. Open 8 to 5 every single day including the holidays, which on a week like this one makes it the most reliable thing on the list."},
+ {id:"enchanted-airlie",name:"Enchanted Airlie",seed:2,tier:"protected",period:"night",load:"mid",env:"outdoor",min:1,ideal:1.75,resv:"required",w:{rain:"poor",cold:"good",wind:"acceptable",heat:"good"},bundle:null,ll:[34.2246,-77.8083],
+  why:"Half a mile of walking path through Airlie Gardens under a million lights, the live oaks strung all the way up, four timed entries a night. Runs select nights from November 28 to December 21, so our week is inside it. Tickets are sold by the carload — 35 dollars a car, 65 for a van — they go on sale October 28 and they sell out, so this one gets booked before anything else on the page."},
+ {id:"fort-fisher",name:"Fort Fisher State Historic Site",seed:3,tier:"protected",period:"day",load:"mid",env:"mixed",min:1.25,ideal:2,resv:"none",w:COAST,bundle:"cape-fear-south",closed:{wd:[0],hol:["thanksgiving","christmas","newyear"]},ll:[33.9718,-77.9188],
+  why:"The largest earthwork fort of the Civil War and the one that kept Wilmington open as the last port the Confederacy had, until the biggest amphibious assault before Normandy took it in January 1865. What is left is the mounds themselves and the sea eating them, which is most of the point."},
+ {id:"kure-beach",name:"Kure Beach and the pier",seed:4,tier:"high",period:"day",load:"lo",env:"outdoor",min:.75,ideal:1.5,resv:"none",w:COAST,bundle:"cape-fear-south",ll:[33.9963,-77.9069],
+  why:"The Atlantic in December, which means a wide empty beach, a fishing pier still open, wind off the water and nobody else on it. Eighteen miles south of downtown, and the same drive as the fort — so it is the fort's afternoon, not a trip of its own."},
+ {id:"southport-ferry",name:"The Fort Fisher ferry to Southport",seed:5,tier:"high",period:"day",load:"mid",env:"mixed",min:1.5,ideal:2.5,resv:"recommended",w:{rain:"poor",cold:"acceptable",wind:"poor",heat:"good"},bundle:null,ll:[33.9614,-77.9401],follows:"cape-fear-south",
+  why:"A thirty-five-minute state ferry across the mouth of the Cape Fear from the fort over to Southport, with the car on board and the river opening out to the ocean on the way. Southport on the other side is the old pilot town — the waterfront, the maritime museum, streets of houses under live oaks. The winter timetable is thin and it is the boat that decides the day, not us."},
+ {id:"riverwalk",name:"The Riverwalk after dark",seed:6,tier:"high",period:"night",load:"lo",env:"outdoor",min:.75,ideal:1.25,resv:"none",w:{rain:"poor",cold:"good",wind:"acceptable",heat:"good"},bundle:"downtown-after-dark",ll:[34.2352,-77.9503],
+  why:"A mile and a half of boardwalk down the river with the battleship lit up across the water the whole way. Free, it starts at the hotel door, and it is the cheapest good hour of the week."},
+ {id:"front-street",name:"Front Street at Christmas",seed:7,tier:"high",period:"night",load:"lo",env:"outdoor",min:.5,ideal:1.25,resv:"none",w:{rain:"poor",cold:"good",wind:"good",heat:"good"},bundle:"downtown-after-dark",ll:[34.2364,-77.9476],
+  why:"Two hundred and thirty blocks of the old town on the National Register, and the length of Front Street strung with lights and garland in December. Horse-drawn carriages if we want to be tourists about it. It is the walk back from the Riverwalk anyway."},
+ {id:"cape-fear-museum",name:"Cape Fear Museum",seed:8,tier:"medium",period:"day",load:"lo",env:"indoor",min:1,ideal:2,resv:"none",w:IN,bundle:null,closed:{wd:[1],hol:["thanksgiving","christmas","newyear"]},ll:[34.2373,-77.9403],
+  why:"The oldest museum in the state, and the one that explains why any of the rest of this is here — the river, the port, the blockade, Michael Jordan's high school jersey. Indoors and warm, which is what a wet afternoon on the coast is for. Shut Mondays."},
+ {id:"bellamy-mansion",name:"Bellamy Mansion",seed:9,tier:"medium",period:"day",load:"lo",env:"indoor",min:1,ideal:1.5,resv:"recommended",w:IN,bundle:null,closed:{wd:[0,1],hol:["thanksgiving","christmas","newyear"]},ll:[34.2379,-77.9455],
+  why:"An 1861 antebellum house at the top of the historic district, decorated through December, with the restored slave quarters standing behind it in the yard and treated as part of the house rather than as a footnote to it. Shut Sundays and Mondays."},
+ {id:"wrightsville",name:"Wrightsville Beach",seed:10,tier:"medium",period:"day",load:"mid",env:"outdoor",min:1,ideal:2,resv:"none",w:COAST,bundle:null,ll:[34.2085,-77.7964],
+  why:"The closer beach — twelve miles east, on the way home from the lights rather than south with the fort. Five miles of sand, the loop around the island, and in December it is ours. The water is about 60 degrees, so this is a walk and not a swim."},
+ {id:"carolina-beach-boardwalk",name:"The Carolina Beach boardwalk",seed:11,tier:"bonus",period:"night",load:"lo",env:"outdoor",min:.5,ideal:1,resv:"none",w:COAST,bundle:null,ll:[34.0352,-77.8936],
+  why:"An old-fashioned boardwalk with the lights on and most of it shut for the winter, which is its own kind of good. Doughnuts at Britt's if the window is open. Fifteen minutes north of the fort, so it is what the coast day turns into once it gets dark."},
+ {id:"burgwin-wright",name:"Burgwin-Wright House and Gardens",seed:12,tier:"bonus",period:"day",load:"lo",env:"mixed",min:.75,ideal:1.25,resv:"none",w:{rain:"acceptable",cold:"good",wind:"good",heat:"good"},bundle:null,closed:{wd:[0,1],hol:["thanksgiving","christmas","newyear"]},ll:[34.2359,-77.9469],
+  why:"A 1770 house built on the stone walls of the town jail, with the colonial gardens behind it and Cornwallis's headquarters in the last months of the war. Decorated for Christmas the way an eighteenth-century house actually would have been. Three blocks from the hotel."},
+ {id:"airlie-oak",name:"Airlie Gardens by daylight",seed:13,tier:"bonus",period:"day",load:"lo",env:"outdoor",min:1,ideal:1.5,resv:"none",w:{rain:"poor",cold:"good",wind:"good",heat:"good"},bundle:null,ll:[34.2246,-77.8083],
+  why:"The same sixty-seven acres as the lights, in the daytime, for the Airlie Oak — four hundred and sixty years old and still standing — the lake, and the Minnie Evans bottle chapel. Only worth doing if we are not already going at night, which we are."},
+ {id:"mine-turtle",name:"Mine Turtle at the hotel",seed:15,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:WILM_BASE_LL,lastNight:true,
+  why:"Truth or dare with a turtle that explodes. Two to six players, so all four of us plus whoever wanders over. Last night, in the room, bags already packed."},
+ {id:"muffin-time",name:"Muffin Time at the hotel",seed:16,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:WILM_BASE_LL,lastNight:true,
+  why:"Two hundred cards of chaos where one card flips the whole game. Two to eight players, so nobody sits out. The other half of the last night."},
+ {id:"uno",name:"Uno",seed:17,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:WILM_BASE_LL,lastNight:true,
+  why:"Weighs nothing, everybody already knows it, and Nanny can play it without a rules explanation. Also the right thing to have in a pocket for nine hours of Interstate 20."},
+ {id:"monopoly-deal",name:"Monopoly Deal",seed:18,tier:"bonus",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:WILM_BASE_LL,lastNight:true,
+  why:"Monopoly that fits in a pocket and ends in fifteen minutes instead of three hours. All the dealing and stealing, none of the sitting there bankrupt at midnight."}
+];
+
+var WILM_BUNDLES = {
+ "cape-fear-south":{name:"Down the cape to Fort Fisher",core:["fort-fisher","kure-beach"],
+   why:"One drive south and both of the things at the end of it. The fort in the early afternoon while the light is still on the earthworks, then the beach and the pier for the last of it. Fifteen miles from the hotel and no reason on earth to do them on separate days."},
+ "downtown-after-dark":{name:"The Riverwalk and Front Street",core:["riverwalk","front-street"],
+   why:"Out of the hotel, down the boardwalk with the battleship lit across the water, and back up Front Street under the garland. An hour and a half, all of it free, and it starts and ends at the door."}
+};
+var WILM_BUNDLE_LOAD = {"cape-fear-south":"hi","downtown-after-dark":"lo"};
+
+var WILM_WANTS = [
+ {ask:"The Battleship NORTH CAROLINA", unit:"battleship",
+  why:"This is the reason to go to Wilmington. Nine levels of a real battleship you walk around inside — the sixteen-inch turrets, the engine rooms, the bunks stacked five high, the whole thing sitting in the river across from downtown. She earned fifteen battle stars in the Pacific and the Japanese reported her sunk six separate times.",
+  rides:"Two hours minimum and closer to three and a half if we do it properly. Open 8 to 5 every day of the year including the holidays, so it is the one thing on this list no closure can take away — which makes it the outing to hang a wet day on. Fourteen dollars each, ten for Nanny, and parking is free."},
+ {ask:"Down the cape to Fort Fisher", unit:"cape-fear-south",
+  why:"The biggest earthwork fort of the Civil War, the one that kept this port open until the end, and the sea is taking it back a foot at a time. Then Kure Beach at the bottom of the road for the Atlantic in December with nobody on it.",
+  rides:"One drive fifteen miles south and both of them at the end of it. The fort is shut Sundays, so it lands midweek. About three and a half hours together, and the ferry can come off the end of it if the timetable plays along."},
+ {ask:"Enchanted Airlie", unit:"enchanted-airlie",
+  why:"A million lights through sixty-seven acres of garden with the live oaks lit all the way up, on a half-mile walking path rather than from inside a car. It runs November 28 to December 21 and our week sits right inside that, which is luck we should not waste.",
+  rides:"Eight miles east of downtown, four timed entries a night, and about an hour and a half on the path. The ticket is sold by the carload — 35 dollars for a car, 65 for a van — so it costs the same for the four of us as for one. On sale October 28 and these sell out; this is the first booking of the trip."},
+ {ask:"The ferry over to Southport", unit:"southport-ferry",
+  why:"A state ferry across the mouth of the Cape Fear with the car on it, thirty-five minutes with the river opening out into the ocean, and the old pilot town on the other side. I want to be on a boat, and this is the one that is free of a tour and goes somewhere real.",
+  rides:"It leaves from Fort Fisher, so it only works on the back of the fort day and the board will not schedule it anywhere else. The winter timetable is thin, so the sailing list decides which day the whole cape trip lands on."},
+ {ask:"The Riverwalk and Front Street after dark", unit:"downtown-after-dark",
+  why:"A mile and a half of boardwalk with the battleship lit up across the black water, then back through two hundred blocks of old town with the garland up. It is the view of the ship you cannot get from on board.",
+  rides:"It starts at the hotel door and ends there, so it costs a slot and no travel at all. The right thing to point a tired evening at, and the right thing to do on the night the lights are sold out."},
+ {ask:"Wrightsville Beach", unit:"wrightsville",
+  why:"The near beach, twelve miles east, five miles of sand and in the first week of December all of it empty. Different from Kure — this is the one with the town on it.",
+  rides:"It is on the same road as the gardens, so it stacks with the lights: beach in the afternoon, Airlie once it is dark. About two hours if the wind is behaving."},
+ {ask:"The Cape Fear Museum", unit:"cape-fear-museum",
+  why:"The oldest museum in North Carolina and the one that explains the rest of the trip — why there is a port here, what the blockade was, what the fort was protecting. Also Michael Jordan's high school jersey, which is a different kind of exhibit.",
+  rides:"Two miles from the hotel, indoors and warm, about two hours. Shut Mondays. This is the outing that saves a rained-out afternoon."},
+ {ask:"The Bellamy Mansion", unit:"bellamy-mansion",
+  why:"An 1861 house at the top of the historic district, dressed for Christmas, with the restored slave quarters standing in the yard behind it and presented as part of the house rather than as something at the bottom of a sign.",
+  rides:"Four blocks from the hotel and about an hour and a half. Shut Sundays and Mondays, which on this week is both end days — so it has to land midweek or not at all."},
+ {ask:"The Carolina Beach boardwalk", unit:"carolina-beach-boardwalk",
+  why:"An old boardwalk with the lights on and most of it closed for the season. Half an hour of walking on it in the cold with doughnuts, which is better in December than it would be in July.",
+  rides:"Fifteen minutes north of the fort on the way home, so it is what the cape day turns into once the sun goes down rather than a trip anybody makes on purpose."},
+ {ask:"Mine Turtle, last night at the hotel", unit:"mine-turtle",
+  why:"Truth or dare where the loser presses the turtle's button and hopes it does not go off. 2 to 6 players, about 20 minutes a round — so realistically two hours, because nobody stops after one round.",
+  rides:"Pinned to the last night in the hotel and it will not schedule anywhere else. Bags packed, shoes off, nothing to walk to."},
+ {ask:"Muffin Time, same night", unit:"muffin-time",
+  why:"Two hundred cards, 2 to 8 players, and a single card can flip the whole thing on its head. Twenty minutes on the box, which is a lie in the same way it is a lie for every good card game.",
+  rides:"Also pinned to the last night. The board budgets three hours of the evening for the pair of them."},
+ {ask:"Uno", unit:"uno",
+  why:"Everyone already knows it, nobody needs the rules read out, and Nanny is in on the first hand. It also lives in a pocket, which matters somewhere around hour six of Interstate 20.",
+  rides:"Last night with the rest of them — but this is the one that comes out on the way there too, in the back seat or at a gate, whichever way we end up going."},
+ {ask:"Monopoly Deal", unit:"monopoly-deal",
+  why:"Monopoly's good part with none of its bad part. Fifteen minutes a game instead of three hours, and it fits in a jacket pocket.",
+  rides:"The same four games as every other version of this trip. They are bought before we leave, so game night costs exactly the same wherever we go and however we get there."}
+];
+
+var WILM_MAYBES = [
+ {ask:"The Burgwin-Wright House", unit:"burgwin-wright",
+  why:"A 1770 house built on the stone walls of the old town jail, Cornwallis's headquarters at the end of the war, decorated for Christmas the way the eighteenth century actually did it.",
+  rides:"Three blocks from the hotel, an hour and a bit, and shut Sundays and Mondays. Genuinely good and genuinely optional — it goes in if a downtown afternoon has a hole in it."},
+ {ask:"Airlie Gardens in the daytime", unit:"airlie-oak",
+  why:"The four-hundred-and-sixty-year-old Airlie Oak, the lake, and the bottle chapel, in daylight and without the crowd.",
+  rides:"It is the same sixty-seven acres we are already paying to walk through after dark, so this is a second ticket to the same place. Only if the lights sell out before we book."}
+];
+
+var WILM_NOPES = [
+ {name:"The NC Aquarium at Fort Fisher", why:"Closed for construction with no reopening date announced. It would have been the obvious second half of the cape day and it is simply not available, so the beach is doing that job instead."},
+ {name:"Bald Head Island", why:"A ferry from Southport, then no cars allowed on the island — golf carts only. It eats a whole day and it costs three separate fares to do it. Not on an eight-day trip with four people."},
+ {name:"Swimming", why:"The Atlantic is about 60 degrees the first week of December. Every beach on this list is a walk."},
+ {name:"Masonboro Island", why:"Only reachable by boat and there is no winter service worth the name. It is a nature reserve with nothing on it, which is the appeal and also the problem in December."},
+ {name:"Classic Monopoly", why:"Three hours minimum, on the night the bags are already packed. Monopoly Deal is on the list instead."}
+];
+
+/* ══ San Jose ═══════════════════════════════════════════════════════════
+   The far one. No train can do this in eight days — Amtrak out of Alabama
+   goes to Los Angeles by way of New Orleans in three days and eight hours,
+   each way — so this city has exactly one way in and the page does not
+   pretend otherwise. What it buys for the fare is the only version of this
+   trip that needs no car at all: the airport is three miles from the hotel,
+   Caltrain runs to San Francisco, and the best thing on the list is free
+   and four blocks away.
+   ═══════════════════════════════════════════════════════════════════════ */
+var SJ_BASE_LL = [37.3337,-121.8907];      /* the hotel, downtown San Jose:
+                                                  the park is four blocks, Diridon is one stop */
+
+var SJ_VENUES = [
+ {id:"christmas-in-the-park",name:"Christmas in the Park",seed:1,tier:"protected",period:"night",load:"mid",env:"outdoor",min:1,ideal:2,resv:"none",w:{rain:"poor",cold:"excellent",wind:"good",heat:"good"},bundle:null,ll:[37.3330,-121.8890],
+  why:"Two acres of Plaza de Cesar Chavez turned into forty-odd animated exhibits, a couple of hundred trees decorated by schools and neighbourhoods, and a sixty-five-foot lit tree in the middle of it. It opens on November 28 — the night we would be leaving Alabama — and it runs to New Year. It has been free for seventy years and it is still free."},
+ {id:"winchester",name:"Winchester Mystery House, by candlelight",seed:2,tier:"protected",period:"night",load:"mid",env:"mixed",min:1.25,ideal:2,resv:"required",w:{rain:"acceptable",cold:"good",wind:"good",heat:"good"},bundle:null,ll:[37.3184,-121.9511],
+  why:"A hundred and sixty rooms built over thirty-eight years with no architect and no plan: staircases into ceilings, doors opening onto a two-storey drop, a window in a floor. In December they run it by candlelight after dark with the house dressed for Christmas, which is the correct way to see a house somebody built to confuse ghosts. Timed tickets and they sell."},
+ {id:"the-tech",name:"The Tech Interactive",seed:3,tier:"high",period:"day",load:"mid",env:"indoor",min:2,ideal:3,resv:"recommended",w:IN,bundle:null,closed:{wd:[],hol:["thanksgiving","christmas"]},ll:[37.3316,-121.8906],
+  why:"Three floors of hands-on engineering in the middle of the city that builds the actual thing — a laser lab you cut your own thing in, a genetics floor, an IMAX dome. Two blocks from the hotel. This is the museum that is a workshop rather than a set of cases with labels."},
+ {id:"computer-history",name:"Computer History Museum",seed:4,tier:"high",period:"day",load:"hi",env:"indoor",min:2,ideal:3.5,resv:"recommended",w:IN,bundle:null,closed:{wd:[1,2],hol:["thanksgiving","christmas","newyear"]},ll:[37.4143,-122.0774],
+  why:"The actual machines. A working Babbage Difference Engine, a PDP-1 running Spacewar, the Cray-1, an Enigma, the Utah teapot, the first Google server rack made out of corkboard. Mountain View, twenty minutes up Caltrain and a short hop from the station. Shut Mondays and Tuesdays."},
+ {id:"ferry-building",name:"The Ferry Building and the Embarcadero",seed:5,tier:"high",period:"day",load:"mid",env:"mixed",min:1.5,ideal:2.5,resv:"none",w:{rain:"poor",cold:"good",wind:"acceptable",heat:"good"},bundle:"the-city",ll:[37.7955,-122.3937],
+  why:"Where Caltrain puts you within a streetcar ride of: the 1898 building with the clock tower, the market hall inside it, the bay out the back and the Bay Bridge lights strung across it. The F-line streetcars running past are older than the building in some cases."},
+ {id:"golden-gate",name:"The Golden Gate Bridge",seed:6,tier:"protected",period:"day",load:"mid",env:"outdoor",min:1,ideal:2,resv:"none",w:{rain:"poor",cold:"good",wind:"poor",heat:"good"},bundle:"the-city",ll:[37.8199,-122.4783],
+  why:"Walk out onto it. A mile and three quarters across, two hundred and twenty feet over the water, and in December there is a real chance of watching the fog come through the towers underneath you. It is free to walk and it is the thing you cannot say you did from a photograph."},
+ {id:"sj-museum-art",name:"San Jose Museum of Art",seed:7,tier:"medium",period:"day",load:"lo",env:"indoor",min:1,ideal:1.75,resv:"none",w:IN,bundle:null,closed:{wd:[1,2],hol:["thanksgiving","christmas","newyear"]},ll:[37.3327,-121.8896],
+  why:"Modern and contemporary, in an 1892 sandstone building that used to be the post office, on the same square as the Christmas lights. Small enough to do properly in ninety minutes. Shut Mondays and Tuesdays."},
+ {id:"santana-row",name:"Santana Row at Christmas",seed:8,tier:"bonus",period:"night",load:"lo",env:"outdoor",min:.75,ideal:1.5,resv:"none",w:{rain:"poor",cold:"good",wind:"good",heat:"good"},bundle:null,ll:[37.3210,-121.9476],
+  why:"A built-from-scratch European-ish street of shops and restaurants with a very large tree and the whole thing strung up for December. Unashamedly a shopping centre pretending to be a town, and pleasant for an hour after dark. It is across the road from the Winchester house, so it is that evening's other half."},
+ {id:"japanese-garden",name:"Japanese Friendship Garden",seed:9,tier:"bonus",period:"day",load:"lo",env:"outdoor",min:.75,ideal:1.25,resv:"none",w:{rain:"poor",cold:"good",wind:"good",heat:"good"},bundle:null,ll:[37.3255,-121.8664],
+  why:"Six acres modelled on the garden in Okayama, with koi ponds and a tea house, free, and about ten minutes from downtown. December is not its month but it is quiet and it is green and it costs nothing."},
+ {id:"cathedral-st-joseph",name:"Cathedral Basilica of St. Joseph",seed:10,tier:"bonus",period:"day",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:[37.3352,-121.8907],
+  why:"An 1877 basilica with the painted dome, on the block next to the hotel, and in Advent it is the one building downtown that looks like the season instead of like a light display. Twenty minutes, free, indoors, and on the way to everything."},
+ {id:"monterey-aquarium",name:"Monterey Bay Aquarium",seed:11,tier:"medium",period:"day",load:"hi",env:"indoor",min:3,ideal:4.5,resv:"required",w:IN,bundle:null,ll:[36.6182,-121.9018],
+  why:"The best aquarium in the country — the kelp forest tank three storeys tall with the surge machine on top of it, the open-sea wing, the otters. It is also seventy-five miles south of the hotel with no train, so it is the one thing on this list that would need a car for the day."},
+ {id:"mine-turtle",name:"Mine Turtle at the hotel",seed:15,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:SJ_BASE_LL,lastNight:true,
+  why:"Truth or dare with a turtle that explodes. Two to six players, so all four of us plus whoever wanders over. Last night, in the room, bags already packed."},
+ {id:"muffin-time",name:"Muffin Time at the hotel",seed:16,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:SJ_BASE_LL,lastNight:true,
+  why:"Two hundred cards of chaos where one card flips the whole game. Two to eight players, so nobody sits out. The other half of the last night."},
+ {id:"uno",name:"Uno",seed:17,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:SJ_BASE_LL,lastNight:true,
+  why:"Weighs nothing, everybody already knows it, and Nanny can play it without a rules explanation. Five hours in the air each way is exactly what it is for."},
+ {id:"monopoly-deal",name:"Monopoly Deal",seed:18,tier:"bonus",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:SJ_BASE_LL,lastNight:true,
+  why:"Monopoly that fits in a pocket and ends in fifteen minutes instead of three hours. All the dealing and stealing, none of the sitting there bankrupt at midnight."}
+];
+
+var SJ_BUNDLES = {
+ "the-city":{name:"A day in San Francisco",core:["ferry-building","golden-gate"],preferDow:6,
+   why:"Caltrain up from Diridon in about an hour and ten, out at Fourth and King, and the whole day is San Francisco. The Ferry Building and the Embarcadero at one end of it and the walk out onto the Golden Gate at the other. One ticket, one day, and no car in a city that punishes you for having one."}
+};
+var SJ_BUNDLE_LOAD = {"the-city":"hi"};
+
+var SJ_WANTS = [
+ {ask:"Christmas in the Park", unit:"christmas-in-the-park",
+  why:"Two acres of downtown turned into forty animated exhibits and two hundred decorated trees with a sixty-five-foot one in the middle, and it has been free for seventy years. It opens November 28, which is the night we would be getting on a plane, so it is running every single night we are there.",
+  rides:"Four blocks from the hotel, so it costs nothing to reach and nothing to leave early. This is the thing to do on the first night, on a tired night, and probably again on the last one."},
+ {ask:"The Winchester Mystery House by candlelight", unit:"winchester",
+  why:"A hundred and sixty rooms built over thirty-eight years with no plan at all — stairs that run into a ceiling, a door that opens onto a two-storey drop, a window set into a floor. In December they run it after dark by candlelight, which is the only sensible way to see a house built to lose ghosts in.",
+  rides:"Four miles west, about twenty minutes, timed tickets and they do sell out in December. Santana Row is directly across the road, so the evening has a second half already built into it."},
+ {ask:"A day in San Francisco", unit:"the-city",
+  why:"Caltrain goes there. An hour and ten from the station by the hotel and we are in the city — the Ferry Building and the bay and the bridge lights at one end, and walking out onto the Golden Gate at the other. I am not going to be an hour from San Francisco and not go.",
+  rides:"One outing, one whole day, and no car anywhere in it. Prefers a Saturday for the market in the Ferry Building. Dress for the bridge properly — it is two hundred feet over open water and December does what it likes up there."},
+ {ask:"The Computer History Museum", unit:"computer-history",
+  why:"The actual machines, not photographs of them. A working Babbage engine, a PDP-1 with Spacewar running on it, a Cray-1, an Enigma, and Google's first server rack held together with corkboard. I write code; this is the building where the reasons for all of it are kept.",
+  rides:"Twenty minutes up Caltrain to Mountain View and a short hop from there, so it is a train day and not a car day. Three and a half hours if I am allowed. Shut Mondays and Tuesdays, which means it has to land in the middle of the week."},
+ {ask:"The Tech Interactive", unit:"the-tech",
+  why:"Three floors of hands-on engineering in the middle of Silicon Valley — a laser lab where you cut your own thing, a genetics floor, and an IMAX dome. It is the museum where you build something rather than read about somebody who did.",
+  rides:"Two blocks from the hotel. Three hours, and the dome show is extra time on top. The obvious thing to do on the one afternoon it rains."},
+ {ask:"The San Jose Museum of Art", unit:"sj-museum-art",
+  why:"Modern and contemporary in the old 1892 post office, on the same square as the Christmas lights, and small enough to actually finish.",
+  rides:"On the plaza, so it stacks with the park in the evening for no travel at all. Ninety minutes. Shut Mondays and Tuesdays."},
+ {ask:"Santana Row after dark", unit:"santana-row",
+  why:"A very large tree and a whole street lit up for December. It is a shopping centre wearing a town's clothes and I do not especially mind.",
+  rides:"Directly across the road from the Winchester house, so it is the second half of that evening and costs no extra travel at all."},
+ {ask:"The Japanese Friendship Garden", unit:"japanese-garden",
+  why:"Six acres of koi ponds and a tea house modelled on the garden at Okayama, ten minutes out of downtown and free.",
+  rides:"An hour, free, and December is admittedly not its season. It is the cheap quiet morning of the trip."},
+ {ask:"The cathedral", unit:"cathedral-st-joseph",
+  why:"An 1877 basilica with a painted dome, on the next block, and in Advent it is the one thing downtown that looks like Christmas rather than like a light rig.",
+  rides:"Twenty minutes, free, indoors, next door. It costs a slot and no travel."},
+ {ask:"Mine Turtle, last night at the hotel", unit:"mine-turtle",
+  why:"Truth or dare where the loser presses the turtle's button and hopes it does not go off. 2 to 6 players, about 20 minutes a round — so realistically two hours, because nobody stops after one round.",
+  rides:"Pinned to the last night in the hotel and it will not schedule anywhere else. Bags packed, shoes off, nothing to walk to."},
+ {ask:"Muffin Time, same night", unit:"muffin-time",
+  why:"Two hundred cards, 2 to 8 players, and a single card can flip the whole thing on its head. Twenty minutes on the box, which is a lie in the same way it is a lie for every good card game.",
+  rides:"Also pinned to the last night. The board budgets three hours of the evening for the pair of them."},
+ {ask:"Uno", unit:"uno",
+  why:"Everyone already knows it, nobody needs the rules read out, and Nanny is in on the first hand. It lives in a pocket, and there are five hours in the air each way to get through.",
+  rides:"Last night with the rest of them — but this is the one that comes out at the gate at Hartsfield and again somewhere over Texas."},
+ {ask:"Monopoly Deal", unit:"monopoly-deal",
+  why:"Monopoly's good part with none of its bad part. Fifteen minutes a game instead of three hours, and it fits in a jacket pocket.",
+  rides:"The same four games as every other version of this trip. They are bought before we leave, so game night costs exactly the same wherever we go."}
+];
+
+var SJ_MAYBES = [
+ {ask:"The Monterey Bay Aquarium", unit:"monterey-aquarium",
+  why:"A kelp forest tank three storeys tall with a machine on the roof making surge in it, the open-sea wing, and the otters. Probably the best aquarium there is.",
+  rides:"Seventy-five miles south with no train that goes there, so it is the one thing on this whole list that would put us in a rental car for a day — which is the argument against a city we picked precisely because it does not need one. Four hours there before the driving. It goes in only if somebody really wants it."}
+];
+
+var SJ_NOPES = [
+ {name:"Alcatraz", why:"Books out weeks ahead, and between the Caltrain up, the ferry over and the ferry back it is most of a day for one thing. The San Francisco day already has two better things in it."},
+ {name:"The Santa Cruz Beach Boardwalk", why:"The rides run weekends only outside the season and half of it is shut in December. An hour over the mountains to look at a closed amusement park is not a plan."},
+ {name:"Lick Observatory", why:"An hour up Mount Hamilton on a road that is genuinely bad in winter, in the dark, in a rental car we are otherwise not renting. No."},
+ {name:"Yosemite", why:"Three and a half hours each way in good weather, and in December Tioga Road is shut and chains are a real possibility. It is a trip, not a day."},
+ {name:"Classic Monopoly", why:"Three hours minimum, on the night the bags are already packed. Monopoly Deal is on the list instead."}
+];
+
+/* ══ Seattle ════════════════════════════════════════════════════════════
+   The darkest one, on purpose. Sunset is about 4:20 in the afternoon the
+   first week of December, which is nearly an hour earlier than New York
+   and an hour and a half earlier than home — so a list that is mostly
+   better after dark gets more dark to work with here than anywhere else
+   on this page. What it costs is rain: this is the wettest month of the
+   Seattle year and half this catalogue rates poorly for it.
+   ═══════════════════════════════════════════════════════════════════════ */
+var SEA_BASE_LL = [47.6097,-122.3422];     /* the hotel, downtown above the market:
+                                                  Link runs in from the airport, no car */
+
+var SEA_VENUES = [
+ {id:"space-needle",name:"The Space Needle",seed:1,tier:"protected",period:"night",load:"mid",env:"mixed",min:1,ideal:1.75,resv:"required",w:{rain:"poor",cold:"good",wind:"poor",heat:"good"},bundle:"seattle-center",ll:[47.6205,-122.3493],
+  why:"Six hundred feet up the thing they built for the 1962 World's Fair, with an open-air deck on one level and a glass floor that rotates on the one below it — you sit on glass and watch the city turn underneath your feet. Timed tickets. It is open to the weather up top, so a wet windy night takes the good half of it away."},
+ {id:"chihuly",name:"Chihuly Garden and Glass",seed:2,tier:"protected",period:"night",load:"mid",env:"mixed",min:1,ideal:1.75,resv:"recommended",w:{rain:"acceptable",cold:"good",wind:"good",heat:"good"},bundle:"seattle-center",ll:[47.6205,-122.3505],
+  why:"Eight galleries of blown glass and then a glasshouse with a hundred-foot sculpture hanging the length of its ceiling, and a garden outside where the glass is planted in among the actual plants and lit from underneath after dark. It is at the foot of the Needle, so it is the same trip, and it is the better half of it on a bad-weather night because nearly all of it is inside."},
+ {id:"pike-place",name:"Pike Place Market",seed:3,tier:"protected",period:"day",load:"mid",env:"mixed",min:1.5,ideal:3,resv:"none",w:{rain:"acceptable",cold:"good",wind:"good",heat:"good"},bundle:"pike-place-morning",ll:[47.6097,-122.3422],
+  why:"Open since 1907 and still a working market rather than a museum of one — nine acres of it on several levels down the hillside, the fish counter where they throw things, the first Starbucks with the queue outside it, and floors of odd little shops underneath the part everybody photographs. It is directly below the hotel."},
+ {id:"gum-wall",name:"The Gum Wall",seed:4,tier:"bonus",period:"day",load:"lo",env:"outdoor",min:.25,ideal:.5,resv:"none",w:{rain:"acceptable",cold:"good",wind:"good",heat:"good"},bundle:"pike-place-morning",ll:[47.6086,-122.3412],
+  why:"An alley under the market with two walls of chewed gum stuck to them, fifteen feet up in places. It is genuinely disgusting and it takes ten minutes and everybody does it. It is in Post Alley directly under the market, so it is not a trip anywhere."},
+ {id:"bainbridge-ferry",name:"The Bainbridge Island ferry",seed:5,tier:"protected",period:"day",load:"mid",env:"mixed",min:1.5,ideal:2.5,resv:"none",w:{rain:"poor",cold:"acceptable",wind:"poor",heat:"good"},bundle:null,ll:[47.6026,-122.3373],
+  why:"Thirty-five minutes across Puget Sound with the whole downtown skyline going away behind you, the Olympic Mountains ahead if the cloud lifts, and Rainier off to the south on the days it decides to exist. Walk-on is a few dollars and you only pay going out — coming back is free. A little town at the far end to stand about in before the return boat."},
+ {id:"christmas-ship",name:"The Christmas Ship Festival",seed:6,tier:"high",period:"night",load:"lo",env:"outdoor",min:.75,ideal:1.5,resv:"none",w:{rain:"poor",cold:"acceptable",wind:"poor",heat:"good"},bundle:null,ll:[47.6280,-122.3600],
+  why:"A lit ship goes out every night from the day after Thanksgiving to December 23, towing a barge with a choir on it, and stops at a different waterfront each evening — forty-five of them over the season. You can pay to ride one, or you can stand on the shore where there are bonfires and listen to a choir come at you across the water for nothing. The schedule says which beach on which night, so this one picks its own day."},
+ {id:"mopop",name:"Museum of Pop Culture",seed:7,tier:"high",period:"day",load:"mid",env:"indoor",min:2,ideal:3,resv:"recommended",w:IN,bundle:null,closed:{wd:[],hol:["thanksgiving","christmas"]},ll:[47.6215,-122.3481],
+  why:"The Gehry building at the foot of the Needle that looks like a smashed guitar from the outside, and inside it is science fiction, horror, fantasy, video games and the Nirvana and Hendrix rooms. A three-storey tower built out of six hundred instruments in the middle of it. Entirely indoors, which in this city is a planning attribute and not a detail."},
+ {id:"museum-of-flight",name:"The Museum of Flight",seed:8,tier:"high",period:"day",load:"hi",env:"mixed",min:2.5,ideal:4,resv:"recommended",w:{rain:"acceptable",cold:"good",wind:"good",heat:"good"},bundle:null,closed:{wd:[],hol:["thanksgiving","christmas"]},ll:[47.5188,-122.2969],
+  why:"The biggest private air and space museum there is, on the field where Boeing started. An SR-71 Blackbird, a Concorde you walk through, the first jet Air Force One, a full-size shuttle trainer, and a park of airliners outside. About forty minutes south on transit."},
+ {id:"great-wheel",name:"The Seattle Great Wheel",seed:9,tier:"bonus",period:"night",load:"lo",env:"mixed",min:.5,ideal:.75,resv:"none",w:{rain:"acceptable",cold:"good",wind:"poor",heat:"good"},bundle:null,ll:[47.6062,-122.3425],
+  why:"A hundred and seventy-five feet of ferris wheel standing out over the water on Pier 57, in an enclosed gondola, which is the version of a ferris wheel that works in a Seattle December. Three turns, about fifteen minutes, and it is five minutes down the hill from the market."},
+ {id:"central-library",name:"Seattle Central Library",seed:10,tier:"medium",period:"day",load:"lo",env:"indoor",min:.75,ideal:1.25,resv:"none",w:IN,bundle:null,closed:{wd:[],hol:["thanksgiving","christmas","newyear"]},ll:[47.6067,-122.3325],
+  why:"Eleven floors of glass and steel folded at angles that should not stand up, with a four-storey spiral of bookshelves running continuously through the middle of it so the whole collection is one unbroken ramp. Free, warm, dry, and four blocks from the hotel. It is the best building in the city and it costs nothing to walk into."},
+ {id:"kerry-park",name:"Kerry Park after dark",seed:11,tier:"medium",period:"night",load:"lo",env:"outdoor",min:.5,ideal:.75,resv:"none",w:{rain:"poor",cold:"good",wind:"acceptable",heat:"good"},bundle:null,ll:[47.6295,-122.3599],follows:"seattle-center",
+  why:"A small park on the side of Queen Anne hill that happens to be the postcard: the Needle in the middle, downtown behind it, the Sound on the right and Rainier over the top of the whole thing on a clear night. Ten minutes uphill from the Needle, so it is the walk after it and not a trip of its own."},
+ {id:"pacific-science",name:"Pacific Science Center",seed:12,tier:"medium",period:"day",load:"mid",env:"indoor",min:1.5,ideal:2.5,resv:"none",w:IN,bundle:null,closed:{wd:[1,2],hol:["thanksgiving","christmas"]},ll:[47.6199,-122.3514],
+  why:"The arches and the pools at the foot of the Needle, a tropical butterfly house kept at eighty degrees in the middle of a Seattle December, a planetarium and an IMAX. Shut Mondays and Tuesdays. Same campus as everything else at the Center."},
+ {id:"mine-turtle",name:"Mine Turtle at the hotel",seed:15,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:SEA_BASE_LL,lastNight:true,
+  why:"Truth or dare with a turtle that explodes. Two to six players, so all four of us plus whoever wanders over. Last night, in the room, bags already packed."},
+ {id:"muffin-time",name:"Muffin Time at the hotel",seed:16,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:SEA_BASE_LL,lastNight:true,
+  why:"Two hundred cards of chaos where one card flips the whole game. Two to eight players, so nobody sits out. The other half of the last night."},
+ {id:"uno",name:"Uno",seed:17,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:SEA_BASE_LL,lastNight:true,
+  why:"Weighs nothing, everybody already knows it, and Nanny can play it without a rules explanation. Five and a half hours in the air each way is exactly what it is for."},
+ {id:"monopoly-deal",name:"Monopoly Deal",seed:18,tier:"bonus",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:SEA_BASE_LL,lastNight:true,
+  why:"Monopoly that fits in a pocket and ends in fifteen minutes instead of three hours. All the dealing and stealing, none of the sitting there bankrupt at midnight."}
+];
+
+var SEA_BUNDLES = {
+ "seattle-center":{name:"Seattle Center after dark",core:["space-needle","chihuly"],
+   why:"They are a hundred yards apart at the foot of the same tower and there is a combined ticket for exactly that reason. Six hundred feet up first while it is properly dark, then the glasshouse and the garden lit from underneath. If the wind takes the Needle's outdoor deck, the glass is still worth the trip on its own."},
+ "pike-place-morning":{name:"The market, and the alley under it",core:["pike-place","gum-wall"],
+   why:"The market is downstairs from the hotel and the Gum Wall is in the alley underneath the market. Nobody schedules a walk down one flight of stairs as a separate outing."}
+};
+var SEA_BUNDLE_LOAD = {"seattle-center":"hi","pike-place-morning":"mid"};
+
+var SEA_WANTS = [
+ {ask:"Seattle Center after dark", unit:"seattle-center",
+  why:"Six hundred feet up the Space Needle standing on a glass floor that rotates, and then the Chihuly glasshouse at the bottom of it with a hundred-foot sculpture over your head and a garden outside where the glass is lit from underneath. Two things, one plaza, both better in the dark.",
+  rides:"About three hours together and there is a combined ticket. The Needle is timed and its top deck is open to the weather — on a wet night the glass is the half that still works, which is why they are one outing and not two."},
+ {ask:"Pike Place Market", unit:"pike-place-morning",
+  why:"A market that has been running since 1907 and still sells fish rather than souvenirs of fish. Nine acres down the side of the hill on several floors, the counter where they throw the salmon, the first Starbucks, and the Gum Wall in the alley underneath.",
+  rides:"It is directly downstairs from the hotel, so it costs a slot and no travel whatsoever. Three hours if we go under the main floor as well, which is where it gets good."},
+ {ask:"The ferry to Bainbridge Island", unit:"bainbridge-ferry",
+  why:"I want to be on a boat. Thirty-five minutes across Puget Sound with the skyline going away behind and the Olympics ahead, and you only pay going out — the ride back is free. It is the Staten Island Ferry of this trip and it is better, because there is somewhere to get off at the far end.",
+  rides:"The terminal is a ten-minute walk down the hill. Two and a half hours all in, including standing about in the town on the other side waiting for the return boat. Pick a day the cloud is off the mountains if there is one."},
+ {ask:"The Christmas Ship Festival", unit:"christmas-ship",
+  why:"A lit ship with a choir on a barge behind it comes into a different waterfront every night from the day after Thanksgiving to December 23, and there are bonfires on the beach where it lands. We can pay to be on the boat or we can stand on the shore and hear a choir arrive across the water for nothing.",
+  rides:"The route decides the night — a different community each evening, so this is one the week gets built around. An hour and a half from the shore, free, and the beach it lands at decides how far we travel."},
+ {ask:"The Museum of Flight", unit:"museum-of-flight",
+  why:"An SR-71 Blackbird, a Concorde you walk through, the first jet Air Force One, and a full-size shuttle trainer, on the field where Boeing started. The biggest private air and space museum in the world.",
+  rides:"Forty minutes south on transit, no car needed. Four hours if I am allowed four hours, and a good chunk of it is outdoors in the airpark, so it wants the driest day of the week."},
+ {ask:"MoPOP", unit:"mopop",
+  why:"The Gehry building that looks like a smashed guitar, and inside it science fiction, horror, fantasy, video games, and a tower built out of six hundred instruments. Nirvana and Hendrix, both from here.",
+  rides:"Same campus as the Needle, so it can be the daytime half of a Seattle Center day. Three hours. Entirely indoors, which is the whole reason it is on the list this high — it is the outing that does not care what the sky is doing."},
+ {ask:"The Central Library", unit:"central-library",
+  why:"Eleven floors of glass folded at angles that look like a mistake, with the entire non-fiction collection running up a single unbroken four-storey spiral so the numbering never restarts on a new floor. It is the best building in the city.",
+  rides:"Four blocks from the hotel, free, indoors, an hour. It costs a slot and no money at all, and it is the right thing to point a rained-off afternoon at."},
+ {ask:"Kerry Park after dark", unit:"kerry-park",
+  why:"The view that is on the front of everything: the Needle in the middle, downtown behind it, the Sound to one side and Rainier standing over the lot on a clear night.",
+  rides:"Ten minutes uphill from the Needle, so it only makes sense as the walk after Seattle Center and the board will not put it anywhere else. Half an hour and it is free."},
+ {ask:"The Great Wheel", unit:"great-wheel",
+  why:"A hundred and seventy-five feet of ferris wheel out over the water on Pier 57, in a closed heated gondola, which is the only kind of ferris wheel that makes any sense here in December.",
+  rides:"Five minutes downhill from the market, three turns, about fifteen minutes on it. A small good thing to bolt onto an evening rather than a plan of its own."},
+ {ask:"The Pacific Science Center", unit:"pacific-science",
+  why:"The white arches and the pools at the foot of the Needle, a butterfly house held at eighty degrees while it is forty outside, a planetarium and an IMAX.",
+  rides:"Same campus again, so a Seattle Center day can hold this and MoPOP without moving. Shut Mondays and Tuesdays. Two and a half hours."},
+ {ask:"Mine Turtle, last night at the hotel", unit:"mine-turtle",
+  why:"Truth or dare where the loser presses the turtle's button and hopes it does not go off. 2 to 6 players, about 20 minutes a round — so realistically two hours, because nobody stops after one round.",
+  rides:"Pinned to the last night in the hotel and it will not schedule anywhere else. Bags packed, shoes off, nothing to walk to."},
+ {ask:"Muffin Time, same night", unit:"muffin-time",
+  why:"Two hundred cards, 2 to 8 players, and a single card can flip the whole thing on its head. Twenty minutes on the box, which is a lie in the same way it is a lie for every good card game.",
+  rides:"Also pinned to the last night. The board budgets three hours of the evening for the pair of them."},
+ {ask:"Uno", unit:"uno",
+  why:"Everyone already knows it, nobody needs the rules read out, and Nanny is in on the first hand. There are five and a half hours in the air each way to fill.",
+  rides:"Last night with the rest of them — but this is the one that comes out at the gate and again somewhere over Montana."},
+ {ask:"Monopoly Deal", unit:"monopoly-deal",
+  why:"Monopoly's good part with none of its bad part. Fifteen minutes a game instead of three hours, and it fits in a jacket pocket.",
+  rides:"The same four games as every other version of this trip. They are bought before we leave, so game night costs exactly the same wherever we go."}
+];
+
+var SEA_MAYBES = [];
+
+var SEA_NOPES = [
+ {name:"Mount Rainier", why:"Two and a half hours each way, most of the park's roads shut for the winter, and chains required on the one that is open. You can see it from the ferry for nothing on a clear day."},
+ {name:"The Boeing factory tour at Everett", why:"An hour north with no useful transit, and it needs a car we are otherwise not renting. The Museum of Flight has the actual aeroplanes in it and is forty minutes the other way on a bus."},
+ {name:"Snoqualmie Falls", why:"Forty-five minutes east and a rental car for one waterfall. It is a good waterfall. It is not a day."},
+ {name:"The underground tour", why:"Ninety minutes of standing in the old flooded street level under Pioneer Square listening to jokes. Fun, and it is the first thing to go when the week is this short."},
+ {name:"Classic Monopoly", why:"Three hours minimum, on the night the bags are already packed. Monopoly Deal is on the list instead."}
+];
+
+/* ══ Portland ═══════════════════════════════════════════════════════════
+   The other Pacific Northwest one, and the honest thing to say about it is
+   that its best December night is on the wrong side of our dates: Peacock
+   Lane, the street that has been doing this for a hundred years, does not
+   light until December 15 and we are home on the 6th. What is left is very
+   good and none of it needs a car — the MAX runs in from the airport and
+   out to the zoo — but the calendar costs this city its best card.
+   ═══════════════════════════════════════════════════════════════════════ */
+var PDX_BASE_LL = [45.5202,-122.6742];     /* the hotel, downtown by the transit mall:
+                                                  MAX in from the airport, MAX out to the zoo */
+
+var PDX_VENUES = [
+ {id:"zoolights",name:"ZooLights at the Oregon Zoo",seed:1,tier:"protected",period:"night",load:"mid",env:"outdoor",min:1.5,ideal:2.5,resv:"recommended",w:{rain:"poor",cold:"good",wind:"good",heat:"good"},bundle:null,ll:[45.5099,-122.7157],
+  why:"A million and a half lights through the whole zoo, five to nine every night from November 29 to January 5, with a train that runs through the middle of the display and food carts and hot drinks along the path. The MAX goes straight there from downtown and the station is at the zoo gate, so it is the rare big light display that needs no car at all."},
+ {id:"powells",name:"Powell's City of Books",seed:2,tier:"protected",period:"day",load:"mid",env:"indoor",min:1.5,ideal:3,resv:"none",w:IN,bundle:null,closed:{wd:[],hol:["thanksgiving","christmas"]},ll:[45.5232,-122.6814],
+  why:"A whole city block, four storeys, nine colour-coded rooms, and something like a million books with the used and the new shelved together on the same shelf so you find both at once. It is the largest independent bookshop in the world and it has a map at the door because it needs one. Six blocks from the hotel."},
+ {id:"omsi",name:"OMSI and the submarine",seed:3,tier:"protected",period:"day",load:"hi",env:"mixed",min:2.5,ideal:4,resv:"recommended",w:{rain:"acceptable",cold:"good",wind:"good",heat:"good"},bundle:null,closed:{wd:[1],hol:["thanksgiving","christmas"]},ll:[45.5084,-122.6664],
+  why:"Six halls of science on the east bank, a planetarium, and moored in the river outside it the USS Blueback — a real diesel-electric attack submarine you go down inside and walk the length of. She was the last non-nuclear boat the Navy commissioned and the one they filmed in for The Hunt for Red October. The tour is a separate ticket and it is the point of coming. Shut Mondays."},
+ {id:"grotto",name:"The Grotto, Festival of Lights",seed:4,tier:"high",period:"night",load:"mid",env:"mixed",min:1.25,ideal:2,resv:"required",w:{rain:"acceptable",cold:"good",wind:"good",heat:"good"},bundle:null,ll:[45.5501,-122.5765],
+  why:"A Catholic sanctuary built into the base of a hundred-and-ten-foot cliff, and in December the largest Christmas choral festival in the world runs inside it — a hundred and fifty concerts across the season in a heated chapel, with a half-million-light display through the gardens outside and a cave carved into the rock face at the middle of it. Indoor concerts and outdoor lights in one ticket, which in Portland weather is the right way round."},
+ {id:"japanese-garden",name:"Portland Japanese Garden",seed:5,tier:"high",period:"day",load:"mid",env:"outdoor",min:1.25,ideal:2,resv:"recommended",w:{rain:"poor",cold:"good",wind:"good",heat:"good"},bundle:"west-hills",ll:[45.5188,-122.7080],
+  why:"Twelve acres on the hillside in eight separate garden styles, widely called the most authentic Japanese garden outside Japan, and December is when the moss and the stonework and the bare maple structure actually read — this is a garden that is arguably better without leaves on it. Up in Washington Park above the city."},
+ {id:"pittock-mansion",name:"Pittock Mansion",seed:6,tier:"high",period:"day",load:"mid",env:"mixed",min:1.25,ideal:2,resv:"recommended",w:{rain:"acceptable",cold:"good",wind:"acceptable",heat:"good"},bundle:"west-hills",ll:[45.5252,-122.7162],
+  why:"A 1914 French Renaissance house a thousand feet up the west hills, decorated room by room for Christmas by a different volunteer group each year, and the lawn behind it has the whole city laid out below with Mount Hood standing over the far end of it on a clear day. The house is the reason to go up and the view is the reason to stay."},
+ {id:"christmas-ships",name:"The Christmas Ships parade",seed:7,tier:"high",period:"night",load:"lo",env:"outdoor",min:.75,ideal:1.25,resv:"none",w:{rain:"poor",cold:"acceptable",wind:"poor",heat:"good"},bundle:null,ll:[45.5087,-122.6700],
+  why:"Two fleets of private boats strung with lights, one on the Willamette and one on the Columbia, running a published route most nights through December and joining up for the big ones. It is free and you watch it from the riverbank or from a window over the water. The schedule says where they are on which night, so this outing picks its own day."},
+ {id:"aerial-tram",name:"The Portland Aerial Tram",seed:8,tier:"medium",period:"night",load:"lo",env:"mixed",min:.5,ideal:.75,resv:"none",w:{rain:"acceptable",cold:"good",wind:"poor",heat:"good"},bundle:null,ll:[45.4997,-122.6710],
+  why:"Three minutes and five hundred feet up the side of Marquam Hill in a glass bubble, from the south waterfront to the hospital on top, with the city and the river underneath and Hood out to the east. It is public transit that happens to be a cable car, which is why it costs about five dollars instead of twenty."},
+ {id:"saturday-market",name:"Portland Saturday Market",seed:9,tier:"medium",period:"day",load:"lo",env:"outdoor",min:1,ideal:1.75,resv:"none",w:{rain:"poor",cold:"good",wind:"acceptable",heat:"good"},bundle:null,ll:[45.5225,-122.6707],
+  why:"The largest continuously operating outdoor arts and crafts market in the country, under the Burnside Bridge on the waterfront, running weekends right through to Christmas Eve. Three hundred-odd stalls of things made by the person selling them. Saturdays and Sundays only, so it picks its own day."},
+ {id:"lan-su-garden",name:"Lan Su Chinese Garden",seed:10,tier:"medium",period:"day",load:"lo",env:"mixed",min:.75,ideal:1.25,resv:"none",w:{rain:"acceptable",cold:"good",wind:"good",heat:"good"},bundle:null,ll:[45.5256,-122.6730],
+  why:"A walled Ming-dynasty garden taking up a whole city block in Old Town, built by artisans from Suzhou out of materials shipped from there, with a lake, a teahouse and covered walkways — which means a good part of it works in the rain. Ten minutes from the hotel on foot."},
+ {id:"multnomah-falls",name:"Multnomah Falls",seed:11,tier:"bonus",period:"day",load:"hi",env:"outdoor",min:2,ideal:3.5,resv:"required",w:{rain:"poor",cold:"acceptable",wind:"acceptable",heat:"good"},bundle:null,ll:[45.5762,-122.1158],
+  why:"Six hundred and twenty feet in two drops with the stone footbridge across the middle of it, in the Columbia River Gorge. December is when it is running hardest and when the road is most likely to be shut for ice. Forty minutes east, and there is no transit — this is the one thing here that needs a car."},
+ {id:"mine-turtle",name:"Mine Turtle at the hotel",seed:15,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:PDX_BASE_LL,lastNight:true,
+  why:"Truth or dare with a turtle that explodes. Two to six players, so all four of us plus whoever wanders over. Last night, in the room, bags already packed."},
+ {id:"muffin-time",name:"Muffin Time at the hotel",seed:16,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:PDX_BASE_LL,lastNight:true,
+  why:"Two hundred cards of chaos where one card flips the whole game. Two to eight players, so nobody sits out. The other half of the last night."},
+ {id:"uno",name:"Uno",seed:17,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:PDX_BASE_LL,lastNight:true,
+  why:"Weighs nothing, everybody already knows it, and Nanny can play it without a rules explanation. Five and a half hours in the air each way is exactly what it is for."},
+ {id:"monopoly-deal",name:"Monopoly Deal",seed:18,tier:"bonus",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:PDX_BASE_LL,lastNight:true,
+  why:"Monopoly that fits in a pocket and ends in fifteen minutes instead of three hours. All the dealing and stealing, none of the sitting there bankrupt at midnight."}
+];
+
+var PDX_BUNDLES = {
+ "west-hills":{name:"Up the west hills",core:["japanese-garden","pittock-mansion"],
+   why:"Both of them are a thousand feet up the same hillside above the city, ten minutes apart, and the bus that goes to one goes past the other. The garden in the flat morning light and the mansion afterwards for the house and the view off the back lawn. Nobody makes that climb twice in a week."}
+};
+var PDX_BUNDLE_LOAD = {"west-hills":"hi"};
+
+var PDX_WANTS = [
+ {ask:"ZooLights", unit:"zoolights",
+  why:"A million and a half lights through the entire zoo with a train running through the middle of the display, five to nine every night, and our whole week falls inside it. Hot drinks and food carts down the path and animals in among it.",
+  rides:"The MAX goes from downtown to a station at the zoo gate, so this is a big light display that costs a transit fare and no car — which is not true of most of them. Two and a half hours. Book ahead; December weekends go."},
+ {ask:"OMSI and the submarine", unit:"omsi",
+  why:"The USS Blueback, moored in the river outside the museum — a real diesel-electric attack submarine, the last non-nuclear boat the Navy commissioned, and you go down inside her and walk the whole length. They filmed The Hunt for Red October in it. Then six halls of science and a planetarium on top of that.",
+  rides:"Across the river on the east bank, fifteen minutes on the streetcar. Four hours with the sub tour, which is a separate ticket and is the actual reason for going. Shut Mondays."},
+ {ask:"Powell's City of Books", unit:"powells",
+  why:"An entire city block of bookshop, four floors, nine rooms, about a million books, and the used copies shelved right next to the new ones so you find both at the same time. It hands you a map at the door because you need one.",
+  rides:"Six blocks from the hotel and it is open late. Three hours disappears in there without anybody noticing, and it is completely indoors, which matters in the wettest month of the Portland year."},
+ {ask:"The Grotto at Christmas", unit:"grotto",
+  why:"A sanctuary built into the bottom of a hundred-and-ten-foot cliff with a cave cut into the rock, and in December the biggest Christmas choral festival in the world runs there — a hundred and fifty concerts in a heated chapel, with half a million lights through the gardens outside.",
+  rides:"Twenty minutes out on the bus. Two hours. The clever part is that the ticket is indoor concerts and outdoor lights together, so it is the light display that still works on the night it is properly raining."},
+ {ask:"Up the west hills", unit:"west-hills",
+  why:"The Japanese garden — twelve acres in eight styles and reckoned the most authentic outside Japan, and in December the moss and the stone and the bare maples are the whole composition. Then Pittock Mansion, a 1914 house dressed for Christmas a thousand feet up, with the entire city and Mount Hood off the back lawn.",
+  rides:"One climb, both of them, ten minutes apart on the same hillside and the same bus. About four hours together. Doing them on separate days would mean going up there twice for no reason."},
+ {ask:"The Christmas Ships", unit:"christmas-ships",
+  why:"Two fleets of private boats covered in lights running the Willamette and the Columbia most nights in December, on a published route, and free from anywhere on the bank.",
+  rides:"The schedule decides the night — they are somewhere different each evening — so this is an outing the week gets built around rather than dropped into. An hour and a bit and it costs nothing."},
+ {ask:"Portland Saturday Market", unit:"saturday-market",
+  why:"Three hundred stalls under the Burnside Bridge, all of it made by whoever is standing behind the table, and the biggest outdoor craft market in the country. It runs weekends to Christmas Eve.",
+  rides:"On the waterfront ten minutes from the hotel. Weekends only, so it lands on the Saturday whether the board likes it or not. Under a bridge, which helps with the drizzle but not with the cold."},
+ {ask:"Lan Su Chinese Garden", unit:"lan-su-garden",
+  why:"A walled Ming garden filling a whole city block in Old Town, built by craftsmen from Suzhou with the materials shipped over with them. A lake, a teahouse, and covered walkways all the way round.",
+  rides:"Ten minutes on foot. An hour and a bit. The covered walkways mean it is one of the few outdoor things here that does not fall over in the rain."},
+ {ask:"The Aerial Tram", unit:"aerial-tram",
+  why:"Five hundred feet up the side of Marquam Hill in a glass bubble in three minutes, with the river and the whole south end of the city underneath and Hood out east.",
+  rides:"It is public transit rather than an attraction, so it costs about five dollars. Half an hour all in, and it stacks onto an east-side evening for almost nothing."},
+ {ask:"Mine Turtle, last night at the hotel", unit:"mine-turtle",
+  why:"Truth or dare where the loser presses the turtle's button and hopes it does not go off. 2 to 6 players, about 20 minutes a round — so realistically two hours, because nobody stops after one round.",
+  rides:"Pinned to the last night in the hotel and it will not schedule anywhere else. Bags packed, shoes off, nothing to walk to."},
+ {ask:"Muffin Time, same night", unit:"muffin-time",
+  why:"Two hundred cards, 2 to 8 players, and a single card can flip the whole thing on its head. Twenty minutes on the box, which is a lie in the same way it is a lie for every good card game.",
+  rides:"Also pinned to the last night. The board budgets three hours of the evening for the pair of them."},
+ {ask:"Uno", unit:"uno",
+  why:"Everyone already knows it, nobody needs the rules read out, and Nanny is in on the first hand. There are five and a half hours in the air each way to fill.",
+  rides:"Last night with the rest of them — but this is the one that comes out at the gate and again somewhere over the Rockies."},
+ {ask:"Monopoly Deal", unit:"monopoly-deal",
+  why:"Monopoly's good part with none of its bad part. Fifteen minutes a game instead of three hours, and it fits in a jacket pocket.",
+  rides:"The same four games as every other version of this trip. They are bought before we leave, so game night costs exactly the same wherever we go."}
+];
+
+var PDX_MAYBES = [
+ {ask:"Multnomah Falls", unit:"multnomah-falls",
+  why:"Six hundred and twenty feet in two drops with the stone bridge across the middle, and December is when it is running hardest.",
+  rides:"Forty minutes east into the Gorge with no transit that goes there, so it is a rental car for one day in a city we picked because it does not need one. The Gorge road also closes for ice, which in the first week of December is a real possibility rather than a footnote. It goes in only if somebody insists and the forecast cooperates."}
+];
+
+var PDX_NOPES = [
+ {name:"Peacock Lane", why:"The hundred-year-old street where every house does it, and it does not light until December 15. We fly home on the 6th. This is the single best argument for going to Portland in December and we would miss it by nine days, which is worth saying out loud rather than quietly leaving off the list."},
+ {name:"Mount Hood and Timberline", why:"Ninety minutes each way, chains or traction tyres required by law in December, in a rental car. It is a ski trip bolted onto a city trip and it does neither of them well."},
+ {name:"Cannon Beach and Haystack Rock", why:"Ninety minutes to the coast each way with no transit, in the rain, in the dark by half four. The Oregon coast in December is a genuinely good thing and it is a different holiday."},
+ {name:"Winter Wonderland at the Raceway", why:"Two miles of lights that you drive through without getting out of the car — which needs a car, and ZooLights is on the MAX and better on foot."},
+ {name:"Classic Monopoly", why:"Three hours minimum, on the night the bags are already packed. Monopoly Deal is on the list instead."}
+];
+
+/* ══ The six cities
  ═════════════════════════════════════════════════════
    Everything in here is city-shaped: the catalogue, the hotel, what the
    train does at each end, and the copy that names real places. Everything
@@ -1065,18 +1729,19 @@ var CITIES = {
   venues:DC_VENUES, bundles:DC_BUNDLES, bundleLoad:DC_BUNDLE_LOAD,
   wants:DC_WANTS, maybes:DC_MAYBES, nopes:DC_NOPES, cutUnits:DC_CUT_UNITS,
   mustSee:13, askVersion:12,
-  uber:{base:7.50, perMile:2.60, mph:18, waitMin:6},
+  uber:{base:7.50, perMile:2.60, mph:18, waitMin:6, word:"UberXL hops", maxMi:16},
   axis:["us-capitol","lincoln-memorial"],
-  travelOrder:["train"],
+  travelOrder:["train","trainatl"],
   travel:{
    train:{
-    id:"train", label:"Train",
+    id:"train", label:"Anniston",
     route:"Amtrak Crescent 20 & 19 · Anniston, Alabama ⇆ Washington Union",
     sub:"Into Washington Union, about 2 pm Sunday",
-    deckTail:"",
+    deckTail:"Boarding at Anniston is the whole evening on the train and no drive to the platform — and the longest version of the fare, because a roomette is priced by the mile.",
     depart:{at:"2026-11-28T20:04:00-06:00", big:"Sat Nov 28", small:"board at Anniston, 8:04 pm"},
     departHours:4,
-    check:null,
+    check:{level:"ok", t:"Anniston boards early and rides the whole line",
+      s:"Out of Anniston at 8:04 pm, which is a civilized hour and no drive to get to it — the evening on the train is part of the trip rather than a cost. It is also the longest version of the fare, and a roomette is priced by distance. Switch to Atlanta above for the identical arrival off the identical train, boarded two stops later for less money and a near-midnight start."},
     structural:function(day, slot){
       if (day.kind === "arrival") return slot === "day"
         ? {name:"Arrive, hotel, food", load:"lo", note:"Union Station about 2:12 pm", ll:DC_BASE_LL}
@@ -1098,6 +1763,42 @@ var CITIES = {
      packing:
       "<tr><td>Photo ID for everyone</td><td>Capitol and Archives security, and Amtrak at Anniston.</td></tr>" +
       "<tr><td>Printed tickets, once</td><td>Union Station Wi-Fi is a rumor. Print the timed passes.</td></tr>"
+    }
+   },
+   trainatl:{
+    id:"trainatl", label:"Atlanta",
+    route:"Amtrak Crescent 20 & 19 · Atlanta Peachtree ⇆ Washington Union",
+    sub:"Into Washington Union, about 2 pm Sunday",
+    deckTail:"Same train, same arrival, boarded two stops later. It is a shorter fare and a later night: 11:29 pm at Peachtree instead of 8:04 at Anniston, with the drive to Atlanta in front of it.",
+    depart:{at:"2026-11-28T23:29:00-05:00", big:"Sat Nov 28", small:"board at Atlanta, 11:29 pm"},
+    departHours:4,
+    check:{level:"ok", t:"Boarding at Atlanta is a shorter fare and a later night",
+      s:"It is the identical train into the identical Washington at 2:12 pm — the only thing that changes is where we get on. Two stops less of sleeper is a cheaper roomette, and coming home the Crescent is into Peachtree at 8:43 am rather than running on to Anniston, so we are home earlier. What it costs is the evening on the train and a 9:30 pm start from the house."},
+    structural:function(day, slot){
+      if (day.kind === "arrival") return slot === "day"
+        ? {name:"Arrive, hotel, food", load:"lo", note:"Union Station about 2:12 pm", ll:DC_BASE_LL}
+        : {name:"The Capitol, illuminated", load:"mid", note:"Three blocks from the station", ll:[38.8899,-77.0091]};
+      if (day.kind === "departure" && slot === "night")
+        return {name:"Southbound sleeper", load:"lo", note:"Crescent 19 departs 6:30 pm", ll:[38.8977,-77.0064]};
+      return null;
+    },
+    logi:{
+     head:"The train, boarded at Atlanta",
+     rows:
+      "<tr><td>Crescent&nbsp;20 north</td><td>Atlanta Peachtree</td><td>Washington Union</td><td class='m'>Board Sat 11:29 pm &middot; in ~2:12 pm</td></tr>" +
+      "<tr><td>Crescent&nbsp;19 south</td><td>Washington Union</td><td>Atlanta Peachtree</td><td class='m'>Out 6:30 pm &middot; in 8:43 am</td></tr>",
+     notes:function(){ return [
+      "The same Crescent and the same Washington at 2:12 pm. Anniston and Atlanta are two stops apart on one train, so this changes nothing about the week — it changes the fare, the bedtime, and how we get to the platform.",
+      "The fare is the argument for it. A roomette is priced by distance and Atlanta is a hundred and fifty miles further up the line, so two rooms from Peachtree cost less than two rooms from Anniston for an identical arrival. Nobody on this page has the actual number yet; it is the first thing to price.",
+      "The bedtime is the argument against it. Northbound 20 is into Peachtree at 11:00 pm and out at 11:29, and Anniston to Atlanta is an hour and three quarters of driving before that — so it is a nine-thirty start from the house to stand on a platform near midnight. From Anniston we board at 8:04 with the evening still in front of us, dinner in the room and Uno on the table somewhere south of Atlanta. Boarding at Peachtree the beds are already down and everyone gets straight into them.",
+      "Coming home it goes the other way. Southbound 19 is into Peachtree at 8:43 in the morning and we drive from there, which puts us home earlier than riding on to Anniston does — call it an hour in hand on the last day.",
+      "Peachtree Station is small and its own parking is not the plan for eight days. Long-term is across the street at the America's Best Value Inn — park, pay the desk clerk inside, ticket on the dashboard — or the deck behind the Peachtree-25th Building two blocks down, or a free MARTA park-and-ride further out with a ride in. Eight days of any of those is a real line on the budget, and a drop-off costs nothing.",
+      "The quiet advantage: it puts the train and the plane on the same starting line. If we are already pricing four fares out of Hartsfield, then both options begin with the same drive to Atlanta and the comparison is finally like for like."
+     ]; },
+     packing:
+      "<tr><td>Photo ID for everyone</td><td>Capitol and Archives security, and Amtrak at Peachtree.</td></tr>" +
+      "<tr><td>Printed tickets, once</td><td>Union Station Wi-Fi is a rumor. Print the timed passes.</td></tr>" +
+      "<tr><td>The parking ticket on the dashboard</td><td>If we use the hotel lot across from Peachtree, that is how they know the car is paid for.</td></tr>"
     }
    }
   },
@@ -1128,14 +1829,14 @@ var CITIES = {
   venues:NYC_VENUES, bundles:NYC_BUNDLES, bundleLoad:NYC_BUNDLE_LOAD,
   wants:NYC_WANTS, maybes:NYC_MAYBES, nopes:NYC_NOPES, cutUnits:[],
   mustSee:11, askVersion:5,
-  uber:{base:9.00, perMile:3.10, mph:11, waitMin:5},
+  uber:{base:9.00, perMile:3.10, mph:11, waitMin:5, word:"UberXL hops", maxMi:16},
   axis:["central-park","911-memorial"],
   /* Undecided on purpose. The two ways in shape the week differently
      enough that the board should be able to show both. */
-  travelOrder:["train","plane"],
+  travelOrder:["train","trainatl","plane"],
   travel:{
    train:{
-    id:"train", label:"Train",
+    id:"train", label:"Anniston",
     route:"Amtrak Crescent 20 & 19 · Anniston, Alabama ⇆ New York Penn Station",
     sub:"Into Penn Station, a little before 7 pm Sunday",
     deckTail:"The train is two roomettes on a longer Crescent than the Washington one — four hours further up the line, so a dearer ticket, not a free one — and it costs two evenings on top: in after dark on the Sunday, out again just after two on the last day.",
@@ -1164,6 +1865,42 @@ var CITIES = {
      packing:
       "<tr><td>Photo ID for everyone</td><td>Amtrak at Anniston, then bag check at the memorial museum and the Empire State.</td></tr>" +
       "<tr><td>Printed tickets, once</td><td>Penn Station Wi-Fi is a rumor. Print the timed passes.</td></tr>"
+    }
+   },
+   trainatl:{
+    id:"trainatl", label:"Atlanta",
+    route:"Amtrak Crescent 20 & 19 · Atlanta Peachtree ⇆ New York Penn Station",
+    sub:"Into Penn Station, a little before 7 pm Sunday",
+    deckTail:"The same long Crescent, boarded two stops later. A shorter fare on the dearest sleeper of any version of this trip, paid for with a near-midnight start at Peachtree.",
+    depart:{at:"2026-11-28T23:29:00-05:00", big:"Sat Nov 28", small:"board at Atlanta, 11:29 pm"},
+    departHours:0,
+    check:{level:"ok", t:"Atlanta boarding trims the longest sleeper fare on the page",
+      s:"New York is already four hours past Washington and the roomette is priced accordingly, so this is the city where cutting a hundred and fifty miles off the ticket is worth the most. The week does not change — in a little before seven on the Sunday, out just after two on the last day, both end days still the railroad's. What changes is a near-midnight boarding and an 8:43 am arrival back into Atlanta."},
+    structural:function(day, slot){
+      if (day.kind === "arrival") return slot === "day"
+        ? {name:"Still on the Crescent", load:"lo", note:"Four hours north of Washington", ll:NYC_BASE_LL}
+        : {name:"Penn Station, hotel, food", load:"lo", note:"In a little before 7 pm", ll:NYC_BASE_LL};
+      if (day.kind === "departure" && slot === "day")
+        return {name:"Southbound Crescent 19", load:"lo", note:"Out of Penn Station just after 2 pm", ll:NYC_BASE_LL};
+      return null;
+    },
+    logi:{
+     head:"The train, boarded at Atlanta",
+     rows:
+      "<tr><td>Crescent&nbsp;20 north</td><td>Atlanta Peachtree</td><td>New York Penn</td><td class='m'>Board Sat 11:29 pm &middot; in a little before 7 pm Sun</td></tr>" +
+      "<tr><td>Crescent&nbsp;19 south</td><td>New York Penn</td><td>Atlanta Peachtree</td><td class='m'>Out just after 2 pm &middot; in 8:43 am</td></tr>",
+     notes:function(){ return [
+      "The identical train to the identical Penn Station, joined two stops later. New York is where the Crescent ends, so nobody changes trains on this one either — it is the same two roomettes, four hours further than the Washington version, and it walks out four blocks from the hotel.",
+      "This is the city where boarding at Atlanta is worth the most money. The sleeper is distance-priced and the New York ride is the longest one on this page, so taking a hundred and fifty miles off the front of it is the biggest single saving available anywhere in this planner. It is also the one nobody has priced.",
+      "The cost is the night. Into Peachtree at 11:00 pm, out at 11:29, with an hour and three quarters of driving to get there — so a nine-thirty departure from the house and everyone into a bunk at midnight. From Anniston we get on at 8:04 with the whole evening ahead, which on a nineteen-hour ride is a real part of the trip rather than dead time.",
+      "The week itself does not move. In a little before seven on the Sunday and back out just after two on the last day, whichever platform we joined at, and the board holds both of those shut. Coming home, 8:43 am into Peachtree and the drive from there gets us back before the Anniston version would.",
+      "Peachtree Station is small and eight days of parking there is not the plan. Long-term is across the street at the America's Best Value Inn — pay the desk clerk, ticket on the dashboard — or the deck behind the Peachtree-25th Building two blocks down, or a free MARTA park-and-ride with a ride in from there. Price eight days of it before calling this the cheap option.",
+      "It also makes the comparison on this page honest. Fly is four fares out of Hartsfield; boarding the train at Peachtree starts from the same city and the same drive, so the two numbers are finally measuring the same thing."
+     ]; },
+     packing:
+      "<tr><td>Photo ID for everyone</td><td>Amtrak at Peachtree, then bag check at the memorial museum and the Empire State.</td></tr>" +
+      "<tr><td>Printed tickets, once</td><td>Penn Station Wi-Fi is a rumor. Print the timed passes.</td></tr>" +
+      "<tr><td>The parking ticket on the dashboard</td><td>If we use the hotel lot across from Peachtree, that is how they know the car is paid for.</td></tr>"
     }
    },
    plane:{
@@ -1221,10 +1958,313 @@ var CITIES = {
    "<tr><td>Broken-in shoes</td><td>Central Park end to end is two and a half miles and the subway stairs are the rest of it.</td></tr>" +
    "<tr><td>A tap-to-pay card each</td><td>Every turnstile takes it. That card is the MetroCard now, and it stops charging after twelve rides in a week.</td></tr>" +
    "<tr><td>The games</td><td>Mine Turtle, Muffin Time, Monopoly Deal and Uno all fit in one bag. The turtle takes AAAs — check them at home, not at the hotel.</td></tr>"
+ },
+
+ wilm: {
+  key:"wilm", slug:"wilmington", name:"Wilmington",
+  base:{name:"Downtown, by the Riverwalk", ll:WILM_BASE_LL},
+  venues:WILM_VENUES, bundles:WILM_BUNDLES, bundleLoad:WILM_BUNDLE_LOAD,
+  wants:WILM_WANTS, maybes:WILM_MAYBES, nopes:WILM_NOPES, cutUnits:[],
+  mustSee:9, askVersion:1,
+  uber:{base:0, perMile:0.70, mph:28, waitMin:2, word:"drives in our own car", maxMi:48},
+  axis:["battleship","fort-fisher"],
+  /* The only city on this page where the way in also decides whether we
+     have a car all week, which is why both options are on the strip. */
+  travelOrder:["drive","plane"],
+  travel:{
+   drive:{
+    id:"drive", label:"Drive",
+    route:"Our own car · Anniston, Alabama ⇆ Wilmington, North Carolina · about 600 miles",
+    sub:"Into Wilmington Sunday evening, with a car for the week",
+    deckTail:"Driving costs both end days outright — nine and a half hours out and nine and a half back — and buys the two things this city cannot do without: a car for the whole week, and a bill that is one tank of fuel instead of four airfares.",
+    depart:{at:"2026-11-29T07:00:00-06:00", big:"Sun Nov 29", small:"out of Anniston at seven"},
+    departHours:0,
+    check:{level:"ok", t:"Driving eats both end days and solves everything else",
+      s:"Nine and a half hours each way, so the Sunday and the last day are the interstate's and the board holds them shut. What you get for them is the car — and in Wilmington that is not a luxury, because the battleship is across a river, the fort is fifteen miles south and the lights are eight miles east. Switch to Fly above and you get the Sunday evening back, then pay for a rental at the airport anyway."},
+    structural:function(day, slot){
+      if (day.kind === "arrival") return slot === "day"
+        ? {name:"I-20, I-26, I-40", load:"lo", note:"Nine and a half hours across four states", ll:WILM_BASE_LL}
+        : {name:"Into Wilmington, hotel, food", load:"lo", note:"In around half five", ll:WILM_BASE_LL};
+      if (day.kind === "departure" && slot === "day")
+        return {name:"The drive home", load:"lo", note:"Out early, home late", ll:WILM_BASE_LL};
+      return null;
+    },
+    logi:{
+     head:"The drive",
+     rows:
+      "<tr><td>Out</td><td>Anniston, AL</td><td>Wilmington, NC</td><td class='m'>Sun 7:00 am &middot; about 9 hr 30 with stops</td></tr>" +
+      "<tr><td>Back</td><td>Wilmington, NC</td><td>Anniston, AL</td><td class='m'>Out early on the last day &middot; home that night</td></tr>",
+     notes:function(){ return [
+      "There is no train. This is the first city on this page the Crescent cannot reach and it is not close — Wilmington has no passenger rail service of any kind, and the nearest Amtrak platform is Charlotte, two hundred miles inland. So the choice is not train against plane here, it is drive against fly, and the honest comparison is nine and a half hours against four fares plus a rental car at the other end.",
+      "Six hundred miles, four states, one tank each way and a second one somewhere in South Carolina. Leave at seven and we are checking in before dark. It is a long day and it is the cheapest way four people have ever got to the Atlantic.",
+      "The car is the point. Everything in this city is fifteen or twenty minutes from everything else and none of it is walkable from the hotel except the Riverwalk — the battleship is across the river, Fort Fisher is fifteen miles south, Airlie is eight miles east, and Enchanted Airlie literally sells its tickets by the carload. Our own car does all of that for fuel.",
+      "Uno comes out somewhere around Atlanta going and again in South Carolina coming home. The rest of the games stay in the boot until the last night."
+     ]; },
+     packing:
+      "<tr><td>Photo ID for everyone</td><td>Not for the road, but the hotel wants one and so does anywhere that checks.</td></tr>" +
+      "<tr><td>The Airlie tickets, printed</td><td>Carload entry, timed. Do not be the family sorting out a phone at the gate.</td></tr>"
+    }
+   },
+   plane:{
+    id:"plane", label:"Fly",
+    route:"Atlanta Hartsfield ⇆ Wilmington ILM · plus a rental car for the week",
+    sub:"Into ILM around lunchtime Sunday, then the rental desk",
+    deckTail:"Flying hands back the Sunday evening and most of the last day — but ILM is a small airport, December is its dearest month, and a rental car is not optional here, so this is four fares plus a car hire against one tank of fuel.",
+    depart:{at:"2026-11-29T09:30:00-05:00", big:"Sun Nov 29", small:"out of Atlanta mid-morning"},
+    departHours:4,
+    check:{level:"ok", t:"Flying buys back two half-days and still needs a car",
+      s:"Delta runs ILM to Atlanta nonstop in about an hour and a half, so we are at the hotel by early afternoon and the first evening is ours. What it does not do is save the rental — the battleship, the fort and the lights are all a drive whichever way we arrive. So it is four fares plus a car against nine and a half hours of driving, and only one of those two numbers has been priced."},
+    structural:function(day, slot){
+      if (day.kind === "arrival" && slot === "day")
+        return {name:"Fly to ILM, rental desk, hotel", load:"lo",
+                note:"Atlanta to Wilmington, about 1 hr 30 in the air", ll:WILM_BASE_LL};
+      if (day.kind === "departure" && slot === "night")
+        return {name:"Fly home", load:"lo", note:"Car back, then out of ILM", ll:WILM_BASE_LL};
+      return null;
+    },
+    logi:{
+     head:"The flights",
+     rows:
+      "<tr><td>Eastbound</td><td>Atlanta Hartsfield</td><td>Wilmington ILM</td><td class='m'>Sun morning &middot; ~1 hr 30 in the air, in around lunchtime</td></tr>" +
+      "<tr><td>Westbound</td><td>Wilmington ILM</td><td>Atlanta Hartsfield</td><td class='m'>Last evening &middot; home the same night</td></tr>",
+     notes:function(){ return [
+      "Delta is the only airline flying ILM to Atlanta nonstop, about twenty flights a week and an hour and a half in the air. American runs the Charlotte hop, which is ILM's busiest route by a distance. Either way there is no nonstop from Birmingham, so the day still starts with the drive to Hartsfield.",
+      "December is the dearest month of the year on this route, and ILM is a small airport with thin schedules — there is no shifting to the next flight if the first one goes wrong. Price four of these against a tank of fuel before anybody signs off on it.",
+      "And the rental is still there. Flying does not save the car in Wilmington, it just moves where you pick it up: the ship is across the river, the fort is fifteen miles down the cape, and the lights sell a per-carload ticket. So this option is four fares plus a hire car, and the drive is fuel.",
+      "What it genuinely buys is the Sunday evening and most of the last day — the Riverwalk on the first night instead of an interstate, and the battleship on the way out if the flight is late enough."
+     ]; },
+     packing:
+      "<tr><td>One bag each that fits the sizer</td><td>ILM is small and four checked bags is four fees and forty minutes at a carousel with two belts.</td></tr>" +
+      "<tr><td>Photo ID for everyone</td><td>TSA at Hartsfield, and the rental desk wants a licence and a card in the same name.</td></tr>" +
+      "<tr><td>The Airlie tickets, printed</td><td>Carload entry, timed, and sold out weeks earlier.</td></tr>"
+    }
+   }
+  },
+  copy:{
+   deck:"The thirteen things I want to do in Wilmington, on the same eight days. A battleship you walk around inside, the cape down to Fort Fisher and the Atlantic in December, a million lights through a garden, and an old port town with the garland up. It is the cheapest of these trips to reach and the only one that needs a car once we are there.",
+   askDeck:"Thirteen things, and the argument for all of them is the ship. Everything below is the same arithmetic as the other cities — which day it lands on, how long it takes, what the drive costs — run against a town where the good things are fifteen minutes apart and nothing is walkable except the river.",
+   fitTail:"Fort Fisher is shut Sundays and both end days are Sundays, so the cape lands midweek; Bellamy is shut Sundays and Mondays, which is tighter still.",
+   togetherNote:"Two of these arrive together: the fort comes with Kure Beach at the bottom of the same road, and the Riverwalk comes with Front Street because it is the way back to the hotel. The ferry to Southport only sails off the back of the fort day and the board will not put it anywhere else.",
+   bookingNote:"Enchanted Airlie is the one that matters — tickets go on sale October 28, they are sold by the carload, and December nights sell out. Book it before anything else on this page.",
+   fareNote:" These are our own miles in our own car, so the figure above is fuel and time rather than a fare. Parking at the battleship is free.",
+   mapNote:"Straight-line miles from the hotel downtown, which understates the cape badly — Fort Fisher is fifteen road miles south and the river is in the way of everything. Every hop is costed as our own car at about 28 mph door to door, which is what a town this size actually drives. Nothing here is a fare; it is fuel and the twenty minutes each leg takes.",
+   artI:"We are going to the coast in December, which means an empty beach and a cold wind off the water and nobody else on the pier. That is the version of the Atlantic I want — not the July one with a hundred thousand people on it. So we bring the real coats and we walk on the sand anyway, and we do not turn round at the dunes because the wind picked up. The battleship is nine levels of unheated steel and that is part of it too.",
+   artIIIHead:"We have a car, and here that is the whole trip.",
+   artIII:"Every other city on this page is built on not driving. This one is built on driving, because there is no version of Wilmington that works otherwise — the ship is across a river, the fort is fifteen miles down the cape, the lights are eight miles east and sold by the carload, and the ferry to Southport takes the car onto the boat with us. That is the trade: no train, no transit, and in exchange a town where everything is twenty minutes away and parking is free."
+  },
+  packing:
+   "<tr><td>A proper coat, and a windproof one</td><td>Fifties on the thermometer and an onshore wind is colder than the number looks. The pier and the fort are both fully exposed.</td></tr>" +
+   "<tr><td>Shoes that can get wet</td><td>Two beaches and a ferry deck. Something on the sand is going to get soaked.</td></tr>" +
+   "<tr><td>Broken-in shoes as well</td><td>Nine levels of battleship is a lot of ladders and steel stairs.</td></tr>" +
+   "<tr><td>Battery pack</td><td>Cold eats phones, and the Airlie tickets are on the phones.</td></tr>" +
+   "<tr><td>The games</td><td>Mine Turtle, Muffin Time, Monopoly Deal and Uno all fit in one bag. The turtle takes AAAs &mdash; check them at home, not at the hotel.</td></tr>"
+ },
+
+ sj: {
+  key:"sj", slug:"san-jose", name:"San Jose",
+  base:{name:"Downtown San Jose", ll:SJ_BASE_LL},
+  venues:SJ_VENUES, bundles:SJ_BUNDLES, bundleLoad:SJ_BUNDLE_LOAD,
+  wants:SJ_WANTS, maybes:SJ_MAYBES, nopes:SJ_NOPES, cutUnits:[],
+  mustSee:9, askVersion:1,
+  uber:{base:8.50, perMile:2.40, mph:22, waitMin:5, word:"hops", maxMi:95},
+  axis:["christmas-in-the-park","golden-gate"],
+  travelOrder:["plane"],
+  travel:{
+   plane:{
+    id:"plane", label:"Fly",
+    route:"Atlanta Hartsfield ⇆ San Jose Mineta · the only way this trip exists",
+    sub:"Into SJC late morning Sunday, three hours in hand",
+    deckTail:"There is no second option and the page is not going to invent one: Amtrak out of Alabama reaches California in three days and eight hours by way of New Orleans, and it arrives in Los Angeles. Four fares to the west coast is what this city costs.",
+    depart:{at:"2026-11-29T07:30:00-05:00", big:"Sun Nov 29", small:"out of Atlanta early"},
+    departHours:2.5,
+    check:{level:"ok", t:"Flying west hands back the first evening",
+      s:"Five hours in the air and three time zones in our favour, so an early flight out of Atlanta lands before lunch local and the first night is entirely ours — which is one more evening than the train gives us in either of the other cities. Coming home the three hours go the other way and eat most of the last day."},
+    structural:function(day, slot){
+      /* West is the good direction: out early, in before lunch, and the
+         first night is real. Coming home the clock takes it all back. */
+      if (day.kind === "arrival" && slot === "day")
+        return {name:"Fly west, SJC, hotel", load:"lo",
+                note:"About 5 hr in the air, in before lunch local", ll:SJ_BASE_LL};
+      if (day.kind === "departure" && slot === "night")
+        return {name:"In the air, then home", load:"lo",
+                note:"Three time zones against us the whole way", ll:SJ_BASE_LL};
+      return null;
+    },
+    logi:{
+     head:"The flights",
+     rows:
+      "<tr><td>Westbound</td><td>Atlanta Hartsfield</td><td>San Jose SJC</td><td class='m'>Sun early &middot; ~5 hr in the air, in before lunch local</td></tr>" +
+      "<tr><td>Eastbound</td><td>San Jose SJC</td><td>Atlanta Hartsfield</td><td class='m'>Last day, midday &middot; home late that night</td></tr>",
+     notes:function(){ return [
+      "This city has one way in and the page is not going to pretend otherwise. Amtrak from Birmingham to California is three days and eight hours each way, routed south to New Orleans first and terminating in Los Angeles — that is six and a half of our eight days spent on a train, to arrive in the wrong city. There is no train version of San Jose.",
+      "Four round-trip fares to the west coast in the first week of December is the most expensive line on any version of this trip, and it should be said plainly rather than buried. The counter-argument is everything below: this is the only city on this page that needs no car at all once we land.",
+      "Flying west is the good direction. Out of Atlanta early, five hours in the air, three time zones handed back, and we are at the hotel before lunch with the whole first evening free — Christmas in the Park is four blocks away and open every night we are there. Coming home the clock takes those three hours back and the last day mostly goes with it.",
+      "SJC is three miles from downtown, which is closer than most cities put their airport. No rental car, no shuttle out to a lot in another county. The games ride in a cabin bag; Uno earns its keep somewhere over Texas."
+     ]; },
+     packing:
+      "<tr><td>One bag each that fits the sizer</td><td>Four checked bags is four fees on the most expensive flights of any version of this trip.</td></tr>" +
+      "<tr><td>Photo ID for everyone</td><td>TSA at Hartsfield both ways.</td></tr>" +
+      "<tr><td>A real rain jacket</td><td>December is the wet half of the California year. It is not cold; it is wet.</td></tr>" +
+      "<tr><td>Battery pack in the cabin bag</td><td>Five hours of flight and the boarding passes are on the phones. Not allowed in a checked bag anyway.</td></tr>"
+    }
+   }
+  },
+  copy:{
+   deck:"The thirteen things I want to do in San Jose, on the same eight days. The most expensive of these trips to reach and the only one that needs no car at all once we are there — the airport is three miles out, Caltrain goes to San Francisco, and the best thing on the list is free and four blocks from the hotel.",
+   askDeck:"Thirteen things, and the spine of it is that everything is on a train or a short walk. Everything below is the same arithmetic as the other cities, run against a place where December means rain rather than cold and where nothing on this list shuts for the season.",
+   fitTail:"The Computer History Museum and the art museum are both shut Mondays and Tuesdays, so those two have to share the back half of the week.",
+   togetherNote:"One of these arrives as a pair: San Francisco is a single day out on Caltrain with the Ferry Building at one end of it and the Golden Gate at the other, and splitting that into two trips would mean paying for the train twice to do half as much.",
+   bookingNote:"Winchester by candlelight is timed and December sells; the Computer History Museum and the Tech both want tickets ahead. Christmas in the Park has never charged anybody anything.",
+   fareNote:" Most of these are a light-rail or Caltrain fare in real life, so the figure above is the ceiling and not the bill.",
+   mapNote:"Straight-line miles from the hotel downtown, which makes San Francisco look further than it feels — Caltrain does it in about an hour and ten for the price of a sandwich. Every hop is costed as a car at about 22 mph, which is the worst case; downtown San Jose is small enough to walk and the train does the rest. Monterey is the one pin on this map that is genuinely far, which is exactly why it is a maybe.",
+   artI:"We are going to California in December and it is not going to be cold, so this is the one version of the trip where the weather argument is about rain instead. The lights in the park run whatever the sky is doing, the Winchester tour is indoors by candlelight, and the bridge is a bridge — we walk out onto it in a rain jacket and we do not turn round at the first tower. Bring the jacket, not the parka.",
+   artIIIHead:"No rental car. Caltrain, light rail, and our feet.",
+   artIII:"This is the city we would be picking precisely because it does not need a car. The airport is three miles from the hotel, downtown is walkable, light rail covers the rest of it and Caltrain runs to San Francisco in about an hour and ten. The board still prices every hop as a car at 22 mph because that is the honest worst case, but almost none of these will actually be one. The single exception is Monterey, which is why it is sitting in the maybes rather than the list."
+  },
+  packing:
+   "<tr><td>A real rain jacket, not a coat</td><td>December in the Bay Area is fifty-something and wet. The parka is the wrong tool.</td></tr>" +
+   "<tr><td>Layers</td><td>Fifty-eight downtown and considerably less than that standing on the Golden Gate in the wind.</td></tr>" +
+   "<tr><td>Broken-in shoes</td><td>The bridge is a mile and three quarters each way and San Francisco is built on hills.</td></tr>" +
+   "<tr><td>A tap-to-pay card each</td><td>Caltrain, VTA and Muni all take it. No paper tickets, no machines.</td></tr>" +
+   "<tr><td>The games</td><td>Mine Turtle, Muffin Time, Monopoly Deal and Uno all fit in one bag. The turtle takes AAAs &mdash; check them at home, not at the hotel.</td></tr>"
+ },
+
+ sea: {
+  key:"sea", slug:"seattle", name:"Seattle",
+  base:{name:"Downtown, above the market", ll:SEA_BASE_LL},
+  venues:SEA_VENUES, bundles:SEA_BUNDLES, bundleLoad:SEA_BUNDLE_LOAD,
+  wants:SEA_WANTS, maybes:SEA_MAYBES, nopes:SEA_NOPES, cutUnits:[],
+  mustSee:9, askVersion:1,
+  uber:{base:9.00, perMile:2.70, mph:16, waitMin:5, word:"hops", maxMi:24},
+  axis:["space-needle","museum-of-flight"],
+  travelOrder:["plane"],
+  travel:{
+   plane:{
+    id:"plane", label:"Fly",
+    route:"Atlanta Hartsfield ⇆ Seattle-Tacoma · the only way this trip exists",
+    sub:"Into SEA around lunchtime Sunday, then Link into town",
+    deckTail:"One way in, and it is a long one — about five and a half hours in the air. What Seattle gives back for it is the earliest dark of any city on this page: the sun is gone by twenty past four, so an after-dark list gets more night here than anywhere else.",
+    depart:{at:"2026-11-29T07:30:00-05:00", big:"Sun Nov 29", small:"out of Atlanta early"},
+    departHours:2.5,
+    check:{level:"ok", t:"Flying west hands back the first evening",
+      s:"Five and a half hours in the air and three time zones in our favour, so we are downtown by early afternoon and the first night is ours. Sunset is at twenty past four, which means the first night is a long one — but also that every day here is a short one, and the board is budgeting seven daylight hours it will not actually have."},
+    structural:function(day, slot){
+      if (day.kind === "arrival" && slot === "day")
+        return {name:"Fly west, Link into town, hotel", load:"lo",
+                note:"About 5 hr 30 in the air, in before mid-afternoon", ll:SEA_BASE_LL};
+      if (day.kind === "departure" && slot === "night")
+        return {name:"In the air, then home", load:"lo",
+                note:"Three time zones against us the whole way", ll:SEA_BASE_LL};
+      return null;
+    },
+    logi:{
+     head:"The flights",
+     rows:
+      "<tr><td>Westbound</td><td>Atlanta Hartsfield</td><td>Seattle-Tacoma SEA</td><td class='m'>Sun early &middot; ~5 hr 30 in the air, in early afternoon local</td></tr>" +
+      "<tr><td>Eastbound</td><td>Seattle-Tacoma SEA</td><td>Atlanta Hartsfield</td><td class='m'>Last day, late morning &middot; home late that night</td></tr>",
+     notes:function(){ return [
+      "There is no train worth the name. Amtrak from Alabama to the Pacific Northwest means going south to New Orleans, west to Los Angeles and then north up the Coast Starlight — the better part of four days each way. Seattle is a flight or it is nothing.",
+      "Link light rail runs from the airport into downtown in about forty minutes for a few dollars, which is the reason this city works without a car at all. Everything on the list is transit, a ferry, or a walk down a hill.",
+      "The dark is the argument. Sunset the first week of December is about twenty past four — nearly an hour earlier than New York and an hour and a half earlier than home. Most of this list is better lit than not, so the short day is a feature. The flip side is that seven usable daylight hours is optimistic here and the board is budgeting them anyway; treat a full day slot as a hopeful number rather than a promise.",
+      "The rain is the other argument, in the other direction. This is the wettest month of the Seattle year and it comes as continuous drizzle rather than as storms, which means it does not cancel anything and it does soak everything. Half this catalogue rates poorly for rain and the weather switches on the board are doing real work here."
+     ]; },
+     packing:
+      "<tr><td>A proper waterproof, with a hood</td><td>Not water-resistant. Not an umbrella either &mdash; nobody here uses one and the wind off the Sound takes them.</td></tr>" +
+      "<tr><td>One bag each that fits the sizer</td><td>Four checked bags is four fees on a five-and-a-half-hour flight.</td></tr>" +
+      "<tr><td>Photo ID for everyone</td><td>TSA at Hartsfield both ways.</td></tr>" +
+      "<tr><td>Battery pack in the cabin bag</td><td>Cold and damp both eat phones, and the tickets are on them.</td></tr>"
+    }
+   }
+  },
+  copy:{
+   deck:"The fourteen things I want to do in Seattle, on the same eight days. The sun sets at twenty past four here in December, which is earlier than anywhere else on this page — so a list that is mostly better after dark gets more dark to work with. The cost is rain, and it is the wettest month of their year.",
+   askDeck:"Fourteen things, and nearly half of them are indoors on purpose, because this is the one city on this page where the weather can genuinely take a day off you. Everything below is the same arithmetic run against the shortest days and the wettest month of any version of this trip.",
+   fitTail:"Nothing here shuts for the season, but the Science Center is dark Mondays and Tuesdays and the Christmas Ship picks its own night from a published route.",
+   togetherNote:"Two of these arrive together: the Needle and the Chihuly glasshouse are a hundred yards apart with a combined ticket, and the Gum Wall is in the alley underneath Pike Place. Kerry Park only works as the walk uphill after Seattle Center, so the board will not schedule it anywhere else.",
+   bookingNote:"The Needle is timed and the combined Needle-and-Chihuly ticket is the one to buy. The Christmas Ship route is published nightly — check which waterfront before promising a day to it.",
+   fareNote:" Most of these are an ORCA tap or a ferry walk-on in real life, so the figure above is the ceiling and not the bill.",
+   mapNote:"Straight-line miles from the hotel above the market, which flatters this city badly — Seattle is built on hills steep enough to have their own staircases, and a quarter-mile on the map can be a two-hundred-foot climb. Every hop is costed as a car at about 16 mph, which is what the downtown grid does to one. Link and the ferries beat it on nearly everything, and the Bainbridge boat is the only leg on this map that crosses water.",
+   artI:"We are going to the place with the shortest days in the country in the week they are shortest, which is the entire point — the sun is gone by twenty past four and everything on this list is better with the lights on. What we are not going to do is let the rain end an evening. It drizzles here more or less continuously in December and if that sends us indoors at six then we have flown five and a half hours to sit in a hotel. Proper waterproofs, hoods up, and we stay out.",
+   artIIIHead:"No rental car. Link, the buses, and the ferry.",
+   artIII:"Light rail runs from the airport door into downtown, buses cover the hills, and the one water crossing on the list is a passenger ferry we walk onto. Nothing here needs a car and parking downtown is punitive anyway. The board prices every hop as a car at 16 mph because that is the honest worst case in a city with this grid, but the real number is an ORCA tap. What does need respect is the hills, which the map does not show at all."
+  },
+  packing:
+   "<tr><td>A proper waterproof with a hood</td><td>Not an umbrella. The drizzle is constant and the wind off the Sound is what takes umbrellas.</td></tr>" +
+   "<tr><td>Waterproof shoes</td><td>Wet feet at ten in the morning ruins the whole day, and there is a ferry deck and a hill involved.</td></tr>" +
+   "<tr><td>Layers</td><td>Forty-six and damp feels colder than forty-six and dry, and every museum on the list runs hot.</td></tr>" +
+   "<tr><td>An ORCA card each</td><td>Link, the buses and the ferry all take the same tap.</td></tr>" +
+   "<tr><td>The games</td><td>Mine Turtle, Muffin Time, Monopoly Deal and Uno all fit in one bag. The turtle takes AAAs &mdash; check them at home, not at the hotel.</td></tr>"
+ },
+
+ pdx: {
+  key:"pdx", slug:"portland", name:"Portland",
+  base:{name:"Downtown, by the transit mall", ll:PDX_BASE_LL},
+  venues:PDX_VENUES, bundles:PDX_BUNDLES, bundleLoad:PDX_BUNDLE_LOAD,
+  wants:PDX_WANTS, maybes:PDX_MAYBES, nopes:PDX_NOPES, cutUnits:[],
+  mustSee:8, askVersion:1,
+  uber:{base:8.00, perMile:2.50, mph:18, waitMin:5, word:"hops", maxMi:26},
+  axis:["zoolights","omsi"],
+  travelOrder:["plane"],
+  travel:{
+   plane:{
+    id:"plane", label:"Fly",
+    route:"Atlanta Hartsfield ⇆ Portland PDX · the only way this trip exists",
+    sub:"Into PDX around lunchtime Sunday, then MAX into town",
+    deckTail:"One way in, about five and a half hours of it. And the thing this city is most famous for in December — Peacock Lane, a whole street of it, a hundred years running — does not light until the 15th, which is nine days after we would be home.",
+    depart:{at:"2026-11-29T07:30:00-05:00", big:"Sun Nov 29", small:"out of Atlanta early"},
+    departHours:2.5,
+    check:{level:"warn", t:"Our week ends nine days before Peacock Lane starts",
+      s:"The best single December night in Portland is a hundred-year-old street where every house on it decorates, and it does not switch on until December 15. We fly home on the 6th. Everything else on this list runs during our week — ZooLights from November 29, the Grotto all month, the ships most nights — but the headline act is not available on these dates and no amount of scheduling fixes that."},
+    structural:function(day, slot){
+      if (day.kind === "arrival" && slot === "day")
+        return {name:"Fly west, MAX into town, hotel", load:"lo",
+                note:"About 5 hr 30 in the air, in before mid-afternoon", ll:PDX_BASE_LL};
+      if (day.kind === "departure" && slot === "night")
+        return {name:"In the air, then home", load:"lo",
+                note:"Three time zones against us the whole way", ll:PDX_BASE_LL};
+      return null;
+    },
+    logi:{
+     head:"The flights",
+     rows:
+      "<tr><td>Westbound</td><td>Atlanta Hartsfield</td><td>Portland PDX</td><td class='m'>Sun early &middot; ~5 hr 30 in the air, in early afternoon local</td></tr>" +
+      "<tr><td>Eastbound</td><td>Portland PDX</td><td>Atlanta Hartsfield</td><td class='m'>Last day, late morning &middot; home late that night</td></tr>",
+     notes:function(){ return [
+      "Same as Seattle: there is no train from Alabama to the Pacific Northwest that fits inside eight days. It is a flight or it is not happening.",
+      "The MAX red line runs from the airport terminal into downtown in about forty minutes, and the same system runs out to the zoo gate for ZooLights. That is the whole transport plan and it does not include a car.",
+      "The calendar is the problem with this city and it is worth stating rather than hiding. Peacock Lane — the street that has been doing this since the twenties and is the reason people go to Portland in December — lights on the 15th. Our last day is the 6th. What is left is genuinely good, and it is not the headline.",
+      "The rain here is drizzle rather than downpour, which is the difference between a wet trip and a cancelled one. It rains most days in December and it rarely rains hard. Hoods, not umbrellas."
+     ]; },
+     packing:
+      "<tr><td>A proper waterproof, with a hood</td><td>It rains most days in December and it comes as drizzle, which soaks you slowly instead of quickly.</td></tr>" +
+      "<tr><td>One bag each that fits the sizer</td><td>Four checked bags is four fees on a five-and-a-half-hour flight.</td></tr>" +
+      "<tr><td>Photo ID for everyone</td><td>TSA at Hartsfield both ways.</td></tr>" +
+      "<tr><td>Battery pack in the cabin bag</td><td>Damp and cold both eat phones, and the tickets are on them.</td></tr>"
+    }
+   }
+  },
+  copy:{
+   deck:"The thirteen things I want to do in Portland, on the same eight days. A submarine you go down inside, a bookshop that takes up a whole city block, a million and a half lights through the zoo on the end of a train line, and a sanctuary cut into a cliff. All of it on transit and none of it needing a car.",
+   askDeck:"Thirteen things, and the honest headline is at the bottom of the cut list rather than the top of this one — Peacock Lane does not light until nine days after we go home. Everything below is the same arithmetic run against what is actually open the week we would be there.",
+   fitTail:"OMSI is shut Mondays and the Saturday Market is weekends only, so those two pin themselves to opposite ends of the week.",
+   togetherNote:"One of these arrives as a pair: the Japanese garden and Pittock Mansion are ten minutes apart a thousand feet up the same hillside, on the same bus, and nobody makes that climb twice in one week.",
+   bookingNote:"ZooLights sells out on December weekends and the Grotto's concerts are ticketed by performance. The Christmas Ships publish a nightly route — check where they are before giving them a day.",
+   fareNote:" Nearly all of these are a MAX or streetcar fare in real life, so the figure above is the ceiling and not the bill.",
+   mapNote:"Straight-line miles from the hotel by the transit mall. The west hills are the distortion here — the garden and the mansion are barely two miles out and a thousand feet up, which the map has no way of showing. Every hop is costed as a car at about 18 mph; the MAX and the streetcar do most of them for a couple of dollars. Multnomah Falls is the one pin genuinely off the edge of the city, which is why it is a maybe.",
+   artI:"We are going to the wettest city on this page in its wettest month, so the rule is that rain does not end an evening. It drizzles here nearly every day in December and it almost never pours — which means the only thing standing between us and a good night out is deciding that a bit of wet is a reason to go back to the hotel. It is not. Hoods up, and the Grotto has the sense to put its concerts indoors and its lights outdoors on the same ticket.",
+   artIIIHead:"No rental car. The MAX does nearly all of it.",
+   artIII:"The light rail runs from the airport terminal into downtown and back out to the zoo gate, the streetcar crosses the river to the submarine, and a bus climbs the west hills. That is the entire plan. The board prices every hop as a car at 18 mph because that is the honest worst case, but the real cost of most of these is a two-dollar fare. The exception is Multnomah Falls, forty minutes east with nothing running to it, which is precisely why it is sitting in the maybes."
+  },
+  packing:
+   "<tr><td>A proper waterproof with a hood</td><td>Drizzle nearly every day. Umbrellas mark you out and do not help.</td></tr>" +
+   "<tr><td>Waterproof shoes</td><td>ZooLights is two hours of standing on wet paths after dark.</td></tr>" +
+   "<tr><td>Layers</td><td>Forty-five and damp, and Powell's and OMSI both run hot.</td></tr>" +
+   "<tr><td>A tap-to-pay card each</td><td>MAX, the streetcar and the buses all take it.</td></tr>" +
+   "<tr><td>The games</td><td>Mine Turtle, Muffin Time, Monopoly Deal and Uno all fit in one bag. The turtle takes AAAs &mdash; check them at home, not at the hotel.</td></tr>"
  }
 };
 var CITY_KEYS
- = ["dc","nyc"];
+ = ["dc","nyc","wilm","sj","sea","pdx"];
 
 /* Everything the rest of the file reads as a global. setCity swaps the
    whole catalogue at once, so no renderer below has to know a second
@@ -1241,6 +2281,8 @@ function setCity(k){
   BASE = C.base; BASE_LL = C.base.ll;
   MUST_SEE = C.mustSee; ASK_VERSION = C.askVersion;
   UBER = C.uber; UBER_MPH = C.uber.mph; UBER_WAIT_MIN = C.uber.waitMin;
+  TICKET = TICKETS[k] || {}; WORTHS = WORTH[k] || {}; FOOD = FOODS[k];
+  RAIL = RAILS[k] || {};
   byId = {}; VENUES.forEach(function(v){ byId[v.id] = v; });
   UNITS = buildUnits();
   unitById = {}; UNITS.forEach(function(u){ unitById[u.id] = u; });
@@ -1600,11 +2642,11 @@ var DAY_HOURS = 7, NIGHT_HOURS = 4;
 function budgetFor(day, slot){
   /* The last night is the one evening with nothing to get up for: the
      southbound train does not leave until 6:30 the next day. */
-  if (slot === "night" && day.lastHotelNight) return NIGHT_HOURS + 1.5;
-  if (slot === "night") return day.kind === "departure" ? 0 : NIGHT_HOURS;
+  if (slot === "night" && day.lastHotelNight) return NIGHT_HOURS + 1.5 - FOOD.dinner.h;
+  if (slot === "night") return day.kind === "departure" ? 0 : NIGHT_HOURS - FOOD.dinner.h;
   if (day.kind === "arrival") return 0;
   if (day.kind === "departure") return DEPART_HOURS;
-  return DAY_HOURS;
+  return DAY_HOURS - FOOD.lunch.h;
 }
 function hoursOf(u, p){ return (p && p.short && u.min < u.ideal) ? u.min : u.ideal; }
 /* Some outings are only an outing because of the one before them. The walk
@@ -1638,11 +2680,24 @@ function rideCount(list){
   legsFor(list).forEach(function(d){ if (d > 0.05) n++; });   /* the hotel is not a ride */
   return n;
 }
-function travelHours(list){
-  var mi = 0;
-  legsFor(list).forEach(function(d){ if (d > 0.05) mi += d; });
-  return mi / UBER_MPH + rideCount(list) * UBER_WAIT_MIN / 60;
+function railOf(u){
+  var r = 0;
+  u.members.forEach(function(id){ var v = RAIL[id]; if (v > r) r = v; });
+  return r;
 }
+/* Leg i runs into list[i] and out of list[i-1]; the last one goes home. */
+function legHours(list, i, d){
+  var from = i > 0 ? railOf(list[i-1].u) : 0;
+  var to   = i < list.length ? railOf(list[i].u) : 0;
+  var r = from > to ? from : to;
+  return (r > 0 ? r : d / UBER_MPH) + UBER_WAIT_MIN / 60;
+}
+function travelHours(list){
+  var h = 0;
+  legsFor(list).forEach(function(d, i){ if (d > 0.05) h += legHours(list, i, d); });
+  return h;
+}
+
 /* Who is actually going. Absent means all four — the common case. */
 function partyOf(p){
   return (p && Array.isArray(p.who) && p.who.length) ? p.who : CREW.map(function(c){ return c.id; });
@@ -1930,9 +2985,9 @@ function checks(){
       dayMiles += slotMiles(board, day, slot);
       dayRides += rideCount(list);
     });
-    if (dayRides > 6 || dayMiles > 16)
+    if (dayRides > 6 || dayMiles > (UBER.maxMi || 16))
       out.push({level:"warn", t:fmt(day) + " is a lot of riding",
-        s:dayRides + " UberXL hops, " + dayMiles.toFixed(1) + " miles. Not impossible, just worth knowing before it is nine at night, everyone is cold, and we are still three stops from anywhere warm."});
+        s:dayRides + " " + (UBER.word || "hops") + ", " + dayMiles.toFixed(1) + " miles. Not impossible, just worth knowing before it is nine at night, everyone is cold, and we are still three stops from anywhere warm."});
   });
 
   if (viewing === "sam"){
@@ -1976,6 +3031,34 @@ function checks(){
   if (needs.length)
     out.push({level:"warn", t:needs.length + " " + (needs.length === 1 ? "booking" : "bookings") + " still open",
       s:needs.join(", ") + ". " + C.copy.bookingNote});
+
+  /* Money is a planning fact too, and the one nobody writes down until
+     it is too late to change the plan. */
+  var wc = weekCost(board);
+  var thin = [];
+  Object.keys(board).forEach(function(uid){
+    var u = unitById[uid]; if (!u) return;
+    u.members.forEach(function(vid){
+      var wv = worthOf(vid), t = ticketOf(vid);
+      var paid = t && t !== 0 && (t.flat != null ? t.flat : t.ad) > 0;
+      if (wv.w === "thin" && paid) thin.push({name:byId[vid].name, s:wv.s});
+    });
+  });
+  thin.forEach(function(x){
+    out.push({level:"warn", t:x.name + " is on the plan and rated thin",
+      s:x.s + " Nothing is stopping us — it is on the board and it can stay there. This is just the page saying it out loud before the money is spent."});
+  });
+  out.push({level:wc.unpriced.length ? "warn" : "ok",
+    t:"This week costs about " + money(wc.total) + " for the four of us",
+    s:money(wc.adm) + " of admissions, " + money(wc.meals.total) + " of food (" +
+      wc.meals.breakfasts + " breakfasts, " + wc.meals.lunches + " lunches and " +
+      wc.meals.dinners + " dinners at " + money(FOOD.lunch.head) + " and " +
+      money(FOOD.dinner.head) + " a head), and " + money(wc.fares) +
+      " of rides. Getting there and the hotel are not in this number. " +
+      (wc.unpriced.length
+        ? wc.unpriced.length + " " + (wc.unpriced.length === 1 ? "outing has" : "outings have") +
+          " no ticket price yet — " + wc.unpriced.join(", ") + " — so the real figure is higher than this one."
+        : "Every outing on this plan is priced.")});
 
   var home = addDays(parseISO(state.config.start), state.config.nights + 1);
   var buffer = Math.round((parseISO(TRIP.backAtWork) - home) / 86400000);
@@ -2748,6 +3831,12 @@ function renderRoster(){
     row("Booking", v.resv === "none" ? "Walk up" : v.resv === "required" ? "Required" : "Recommended");
     row("From base", mi.toFixed(1) + " mi · " + walkMin(mi) + " min walk");
     row("Weather", "Cold " + v.w.cold + ", rain " + v.w.rain);
+    var tk = ticketOf(v.id), wv = worthOf(v.id);
+    row("Ticket", tk === undefined ? "Not priced yet"
+      : tk === 0 ? "Free"
+      : tk.flat != null ? money(tk.flat) + " for the whole party"
+      : money(tk.ad) + " each, " + money(tk.sr) + " for Nanny");
+    row("Worth it", worthWord(wv.w) + (wv.s ? " · " + wv.s : ""));
     if (v.bundle) row("Goes with", BUNDLES[v.bundle].name);
     if (v.closesAt) row("Gates", "Open 8:00 to " + v.closesAt + ":00, October to March");
     if (v.onTheHour) row("Ceremony", "Changing of the Guard, on the hour, about 15 min");
@@ -2824,6 +3913,37 @@ function renderLogi(){
   rules.appendChild(rl);
   g.appendChild(rules);
 
+  var cost = el("div","card");
+  cost.appendChild(head("What the week costs, once we are there"));
+  var wc2 = weekCost(S().boards[viewing] || {});
+  cost.appendChild(el("p","hint","Admissions for the four of us on the plan as it stands, "
+    + "every meal for " + wc2.meals.n + " days, and the rides between them. Getting to "
+    + C.name + " and somewhere to sleep are not in here — those are Bart's line, not the board's. "
+    + "Ticket figures are published list rates to check before booking, not quotes."));
+  var cw = el("div","tablewrap"), ct = el("table","tt"), cb = el("tbody");
+  function cRow(k, v, cls){
+    var tr = el("tr", cls || "");
+    tr.appendChild(el("td", null, k));
+    tr.appendChild(el("td","m num", v));
+    cb.appendChild(tr);
+  }
+  cRow("Admissions, everything placed", money(wc2.adm));
+  cRow(wc2.meals.breakfasts + " breakfasts · " + money(FOOD.breakfast.head) + " a head", money(wc2.meals.b));
+  cRow(wc2.meals.lunches + " lunches · " + money(FOOD.lunch.head) + " a head", money(wc2.meals.l));
+  cRow(wc2.meals.dinners + " dinners · " + money(FOOD.dinner.head) + " a head", money(wc2.meals.d));
+  cRow("Rides across the week", money(wc2.fares));
+  cRow("Total", money(wc2.total), "total");
+  ct.appendChild(cb); cw.appendChild(ct); cost.appendChild(cw);
+  cost.appendChild(el("p","hint", wc2.unpriced.length
+    ? wc2.unpriced.length + " of these have no ticket price on the page yet (" +
+      wc2.unpriced.join(", ") + "), so the total above is a floor and not an estimate."
+    : "Every outing on this plan is priced, so the total above is a real number."));
+  cost.appendChild(el("p","hint","Lunch takes " + hrs(FOOD.lunch.h) +
+    " out of every daytime slot and dinner takes " + hrs(FOOD.dinner.h) +
+    " out of every evening, before a single outing is placed. That is why a day holds "
+    + "less than it looks like it should."));
+  g.appendChild(cost);
+
   var games = el("div","card");
   games.appendChild(head("Game night, bought before we go"));
   games.appendChild(el("p","hint", GAMES_COST.items.join(" · ") +
@@ -2878,6 +3998,7 @@ function renderChrome(){
   document.getElementById("routeline").textContent = M.route;
   document.getElementById("deckline").textContent  = C.copy.deck + (M.deckTail ? " " + M.deckTail : "");
   document.getElementById("citysub").textContent   = M.sub;
+  document.getElementById("footline").textContent   = M.route;
   document.getElementById("departbig").textContent   = M.depart.big;
   document.getElementById("departsmall").textContent = M.depart.small;
   renderWay();
