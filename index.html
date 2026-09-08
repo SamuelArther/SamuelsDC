@@ -924,7 +924,8 @@ function buildUnits(){
     if (seen[v.id]) return;
     out.push({id:v.id, name:v.name, why:v.why, members:[v.id], bundle:false,
       seed:v.seed, tier:v.tier, period:v.period, load:v.load, env:v.env,
-      min:v.min, ideal:v.ideal, resv:v.resv, w:v.w, ll:v.ll, lastNight:v.lastNight});
+      min:v.min, ideal:v.ideal, resv:v.resv, w:v.w, ll:v.ll, lastNight:v.lastNight,
+      follows:v.follows});
   });
   out.sort(function(a,b){ return a.seed - b.seed; });
   return out;
@@ -964,15 +965,17 @@ var NYC_VENUES = [
   why:"Free, warm, and better than it sounds. The whispering gallery is the reason to go: stand facing into one corner of the arched vault outside the Oyster Bar, talk at the tiles, and somebody in the opposite corner forty feet away hears you as if you were next to them. Then the concourse, the green ceiling with the constellations painted backwards, and in December a holiday market in Vanderbilt Hall and a model train show off the main floor. Three quarters of an hour, on the way to everything else."},
  {id:"bryant-park",name:"Bryant Park Winter Village",seed:12,tier:"bonus",period:"night",load:"lo",env:"outdoor",min:1,ideal:2,resv:"none",w:OUT,bundle:null,ll:[40.7536,-73.9832],
   why:"Stalls, a rink that is free if you bring your own skates, and hot chocolate. Four blocks from the hotel, so it costs nothing to get to and nothing to leave."},
- {id:"nyc-ferry",name:"The East River ferry to DUMBO",seed:13,tier:"bonus",period:"day",load:"lo",env:"mixed",min:.75,ideal:1.5,resv:"none",w:{rain:"poor",cold:"acceptable",wind:"poor",heat:"good"},bundle:null,ll:[40.7033,-74.0110],
-  why:"Four dollars and change, out of Pier 11 and under the Brooklyn Bridge to DUMBO. It is a city bus that happens to float, which makes it the cheapest boat ride in the world with a skyline on it."},
- {id:"mine-turtle",name:"Mine Turtle at the hotel",seed:14,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:NYC_BASE_LL,lastNight:true,
+ {id:"dumbo",name:"DUMBO, after dark",seed:13,tier:"high",period:"night",load:"mid",env:"outdoor",min:1.25,ideal:2,resv:"none",w:{rain:"poor",cold:"acceptable",wind:"poor",heat:"good"},bundle:null,ll:[40.7035,-73.9925],
+  why:"Down Under the Manhattan Bridge Overpass, which is where it is and also what the name stands for. Three things: Washington Street, where you stand on the cobbles and the bridge arch frames the Empire State Building dead centre; Brooklyn Bridge Park along the water, with the whole Lower Manhattan skyline lit across the river and both bridges overhead; and Jane\x27s Carousel in its glass box on the waterfront, which cuts its hours right back in winter. Free, all of it. The F train runs there from the hotel without a change, and the East River ferry is the better arrival if we go while it is still light. It is also two rivers\x27 worth of wind, so it will be the coldest hour of the trip."},
+ {id:"brooklyn-bridge-walk",name:"Walking back over the Brooklyn Bridge",seed:14,tier:"bonus",period:"night",load:"mid",env:"outdoor",min:.5,ideal:1,resv:"none",w:{rain:"poor",cold:"acceptable",wind:"poor",heat:"acceptable"},bundle:null,ll:[40.7061,-73.9969],follows:"dumbo",
+  why:"A mile and a bit back into Manhattan on the upper deck, above the traffic, on the wooden promenade, with the skyline coming at you the whole way. The way home from DUMBO if the legs are still in it. Free, and it costs an hour and no fare."},
+ {id:"mine-turtle",name:"Mine Turtle at the hotel",seed:15,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:NYC_BASE_LL,lastNight:true,
   why:"Truth or dare with a turtle that explodes. Two to six players, so all four of us plus whoever wanders over. Last night, in the room, bags already packed."},
- {id:"muffin-time",name:"Muffin Time at the hotel",seed:15,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:NYC_BASE_LL,lastNight:true,
+ {id:"muffin-time",name:"Muffin Time at the hotel",seed:16,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:NYC_BASE_LL,lastNight:true,
   why:"Two hundred cards of chaos where one card flips the whole game. Two to eight players, so nobody sits out. The other half of the last night."},
- {id:"uno",name:"Uno",seed:16,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:NYC_BASE_LL,lastNight:true,
+ {id:"uno",name:"Uno",seed:17,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:NYC_BASE_LL,lastNight:true,
   why:"Weighs nothing, everybody already knows it, and Nanny can play it without a rules explanation. Also the right thing to have in a pocket whichever way we go — nineteen hours in a sleeper car or a morning spent in two airports."},
- {id:"monopoly-deal",name:"Monopoly Deal",seed:17,tier:"bonus",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:NYC_BASE_LL,lastNight:true,
+ {id:"monopoly-deal",name:"Monopoly Deal",seed:18,tier:"bonus",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:NYC_BASE_LL,lastNight:true,
   why:"Monopoly that fits in a pocket and ends in fifteen minutes instead of three hours. All the dealing and stealing, none of the sitting there bankrupt at midnight."}
 ];
 
@@ -1015,6 +1018,9 @@ var NYC_WANTS = [
  {ask:"Grand Central Terminal", unit:"grand-central",
   why:"The whispering gallery, mostly. Face into a corner of the arched vault outside the Oyster Bar, talk at the tiles, and somebody in the far corner hears you like they are standing next to you. Then the concourse and the ceiling with the constellations painted backwards by mistake.",
   rides:"Free, indoors, warm, three quarters of an hour, and on the way to almost everything else — so it costs a slot and no travel. In December there is a holiday market in Vanderbilt Hall and a model train show off the main floor as well."},
+ {ask:"DUMBO, after dark", unit:"dumbo",
+  why:"Down Under the Manhattan Bridge Overpass. Washington Street, where the bridge arch frames the Empire State Building dead centre; the park along the water with all of Lower Manhattan lit across the river; and the old carousel in its glass box. It is free, it is the best skyline view in the city, and it is only good after the lights are on.",
+  rides:"The F train goes there from the hotel without a change, which makes it cheaper to reach than the board thinks — it prices the ride as a car. The East River ferry is the nicer way over if we ever do it in daylight instead. Dress for it properly: it is a waterfront with two rivers pointing at it and it will be the coldest hour of the week."},
  {ask:"Mine Turtle, last night at the hotel", unit:"mine-turtle",
   why:"Truth or dare where the loser presses the turtle's button and hopes it does not go off. 2 to 6 players, about 20 minutes a round — so realistically two hours, because nobody stops after one round.",
   rides:"Pinned to the last night in the hotel and it will not schedule anywhere else. Bags packed, shoes off, nothing to walk to."},
@@ -1030,9 +1036,9 @@ var NYC_WANTS = [
 ];
 
 var NYC_MAYBES = [
- {ask:"The East River ferry to DUMBO", unit:"nyc-ferry",
-  why:"Four dollars and change for a boat under the Brooklyn Bridge, with the skyline behind it the whole way over.",
-  rides:"Out of Pier 11, ten minutes from the memorial. A third helping of boat, and the first two are already on the list — so this is the one that gets cut if the week tightens."}
+ {ask:"Walking back over the Brooklyn Bridge", unit:"brooklyn-bridge-walk",
+  why:"A mile and a bit into Manhattan on the upper deck, above the traffic, with the skyline coming at you the whole way.",
+  rides:"The way home from DUMBO rather than a trip of its own — so it only really works on the same night, and only if everyone still has the legs for it. Scheduled last and cut first, which is exactly right for a walk nobody has to take."}
 ];
 
 var NYC_NOPES = [
@@ -1119,7 +1125,7 @@ var CITIES = {
   base:{name:"Midtown", ll:NYC_BASE_LL},
   venues:NYC_VENUES, bundles:NYC_BUNDLES, bundleLoad:NYC_BUNDLE_LOAD,
   wants:NYC_WANTS, maybes:NYC_MAYBES, nopes:NYC_NOPES, cutUnits:[],
-  mustSee:10, askVersion:3,
+  mustSee:11, askVersion:4,
   uber:{base:9.00, perMile:3.10, mph:11, waitMin:5},
   axis:["central-park","911-memorial"],
   /* Undecided on purpose. The two ways in shape the week differently
@@ -1196,8 +1202,8 @@ var CITIES = {
    }
   },
   copy:{
-   deck:"The fourteen things I want to do in New York, on the same eight days as Washington. Ten of them are places and four of them are card games, and most of the places are better after dark — which is most of the argument for going in December at all.",
-   askDeck:"Ten things to see and the four games, and that is the whole ask. Everything below is the same arithmetic — which day it lands on, how long it takes, what it costs to get there — run against a city where nothing on this list shuts in the first week of December. How we get there is still open, and the strip at the top of the page will show you what each way does to the week.",
+   deck:"The fifteen things I want to do in New York, on the same eight days as Washington. Eleven of them are places and four of them are card games, and most of the places are better after dark — which is most of the argument for going in December at all.",
+   askDeck:"Eleven things to see and the four games, and that is the whole ask. Everything below is the same arithmetic — which day it lands on, how long it takes, what it costs to get there — run against a city where nothing on this list shuts in the first week of December. How we get there is still open, and the strip at the top of the page will show you what each way does to the week.",
    fitTail:"Nothing on this list closes the week we are there, so the only thing deciding the order is what is better after dark.",
    togetherNote:"Two of these arrive together: the memorial and the top of One World are one outing after dark on the same plaza, and the tree comes with the Fifth Avenue windows on the same walk. The museum is deliberately not in with them — it shuts hours before the lights come on, so it is its own daytime trip. Days can hold more than one outing; the board budgets each in hours, including the time between stops.",
    bookingNote:"One World, the 9/11 Museum, the Empire State observatory and the Circle Line all want tickets ahead of the day — and the Circle Line runs a thinner winter timetable, so check which days it actually sails before the board promises it.",
@@ -1574,6 +1580,13 @@ function budgetFor(day, slot){
   return DAY_HOURS;
 }
 function hoursOf(u, p){ return (p && p.short && u.min < u.ideal) ? u.min : u.ideal; }
+/* Some outings are only an outing because of the one before them. The walk
+   home over the Brooklyn Bridge is not a thing you do from Bryant Park, so
+   it may only land in the slot its anchor is already sitting in. */
+function withAnchor(board, u, day){
+  var a = board[u.follows];
+  return !!(a && a.d === day.i && a.slot === u.period);
+}
 
 /* Everything placed in one slot, in the order it will actually happen. */
 function occupantsAt(board, day, slot){
@@ -1690,6 +1703,7 @@ function bestSpot(board, uid, days){
     if (!cap || structuralAt(day, u.period)) return;
     if (closedOn(u, day)) return;
     if (u.lastNight && !day.lastHotelNight) return;   /* the hotel, the last night, or not at all */
+    if (u.follows && !withAnchor(board, u, day)) return;  /* only where its anchor already is */
     var list = occupantsAt(board, day, u.period);
     [prefersShort(u.id) ? true : false, true].forEach(function(sh, si){
       if (si === 1 && prefersShort(u.id)) return;
@@ -1728,9 +1742,12 @@ function autoFillInto(board, nights, only){
   var days = frameDays(nights), order = planningOrder();
   if (only) order = only.filter(function(id){ return unitById[id]; });
   /* Anything with exactly one possible home goes first, or the flexible
-     outings take its slot and it has nowhere else to land. */
-  order = order.filter(function(id){ return unitById[id] && unitById[id].lastNight; })
-    .concat(order.filter(function(id){ return !(unitById[id] && unitById[id].lastNight); }));
+     outings take its slot and it has nowhere else to land. Anything that
+     follows another outing goes last, once there is something to follow. */
+  function uOf(id){ return unitById[id]; }
+  order = order.filter(function(id){ return uOf(id) && uOf(id).lastNight; })
+    .concat(order.filter(function(id){ return uOf(id) && !uOf(id).lastNight && !uOf(id).follows; }))
+    .concat(order.filter(function(id){ return uOf(id) && uOf(id).follows; }));
   for (var k in board) delete board[k];
   order.forEach(function(uid){
     var u = unitById[uid];
@@ -1741,6 +1758,7 @@ function autoFillInto(board, nights, only){
       if (!cap || structuralAt(day, u.period)) return;
       if (closedOn(u, day)) return;
       if (u.lastNight && !day.lastHotelNight) return;
+      if (u.follows && !withAnchor(board, u, day)) return;
       var list = occupantsAt(board, day, u.period);
       [prefersShort(u.id) ? true : false, true].forEach(function(sh, si){
         if (si === 1 && prefersShort(u.id)) return;    /* asked for short: never offer full */
@@ -1897,6 +1915,16 @@ function checks(){
         s:strays.map(function(i){ return unitById[i].name; }).join(", ") +
           " — on the not-this-trip list, but sitting on your plan. Drag it off, or take it off the no list if you have changed your mind."});
   }
+
+  Object.keys(board).forEach(function(uid){
+    var u = unitById[uid];
+    if (!u || !u.follows || !unitById[u.follows]) return;
+    var a = board[u.follows], p = board[uid];
+    if (!a || a.d !== p.d || a.slot !== p.slot)
+      out.push({level:"stop", t:u.name + " is stranded on its own",
+        s:"It only works straight after " + unitById[u.follows].name +
+          ", the same evening — it is the way home from there, not a trip of its own. Put them together or take it off."});
+  });
 
   var unplaced = must.filter(function(id){ return !board[id]; });
   if (unplaced.length)

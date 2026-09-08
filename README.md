@@ -66,7 +66,7 @@ not marketing copy.
 
 ## New York
 
-The second tab: seventeen venues, fifteen outings, on the same eight days. Ten
+The second tab: eighteen venues, sixteen outings, on the same eight days. Eleven
 things to see plus the same four game nights, and the list leans after dark on
 purpose, because that is when most of it is worth looking at.
 
@@ -82,6 +82,15 @@ The two observatories are modelled differently on purpose. The Empire State's
 86th floor is open to the weather and rates poorly for wind and rain; One World
 is entirely behind glass and rates as indoor. On a wet night the board can tell
 you which one still works.
+
+### follows
+
+New York needed one new attribute. Walking back over the Brooklyn Bridge is not
+a trip of its own — it is the way home from DUMBO — so `follows: "dumbo"` means
+the scheduler will only place it in the slot its anchor is already sitting in,
+places it after everything else, and Checks calls it out as blocking if a hand
+drag ever separates the two. Washington uses no followers, so the code path is
+inert there.
 
 **How we get there is undecided, so the page treats it as a variable.** The
 `How` control beside the city strip switches between:
