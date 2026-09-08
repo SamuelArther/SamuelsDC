@@ -13,7 +13,7 @@
  *   trip/shared
  *   <city>/boards/*  <city>/votes/*  <city>/trip/shared
  *
- * where <city> is one of nyc, wilm, sj, sea, pdx — the same keys the page
+ * where <city> is one of nyc, wilm, sj, sea, pdx, home — the same keys the page
  * uses in CITY_KEYS. Adding a city here is adding it to CITIES below.
  *
  * `trip/shared` carries the dates for the whole trip plus Washington's
@@ -34,7 +34,7 @@
 
 // Washington is the unprefixed set and is not in here; every other city
 // hangs off its own key, matching CITY_KEYS in index.html.
-const CITIES = ["nyc", "wilm", "sj", "sea", "pdx"];
+const CITIES = ["nyc", "wilm", "sj", "sea", "pdx", "home"];
 const DOCS = new RegExp(
   `^((${CITIES.join("|")})/)?(boards/(family|bart|jess|sam|nanny)|votes/(bart|jess|sam|nanny)|trip/shared)$`
 );
