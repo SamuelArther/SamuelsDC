@@ -1127,7 +1127,7 @@ var CITIES = {
   base:{name:"Midtown", ll:NYC_BASE_LL},
   venues:NYC_VENUES, bundles:NYC_BUNDLES, bundleLoad:NYC_BUNDLE_LOAD,
   wants:NYC_WANTS, maybes:NYC_MAYBES, nopes:NYC_NOPES, cutUnits:[],
-  mustSee:11, askVersion:4,
+  mustSee:11, askVersion:5,
   uber:{base:9.00, perMile:3.10, mph:11, waitMin:5},
   axis:["central-park","911-memorial"],
   /* Undecided on purpose. The two ways in shape the week differently
@@ -3239,6 +3239,16 @@ function seedCity(){
     if (b) S().ballots[p.id] = normalizeBallot(b);
   });
   if (!S().ballots["sam"]) S().ballots["sam"] = normalizeBallot(wantUnits(true));
+
+  /* Every board that already has something on it, not just Samuel\x27s. The
+     family plan is the one that actually gets used, and it was quietly the
+     only one nobody was repairing. */
+  BOARD_KEYS.forEach(function(k){
+    if (k === "sam" || !Object.keys(pl(k)).length) return;
+    wantUnits(true).forEach(function(id){
+      if (!pl(k)[id]) addBest(pl(k), id);
+    });
+  });
   if (!Object.keys(pl("family")).length) autoFillInto(pl("family"));
   S().askVersion = ASK_VERSION;
   return msg.join("; ");
