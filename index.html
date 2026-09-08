@@ -718,11 +718,26 @@ var RAILS = {
  pdx:{ "zoolights":0.5, "grotto":0.5 }
 };
 
+/* ── When we last did it ──────────────────────────────────────────────
+   Novelty is a real input to a plan and it is the one that only lives in
+   somebody's head. `recent` means recent enough that putting it on the
+   board again is worth a second look — not that it is bad.
+   ─────────────────────────────────────────────────────────────────── */
+var SEENS = {
+ home:{
+  "sweetwater-creek":{when:"Many times. Fifteen miles of it over the years, all the trails.", recent:true},
+  "georgia-aquarium":{when:"About a year ago.", recent:false},
+  "world-of-coke":{when:"Over three years ago.", recent:false},
+  "arbor-place":{when:"Constantly. It is the local mall.", recent:true}
+ }
+};
+
 var TICKETS = {
  home:{
   "movie-marathon":0, "tree-and-lights":0, "baking-day":0, "big-dinner":0,
   "fire-pit":0, "video-games":0, "jigsaw":0, "sleep-in":0, "bad-movies":0,
-  "sweetwater-creek":{flat:5}, "downtown-lights":0, "christmas-parade":0,
+  "sweetwater-creek":{flat:5}, "downtown-lights":0, "minecraft-night":0,
+  "fabianos":{ad:19, sr:16, yo:19}, "christmas-parade":0,
   "lights-drive":0, "mlk-park":0,
   "cinema-trip":{ad:14, sr:11, yo:14},
   "arbor-place":0,
@@ -808,9 +823,11 @@ var WORTH = {
  home:{
   "movie-marathon":{w:"high", s:"Free, and the one thing on any of the seven tabs that a hotel room flatly cannot do."},
   "sleep-in":{w:"high", s:"Costs nothing, and it is the only item anywhere on this page that no other version of the week can offer at all."},
-  "sweetwater-creek":{w:"high", s:"Five dollars for the car. A burnt-out five-storey mill in the woods, fifteen minutes from the house, and most people who live here have never walked down to it."},
-  "arbor-place":{w:"thin", s:"It is a shopping centre. It is free, it is warm, and it is on the page for exactly one reason: it is where to be on the afternoon it rains all day."},
-  "rock-city-lights":{w:"thin", s:"Three and a half hours in the car for a light show, when Garden Lights is forty minutes away and Callaway is an hour and a quarter. Good, and hard to justify against what else is on this list."},
+  "sweetwater-creek":{w:"fair", s:"Five dollars for the car, and a genuinely good mill in genuinely good woods — but we have walked all fifteen miles of it. It is the local park, and the page should stop pretending it is a find."},
+  "fabianos":{w:"high", s:"Pizza for four and a room full of pinball and arcade machines, ten minutes away, with trivia three nights a week. Nothing else in the county is that much of an evening for that little."},
+  "minecraft-night":{w:"high", s:"Free, and the only thing on the list that leaves something behind at the end of the week."},
+  "arbor-place":{w:"fair", s:"It is a shopping centre and it is free and it is ten minutes away. Not every hour of a week off needs to justify itself, and this one does not have to."},
+  "rock-city-lights":{w:"high", s:"Three and a half hours of driving is real and so is the fact that it is the only thing on this list in another state, on a mountain, with a view over seven of them. Samuel wants it; it is in. Book it early, it is online-only and December goes."},
   "world-of-coke":{w:"fair", s:"Only earns its place because it is a two-minute walk from the whale sharks. It would not survive its own drive into Atlanta."},
   "downtown-lights":{w:"high", s:"Free, out every night, six minutes away. Nothing else on this page returns that much for that little."}
  },
@@ -869,7 +886,8 @@ var FOODS = {
  pdx:  {breakfast:{h:0,   head:11}, lunch:{h:0.75, head:18}, dinner:{h:1.25, head:32}},
  /* Cooking it ourselves, which is why this is a third of New York. A day
     trip means eating out and the Day trips notes say so. */
- home: {breakfast:{h:0,   head:4},  lunch:{h:0.5,  head:6},  dinner:{h:1,    head:9}}
+ home: {breakfast:{h:0,   head:4},  lunch:{h:0.5,  head:6},  dinner:{h:1,    head:9},
+        how:"groceries, cooked here"}
 };
 
 var IN   = {rain:"excellent", cold:"excellent", wind:"excellent", heat:"excellent"};
@@ -1071,10 +1089,11 @@ function gamesTotal(){ return GAMES_COST.subtotal + gamesTax() + GAMES_COST.ship
    not known yet, because an outing nobody has priced is not the same as
    an outing that is free, and totalling them together would be a lie.
    ─────────────────────────────────────────────────────────────────── */
-var TICKET, WORTHS, FOOD, RAIL;        /* the selected city's own tables */
+var TICKET, WORTHS, FOOD, RAIL, SEEN;  /* the selected city's own tables */
 
 function ticketOf(id){ return TICKET ? TICKET[id] : undefined; }
 function worthOf(id){ return (WORTHS && WORTHS[id]) || {w:"fair", s:null}; }
+function seenOf(id){ return SEEN ? SEEN[id] : null; }
 function worthWord(w){ return w === "high" ? "Worth it" : w === "thin" ? "Thin" : "Fair"; }
 
 /* Admission for all four of us. null means something in it is unpriced,
@@ -1788,15 +1807,15 @@ var HOME_VENUES = [
   why:"The made-for-TV ones where a big-city executive inherits a failing Christmas tree farm. They are all the same film and that is the entertainment. Strictly a second-half-of-the-week activity, once the good list is used up."},
 
  /* ── Around town ───────────────────────────────────────────────────── */
- {id:"sweetwater-creek",name:"Sweetwater Creek and the mill ruins",seed:10,tier:"protected",period:"day",load:"mid",env:"outdoor",min:1.5,ideal:3,resv:"none",w:COLD_OUT,bundle:null,ll:[33.7540,-84.6320],
-  why:"Fifteen minutes from the house. The Red Trail runs half a mile along the whitewater to the five-storey brick shell of the New Manchester mill, which Sherman's cavalry burned in 1864 and nobody ever rebuilt. The inside is closed except on guided hikes, but the outside is the thing anyway, and the second half-mile down to the falls is proper rocky scrambling. Park is open 7am to dark, and in December dark is about half five."},
+ {id:"sweetwater-creek",name:"Sweetwater Creek and the mill ruins",seed:10,tier:"bonus",period:"day",load:"mid",env:"outdoor",min:1.5,ideal:3,resv:"none",w:COLD_OUT,bundle:null,ll:[33.7540,-84.6320],
+  why:"The local park, and we have walked all of it — fifteen miles of those trails over the years. The mill is still the mill: five storeys of brick shell on the whitewater, burned by Sherman's cavalry in 1864 and never rebuilt. None of that is new to us, which is exactly why it sits down here now rather than at the top. It is a good morning, in December, in the cold, when the leaves are off and you can actually see the creek — not a thing to build a week around."},
  {id:"downtown-lights",name:"The Celebration of Lights downtown",seed:11,tier:"high",period:"night",load:"lo",env:"outdoor",min:.75,ideal:1.5,resv:"none",w:COLD_OUT,bundle:null,ll:[33.7515,-84.7477],
   why:"O'Neal Plaza and Jessie Davis Park lit for the season, ten minutes down the road, free, and out every night in December. It is not the Rockefeller tree and it is four minutes of driving instead of nineteen hours on a train."},
  {id:"christmas-parade",name:"Miracle on Main Street",seed:12,tier:"high",period:"night",load:"lo",env:"outdoor",min:1,ideal:2,resv:"none",w:{rain:"poor",cold:"good",wind:"acceptable",heat:"good"},bundle:null,closed:{wd:[0,1,2,3,4,6],hol:[]},ll:[33.7512,-84.7469],preferDow:5,
   why:"Douglasville's own Christmas parade down Main Street with the tree lighting straight after it, in front of the conference center. It has run on the first Friday of December for years, so it should land inside our week — but the 2026 date is not posted yet and it is the one thing here that cannot be moved to suit us."},
  {id:"cinema-trip",name:"Actually going to the cinema",seed:13,tier:"medium",period:"night",load:"lo",env:"indoor",min:2,ideal:2.75,resv:"none",w:IN,bundle:null,ll:[33.7290,-84.7180],
   why:"Whatever the big December release turns out to be, on a real screen, with the seats that recline. Ten minutes away. Distinct from the movie run at home, which is old films on the sofa — this is the one where somebody else makes the popcorn."},
- {id:"arbor-place",name:"Arbor Place at Christmas",seed:14,tier:"bonus",period:"day",load:"lo",env:"indoor",min:1.5,ideal:2.5,resv:"none",w:IN,bundle:null,ll:[33.7290,-84.7180],
+ {id:"arbor-place",name:"Arbor Place at Christmas",seed:14,tier:"medium",period:"day",load:"lo",env:"indoor",min:1.5,ideal:2.5,resv:"none",w:IN,bundle:null,ll:[33.7290,-84.7180],
   why:"The mall with the decorations up and the Santa queue in the middle of it. Warm, indoors, and the correct place to be on the one afternoon it rains all day. Nobody is pretending this is a cultural experience."},
  {id:"lights-drive",name:"Driving the neighbourhoods",seed:15,tier:"medium",period:"night",load:"lo",env:"indoor",min:1,ideal:1.75,resv:"none",w:INCAR,bundle:null,ll:HOME_BASE_LL,
   why:"An hour of driving slowly round Douglas County looking at what everybody else did to their houses, with the heating on and something playing. Free, works in any weather because we never get out, and it is genuinely one of the best hours of December."},
@@ -1805,26 +1824,30 @@ var HOME_VENUES = [
  {id:"garden-lights",name:"Garden Lights at the Botanical Garden",seed:16,tier:"protected",period:"night",load:"mid",env:"outdoor",min:2,ideal:3,resv:"required",w:COLD_OUT,bundle:null,ll:[33.7905,-84.3733],
   why:"Atlanta Botanical Garden lit end to end, nightly from November 14 to January 10, so every night of our week is inside it. The orchestral light show, the tunnel, and the mosaiculture dragon back in the Skyline Garden this year. Forty minutes up I-20 and the best after-dark thing within an hour of the house. Tickets went on sale October 1 and December dates go."},
  {id:"georgia-aquarium",name:"Georgia Aquarium",seed:17,tier:"protected",period:"day",load:"hi",env:"indoor",min:3,ideal:4.5,resv:"required",w:IN,bundle:"pemberton-place",ll:[33.7634,-84.3951],
-  why:"Whale sharks. Four of them, in six million gallons, in the biggest aquarium in the western hemisphere, thirty-five minutes from the house. The Ocean Voyager tunnel puts them straight over your head. Timed tickets and it is busy the whole of December."},
+  why:"Whale sharks. Four of them, in six million gallons, thirty-five minutes from the house, with the Ocean Voyager tunnel putting them over your head. We were last here about a year ago, which is a long enough gap that it is a trip again rather than a repeat — and the December galleries are not the ones we saw. Timed tickets, and it is busy all month."},
  {id:"world-of-coke",name:"World of Coca-Cola",seed:18,tier:"medium",period:"day",load:"mid",env:"indoor",min:1.5,ideal:2.5,resv:"recommended",w:IN,bundle:"pemberton-place",ll:[33.7629,-84.3925],
-  why:"Directly across the same plaza from the aquarium, which is the only reason it is on this list — the tasting room with a hundred drinks from everywhere in the world, the vault, and the bottling line. Ninety minutes, and it is a two-minute walk from the whale sharks."},
- {id:"fantasy-in-lights",name:"Fantasy In Lights at Callaway",seed:19,tier:"high",period:"night",load:"hi",env:"indoor",min:3,ideal:4.5,resv:"required",w:INCAR,bundle:null,ll:[32.8443,-84.8480],
+  why:"Directly across the same plaza from the aquarium, which is most of why it is on this list — the tasting room with a hundred drinks from everywhere in the world, the vault, and the bottling line. It has been over three years since we went, which is long enough that Nanny will not have to hear about the one from last time. Ninety minutes, two minutes from the whale sharks."},
+ {id:"fantasy-in-lights",name:"Fantasy In Lights at Callaway",seed:19,tier:"high",period:"night",load:"hi",env:"indoor",min:1.5,ideal:2.5,resv:"required",w:INCAR,bundle:null,ll:[32.8443,-84.8480],
   why:"Seven miles of driving through eighteen lit scenes at Callaway Gardens in Pine Mountain, running November 15 to January 3. You stay in the car the entire way, which makes it the one big outdoor light show on this page that does not care at all what the weather is doing. An hour and fifteen each way, so it is most of an evening."},
  {id:"stone-mountain-christmas",name:"Stone Mountain Christmas",seed:20,tier:"high",period:"night",load:"hi",env:"outdoor",min:3,ideal:4.5,resv:"recommended",w:COLD_OUT,bundle:null,closed:{wd:[1,2,3,4,5],hol:[]},ll:[33.8053,-84.1455],
   why:"Two million lights, the Christmas parade, the singing tree and a drone show off the side of the mountain. About an hour east. The catch is real: it runs weekends and school holidays rather than every night, so on our week it can only be the Saturday or a Sunday, and the 2026 calendar is not published yet."},
- {id:"rock-city-lights",name:"Rock City, Enchanted Garden of Lights",seed:21,tier:"medium",period:"night",load:"hi",env:"outdoor",min:4,ideal:6,resv:"required",w:COLD_OUT,bundle:null,ll:[34.9740,-85.3500],
+ {id:"rock-city-lights",name:"Rock City, Enchanted Garden of Lights",seed:21,tier:"high",period:"day",load:"hi",env:"outdoor",min:2,ideal:3,resv:"required",w:COLD_OUT,bundle:null,ll:[34.9740,-85.3500],
   why:"Lookout Mountain above Chattanooga, lit from four in the afternoon, running mid-November to January 4. Millions of lights through the rock gardens and Fat Man's Squeeze. It is also an hour and three quarters each way, which makes it the longest single thing on this list by a distance — a whole day and evening, not an outing."},
  {id:"mlk-park",name:"The King Historical Park",seed:22,tier:"high",period:"day",load:"mid",env:"mixed",min:2,ideal:3,resv:"none",w:{rain:"acceptable",cold:"good",wind:"good",heat:"good"},bundle:null,ll:[33.7554,-84.3733],
   why:"Ebenezer Baptist Church where he preached, the house on Auburn Avenue where he was born, and the tomb with the flame. Thirty-five minutes from the house, free, and one of the few things on any version of this week that is genuinely important rather than genuinely fun."},
 
  /* ── The games. Mandatory in every version of this week. ───────────── */
- {id:"mine-turtle",name:"Mine Turtle",seed:24,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:HOME_BASE_LL,lastNight:true,
+ {id:"fabianos",name:"Fabiano's, pizza night",seed:24,tier:"high",period:"night",load:"lo",env:"indoor",min:1.5,ideal:2.5,resv:"none",w:IN,bundle:null,ll:[33.7098,-84.7346],preferDow:4,
+  why:"New York-style pizza ten minutes down Veterans Memorial, and the reason it is an outing rather than a dinner is the back of the place: pinball, air hockey, pool and a room of arcade machines. Trivia runs Mondays, Thursdays and Saturdays with prizes, and Thursday is the one that fits our week. Garlic knots with cheese on them. In the strict stay-at-home version of this week it is a collection order instead, and it still happens."},
+ {id:"minecraft-night",name:"Minecraft night",seed:23,tier:"high",period:"night",load:"lo",env:"indoor",min:1.5,ideal:3,resv:"none",w:IN,bundle:null,ll:HOME_BASE_LL,
+  why:"One world, on the server, for the whole week — not an evening of it, a thing we come back to. Something actually gets built by Sunday. This is different from an evening of whatever-is-installed in the same way the movie run is different from putting the telly on, and it is the reason a week at home has a shape."},
+ {id:"mine-turtle",name:"Mine Turtle",seed:25,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:HOME_BASE_LL,lastNight:true,
   why:"Truth or dare with a turtle that explodes. Two to six players, so all four of us plus whoever wanders over. Last night, in our own front room, which is the one version of this where nobody has packed a bag."},
- {id:"muffin-time",name:"Muffin Time",seed:25,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:HOME_BASE_LL,lastNight:true,
+ {id:"muffin-time",name:"Muffin Time",seed:26,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:HOME_BASE_LL,lastNight:true,
   why:"Two hundred cards of chaos where one card flips the whole game. Two to eight players, so nobody sits out. The other half of the last night."},
- {id:"uno",name:"Uno",seed:26,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:HOME_BASE_LL,lastNight:true,
+ {id:"uno",name:"Uno",seed:27,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:HOME_BASE_LL,lastNight:true,
   why:"Everybody already knows it and Nanny is in on the first hand. It is the only one of the four that does not need a table, so it is also the one that comes out in the car on the way back from Pine Mountain."},
- {id:"monopoly-deal",name:"Monopoly Deal",seed:27,tier:"bonus",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:HOME_BASE_LL,lastNight:true,
+ {id:"monopoly-deal",name:"Monopoly Deal",seed:28,tier:"bonus",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:HOME_BASE_LL,lastNight:true,
   why:"Monopoly that fits in a pocket and ends in fifteen minutes instead of three hours. All the dealing and stealing, none of the sitting there bankrupt at midnight."}
 ];
 
@@ -1836,7 +1859,7 @@ var HOME_BUNDLE_LOAD = {"pemberton-place":"hi"};
 
 /* Which tier each unit belongs to. The `How` strip cuts by these. */
 var HOME_LOCAL_UNITS = ["sweetwater-creek","downtown-lights","christmas-parade",
-                        "cinema-trip","arbor-place","lights-drive"];
+                        "cinema-trip","arbor-place","lights-drive","fabianos"];
 var HOME_FAR_UNITS   = ["garden-lights","pemberton-place","fantasy-in-lights",
                         "stone-mountain-christmas","rock-city-lights","mlk-park"];
 
@@ -1847,9 +1870,6 @@ var HOME_WANTS = [
  {ask:"The tree and the lights on the house", unit:"tree-and-lights",
   why:"Somebody up a ladder in the cold, an argument about whether the tree is straight, and then it is properly December in here for the rest of the month.",
   rides:"An afternoon, early in the week so we get the rest of it with the house done. Every other version of this trip misses this entirely, because we are not in the house to do it."},
- {ask:"Sweetwater Creek and the mill ruins", unit:"sweetwater-creek",
-  why:"A five-storey brick mill that Sherman's cavalry burned in 1864, standing in the woods next to whitewater, fifteen minutes from the front door. Most people who live here have never walked down to it.",
-  rides:"Three hours including the drive. The park shuts at dark and dark is half five in December, so this is a morning or it is nothing."},
  {ask:"Garden Lights at the Botanical Garden", unit:"garden-lights",
   why:"The whole Atlanta Botanical Garden lit end to end — the orchestral show, the tunnel, and the mosaiculture dragon back in the Skyline Garden. It runs nightly from November 14 to January 10, so every single night of our week works.",
   rides:"Forty minutes up I-20 and about three hours all in. Timed tickets, on sale since October 1, and December dates sell. This is the best after-dark thing within an hour of the house and it is the one booking to make early."},
@@ -1889,6 +1909,18 @@ var HOME_WANTS = [
  {ask:"Video games, properly", unit:"video-games",
   why:"A whole evening of it instead of the forty minutes a normal Tuesday allows. This is the one thing on any version of this week that is flatly better at home than anywhere on earth.",
   rides:"Three hours, no travel, no ticket."},
+ {ask:"Fabiano's, pizza night", unit:"fabianos",
+  why:"New York-style pizza ten minutes away, and a back room with pinball, air hockey, pool and a wall of arcade machines. Trivia runs Mondays, Thursdays and Saturdays. It is the one night out in the county that is a night out rather than an errand.",
+  rides:"Two and a half hours and about ten minutes of driving. Thursday is the trivia night that fits our week. In the stay-at-home version this becomes a collection order and it still happens — the pizza is not the part that needs the car, the pinball is."},
+ {ask:"Minecraft night", unit:"minecraft-night",
+  why:"One world, on the server, running all week — not one evening of it. Something is actually finished by Sunday, which is the difference between a week at home and a week of evenings at home.",
+  rides:"Three hours a go, no travel, no ticket, and the board will hand it several nights because it is a project and not a session."},
+ {ask:"Rock City's Enchanted Garden of Lights", unit:"rock-city-lights",
+  why:"Lookout Mountain above Chattanooga, lit from four in the afternoon, millions of lights through the rock gardens and down Fat Man's Squeeze. It is the one thing on this list that is genuinely somewhere else — a different state, a mountain, and a view over seven of them.",
+  rides:"An hour and three quarters each way, so with three hours up there it is about six and a half hours door to door and it takes a whole evening. That is the price and it is worth paying once. Book ahead — it is online-only ticketing and December weekends go."},
+ {ask:"Arbor Place at Christmas", unit:"arbor-place",
+  why:"The mall with the whole thing done up, ten minutes away. Not every hour of a week off has to be an expedition, and this is a good one to spend warm and indoors with no plan.",
+  rides:"Two and a half hours and ten minutes of driving. It is also the right answer to the afternoon it rains all day, which in a Georgia December there will be at least one of."},
  {ask:"Mine Turtle, last night", unit:"mine-turtle",
   why:"Truth or dare where the loser presses the turtle's button and hopes. 2 to 6 players, twenty minutes a round, so realistically two hours because nobody stops after one.",
   rides:"Pinned to the last night and it will not go anywhere else. In our own front room this time, with nothing packed."},
@@ -1904,15 +1936,12 @@ var HOME_WANTS = [
 ];
 
 var HOME_MAYBES = [
- {ask:"Rock City's Enchanted Garden of Lights", unit:"rock-city-lights",
-  why:"Lookout Mountain above Chattanooga lit from four in the afternoon, millions of lights through the rock gardens and Fat Man's Squeeze.",
-  rides:"An hour and three quarters each way, so six hours minimum and realistically the whole day and evening. It is the only thing on this list that is a trip rather than an outing, and it only goes in if we actively want one big day out."},
+ {ask:"Sweetwater Creek and the mill ruins", unit:"sweetwater-creek",
+  why:"The mill is still five storeys of burnt brick on the whitewater and it is still fifteen minutes away. But we have walked all of it — fifteen miles of those trails over the years — so it is not a discovery, it is the local park.",
+  rides:"Three hours with the drive, and the park shuts at dark, which in December is half past five. It earns a morning if we want a walk in the cold with the leaves off. It does not earn a place near the top of the list any more."},
  {ask:"A jigsaw nobody finishes", unit:"jigsaw",
   why:"A thousand pieces on the dining table from day two, four pieces done every time anybody walks past it.",
   rides:"Not really an outing, which is why it is down here. It is still going to happen."},
- {ask:"Arbor Place at Christmas", unit:"arbor-place",
-  why:"The mall with the decorations up. Warm, indoors, ten minutes away.",
-  rides:"Two and a half hours, and the honest reason it is on the page is that it is the correct place to be on the one afternoon it rains all day."},
  {ask:"Miracle on Main Street", unit:"christmas-parade",
   why:"Douglasville's own Christmas parade down Main Street with the tree lighting straight after.",
   rides:"It has run on the first Friday of December for years, which should put it inside our week — but the 2026 date is not posted and this is the one thing here that cannot move to suit us. It is a maybe on the calendar, not on the merit."},
@@ -2618,7 +2647,7 @@ function setCity(k){
   MUST_SEE = C.mustSee; ASK_VERSION = C.askVersion;
   UBER = C.uber; UBER_MPH = C.uber.mph; UBER_WAIT_MIN = C.uber.waitMin;
   TICKET = TICKETS[k] || {}; WORTHS = WORTH[k] || {}; FOOD = FOODS[k];
-  RAIL = RAILS[k] || {};
+  RAIL = RAILS[k] || {}; SEEN = SEENS[k] || {};
   byId = {}; VENUES.forEach(function(v){ byId[v.id] = v; });
   UNITS = buildUnits();
   unitById = {}; UNITS.forEach(function(u){ unitById[u.id] = u; });
@@ -3166,8 +3195,25 @@ function autoFillInto(board, nights, only){
      outings take its slot and it has nowhere else to land. Anything that
      follows another outing goes last, once there is something to follow. */
   function uOf(id){ return unitById[id]; }
+  /* How many days this could legally sit on at all. One means it has
+     exactly one home and everything flexible must schedule around it. */
+  function choices(u){
+    var n = 0;
+    days.forEach(function(day){
+      if (!budgetFor(day, u.period) || structuralAt(day, u.period)) return;
+      if (closedOn(u, day)) return;
+      if (u.lastNight && !day.lastHotelNight) return;
+      n++;
+    });
+    return n;
+  }
+  var mid = order.filter(function(id){ return uOf(id) && !uOf(id).lastNight && !uOf(id).follows; });
+  mid.sort(function(a, b){
+    var d = choices(uOf(a)) - choices(uOf(b));
+    return d || (uOf(a).seed - uOf(b).seed);   /* ties keep the authored order */
+  });
   order = order.filter(function(id){ return uOf(id) && uOf(id).lastNight; })
-    .concat(order.filter(function(id){ return uOf(id) && !uOf(id).lastNight && !uOf(id).follows; }))
+    .concat(mid)
     .concat(order.filter(function(id){ return uOf(id) && uOf(id).follows; }));
   for (var k in board) delete board[k];
   order.forEach(function(uid){
@@ -3378,6 +3424,21 @@ function checks(){
     out.push({level:"warn", t:needs.length + " " + (needs.length === 1 ? "booking" : "bookings") + " still open",
       s:needs.join(", ") + ". " + C.copy.bookingNote});
 
+  /* Things we have only just done. Not a problem — a question. */
+  var again = [];
+  Object.keys(board).forEach(function(uid){
+    var u = unitById[uid]; if (!u) return;
+    u.members.forEach(function(vid){
+      var sn = seenOf(vid);
+      if (sn && sn.recent) again.push(byId[vid].name + " — " + sn.when);
+    });
+  });
+  if (again.length)
+    out.push({level:"ok", t:again.length === 1 ? "One thing on this plan we have already done"
+        : again.length + " things on this plan we have already done",
+      s:again.join("  ·  ") + ". Worth knowing before a week gets built round them, "
+        + "and no reason at all to drop them if we want them anyway."});
+
   /* Money is a planning fact too, and the one nobody writes down until
      it is too late to change the plan. */
   var wc = weekCost(board);
@@ -3408,10 +3469,17 @@ function checks(){
 
   var home = addDays(parseISO(state.config.start), state.config.nights + 1);
   var buffer = Math.round((parseISO(TRIP.backAtWork) - home) / 86400000);
-  if (buffer <= 0) out.push({level:"stop", t:"Bart misses work",
-    s:"Home " + fmt({date:home}) + ", back on the clock Thu Dec 10 at 2 pm. That does not work."});
-  else if (buffer === 1) out.push({level:"warn", t:"One day of slack before work",
-    s:"Home " + fmt({date:home}) + ", Bart is back on the clock Thu Dec 10. Any delay eats it."});
+  if (buffer < 0) out.push({level:"stop", t:"Bart misses work",
+    s:"Home " + fmt({date:home}) + ", and he leaves for work on the afternoon of Thu Dec 10. That does not work."});
+  else if (buffer === 0) out.push({level:"warn", t:"Home the same morning he leaves for work",
+    s:"Home " + fmt({date:home}) + ", out of the door that afternoon. The vacation genuinely does run this far — it does not end until he goes in on the 10th — so this is legal rather than impossible. It is also the tightest version that is: the sleeper is not in until mid-morning and one late train takes it."});
+  else if (buffer === 1) out.push({level:"ok", t:"One clear day before work",
+    s:"Home " + fmt({date:home}) + ", and Bart is not in until the afternoon of Thu Dec 10. A whole day spare to unpack in."});
+  else out.push({level:"ok", t:buffer + " nights of the vacation nobody is using",
+    s:"This plan is " + state.config.nights + " nights and has us home " + fmt({date:home}) +
+      ". Bart is not due at work until the afternoon of Thu Dec 10, so it could run to " +
+      (state.config.nights + buffer - 1) + " nights and still leave a clear day at home first, or " +
+      (state.config.nights + buffer) + " and come home that same morning. Those are real days and they are currently being given back. The nights slider is his."});
 
   if (!out.length) out.push({level:"ok", t:"This plan holds",
     s:"No closures, no double-Bigs, no long hops, every must-see thing placed, every booking accounted for."});
@@ -4183,6 +4251,7 @@ function renderRoster(){
       : tk.flat != null ? money(tk.flat) + " for the whole party"
       : money(tk.ad) + " each, " + money(tk.sr) + " for Nanny");
     row("Worth it", worthWord(wv.w) + (wv.s ? " · " + wv.s : ""));
+    var sn = seenOf(v.id); if (sn) row("Last done", sn.when);
     if (v.bundle) row("Goes with", BUNDLES[v.bundle].name);
     if (v.closesAt) row("Gates", "Open 8:00 to " + v.closesAt + ":00, October to March");
     if (v.onTheHour) row("Ceremony", "Changing of the Guard, on the hour, about 15 min");
@@ -4265,9 +4334,12 @@ function renderLogi(){
   cost.appendChild(head("What the week costs, once we are there"));
   var wc2 = weekCost(S().boards[viewing] || {});
   cost.appendChild(el("p","hint","Admissions for the four of us on the plan as it stands, "
-    + "every meal for " + wc2.meals.n + " days, and the rides between them. Getting to "
-    + C.name + " and somewhere to sleep are not in here — those are Bart's line, not the board's. "
-    + "Ticket figures are published list rates to check before booking, not quotes."));
+    + "every meal for " + wc2.meals.n + " days, and the " + (UBER.base === 0 ? "fuel" : "rides")
+    + " between them. "
+    + (M.noJourney
+        ? "There is no getting here and nothing to book a bed in, so unlike every other tab on this page this is very close to the whole cost of the week."
+        : "Getting to " + C.name + " and somewhere to sleep are not in here — those are Bart's line, not the board's.")
+    + " Ticket figures are published list rates to check before booking, not quotes."));
   var cw = el("div","tablewrap"), ct = el("table","tt"), cb = el("tbody");
   function cRow(k, v, cls){
     var tr = el("tr", cls || "");
@@ -4276,10 +4348,11 @@ function renderLogi(){
     cb.appendChild(tr);
   }
   cRow("Admissions, everything placed", money(wc2.adm));
-  cRow(wc2.meals.breakfasts + " breakfasts · " + money(FOOD.breakfast.head) + " a head", money(wc2.meals.b));
-  cRow(wc2.meals.lunches + " lunches · " + money(FOOD.lunch.head) + " a head", money(wc2.meals.l));
-  cRow(wc2.meals.dinners + " dinners · " + money(FOOD.dinner.head) + " a head", money(wc2.meals.d));
-  cRow("Rides across the week", money(wc2.fares));
+  var how = FOOD.how || "eating out";
+  cRow(wc2.meals.breakfasts + " breakfasts · " + money(FOOD.breakfast.head) + " a head, " + how, money(wc2.meals.b));
+  cRow(wc2.meals.lunches + " lunches · " + money(FOOD.lunch.head) + " a head, " + how, money(wc2.meals.l));
+  cRow(wc2.meals.dinners + " dinners · " + money(FOOD.dinner.head) + " a head, " + how, money(wc2.meals.d));
+  cRow(UBER.base === 0 ? "Fuel, our own car, across the week" : "Rides across the week", money(wc2.fares));
   cRow("Total", money(wc2.total), "total");
   ct.appendChild(cb); cw.appendChild(ct); cost.appendChild(cw);
   cost.appendChild(el("p","hint", wc2.unpriced.length
