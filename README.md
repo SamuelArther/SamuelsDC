@@ -1,8 +1,9 @@
 # Crescent Dispatch
 
 Samuel's case for Christmas 2026: four people, eight days, and the week that makes it all fit.
-Six cities are on the table now — Washington and New York on the Amtrak Crescent, Wilmington
-driven or flown, and San Jose, Seattle or Portland flown — and the same board plans all of them.
+Seven options are on the table now — Washington and New York on the Amtrak Crescent,
+Wilmington driven or flown, San Jose, Seattle or Portland flown, and Home, which is the
+argument for not going anywhere at all. The same board plans all of them.
 
 Live at **dc.sambonius.net**.
 
@@ -11,8 +12,8 @@ Live at **dc.sambonius.net**.
 One HTML file. No build step, no dependencies, no server. Open `index.html` and it
 works — offline, on a phone, from a USB stick.
 
-The city strip at the top of the page switches the whole thing between the six
-trips. Everything below it — the board, the checks, the ballots, the map, the
+The city strip at the top of the page switches the whole thing between the seven
+options. Everything below it — the board, the checks, the ballots, the map, the
 export — is the same machinery pointed at a different catalogue. Each city keeps
 its own boards, ballots, weather switches and bookings; the dates are shared,
 because it is the same eight days wherever we go.
@@ -71,7 +72,7 @@ what the week costs once we are there.
 
 **Export.** Writes a real `.ics` of the placed week.
 
-## The six cities
+## The seven options
 
 | | Way in | Needs a car | What it is for |
 | --- | --- | --- | --- |
@@ -81,6 +82,7 @@ what the week costs once we are there.
 | **San Jose** | Fly | No | Christmas in the Park, and San Francisco an hour up Caltrain |
 | **Seattle** | Fly | No | The earliest dark of any of them, and a ferry |
 | **Portland** | Fly | No | A submarine, a bookshop the size of a block, and ZooLights |
+| **Home** | Nothing, or our own car | Only for day trips | Eight days in Douglasville, and two extra days nobody spends travelling |
 
 **Wilmington has no passenger rail at all** — the nearest Amtrak platform is
 Charlotte, two hundred miles inland — and nothing in it is walkable from the hotel
@@ -135,19 +137,22 @@ something got scheduled. Checks warns when something rated `thin` is on the plan
 are free, the Great Wheel at $18 for fifteen minutes when Kerry Park is free and
 higher. It never removes anything; it just says so before the money is spent.
 
-What the six weeks cost for four people, on the seeded plans — admissions, all food,
+What the seven weeks cost for four people, on the seeded plans (Home shown "In the house") — admissions, all food,
 and the rides, with getting there and the hotel deliberately excluded:
 
 | City | Admissions | Food | Rides | Total |
 | --- | --- | --- | --- | --- |
-| Washington | $59 | $1,972 | $275 | **$2,306** |
+| Home (in the house) | $0 | $592 | $0 | **$592** |
 | Wilmington | $280 | $1,596 | $70 | **$1,946** |
+| Washington | $59 | $1,972 | $275 | **$2,306** |
 | Portland | $466 | $1,908 | $334 | **$2,708** |
 | San Jose | $416 | $2,192 | $446 | **$3,054** |
 | Seattle | $733 | $2,224 | $190 | **$3,147** |
 | New York | $701 | $2,412 | $262 | **$3,375** |
 
-Washington at $59 of admissions is not a rounding error — it is the whole argument
+Home at $592 for the whole week is not a joke entry — it is eight days of food and
+nothing else, against $3,375 for New York. Washington at $59 of admissions is not a
+rounding error either — it is the whole argument
 for it, and the board can finally show it.
 
 ## New York
@@ -242,3 +247,50 @@ npx wrangler pages deploy . --project-name samuels-dc
 
 For a custom domain on GitHub Pages, add a `CNAME` file containing
 `dc.sambonius.net` and set the matching DNS record.
+
+## Home
+
+The seventh tab is the one where we do not go anywhere, and it is built as a real
+week rather than as the absence of one. Twenty-five outings: the Christmas movie run,
+the tree, baking day, the fire pit, sleeping in on purpose — and then as much of
+Georgia as we feel like driving to.
+
+**Home is the only option where the `How` strip changes the catalogue** rather than
+the first and last days, because it is not asking how we arrive. There is no
+arriving. It is asking how far we are prepared to drive:
+
+| | Reaches | Day / night budget | On the board |
+| --- | --- | --- | --- |
+| **In the house** | The house and the back garden | 6 h / 4 h | 13 of 25 |
+| **Around town** | Everything inside twenty minutes | 7 h / 4 h | 19 of 25 |
+| **Day trips** | Atlanta, Pine Mountain, Stone Mountain, Lookout Mountain | 11 h / 7.5 h | 24 of 25 |
+
+Day trips get an eleven-hour day and a seven-and-a-half-hour evening on purpose: a
+day out from your own house genuinely is longer than a day from a hotel, because
+nobody is checking in, checking out, or moving a bag.
+
+**No journey means no arrival day and no departure day.** Every other option on the
+page loses at least one end day to getting there; the Crescent to New York loses
+both. Home hands back all eight, which is the strongest single argument it has.
+
+Three new bits of machinery, all inert everywhere else:
+
+- `cuts` on a way in — the unit ids that way puts out of reach. This is what makes
+  "In the house" mean something.
+- `noJourney` — no arrival or departure day; both end days are fully schedulable.
+- `dayHours` / `nightHours` — per-mode budget overrides.
+
+Making `cuts` work turned up a real bug: the comment over `excludedIds()` has always
+claimed cut outings are "off the auto-filler for his plan", and they never were —
+nothing filtered them, so a cut only ever showed as a flag on a chip. `askableUnits()`
+now applies it everywhere Samuel's plan is built. Washington's one cut outing (Air
+and Space) had been staying off the board by luck rather than by rule.
+
+Dates and prices verified against the real 2026 calendars: Garden Lights runs Nov 14
+2026 – Jan 10 2027, Fantasy In Lights Nov 15 2026 – Jan 3 2027, and Rock City from
+mid-November. Stone Mountain has not published its 2026 calendar and runs weekends
+and school holidays rather than nightly, so it is modelled as closed Monday to Friday
+and can only land on our Saturday or Sunday.
+
+The house coordinates in the file are the neighbourhood, not the door — this page is
+served publicly.
