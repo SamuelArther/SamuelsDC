@@ -11,7 +11,10 @@
  *   boards/family  boards/bart  boards/jess  boards/sam  boards/nanny
  *   votes/bart     votes/jess   votes/sam    votes/nanny
  *   trip/shared
- *   nyc/boards/*   nyc/votes/*  nyc/trip/shared
+ *   <city>/boards/*  <city>/votes/*  <city>/trip/shared
+ *
+ * where <city> is one of nyc, wilm, sj, sea, pdx — the same keys the page
+ * uses in CITY_KEYS. Adding a city here is adding it to CITIES below.
  *
  * `trip/shared` carries the dates for the whole trip plus Washington's
  * weather switches, bookings and how-we-get-there; the per-city documents
@@ -29,15 +32,17 @@
  *        Pass version -1 to force.
  */
 
-const CITY = "(nyc)";
+// Washington is the unprefixed set and is not in here; every other city
+// hangs off its own key, matching CITY_KEYS in index.html.
+const CITIES = ["nyc", "wilm", "sj", "sea", "pdx"];
 const DOCS = new RegExp(
-  `^(${CITY}/)?(boards/(family|bart|jess|sam|nanny)|votes/(bart|jess|sam|nanny)|trip/shared)$`
+  `^((${CITIES.join("|")})/)?(boards/(family|bart|jess|sam|nanny)|votes/(bart|jess|sam|nanny)|trip/shared)$`
 );
 const NAMES = [
   "boards/family", "boards/bart", "boards/jess", "boards/sam", "boards/nanny",
   "votes/bart", "votes/jess", "votes/sam", "votes/nanny",
   "trip/shared",
-].flatMap((n) => [n, `nyc/${n}`]);
+].flatMap((n) => [n, ...CITIES.map((c) => `${c}/${n}`)]);
 const MAX_BYTES = 128 * 1024;
 
 const CORS = {
