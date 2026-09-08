@@ -98,12 +98,25 @@ inert there.
 | | The train | Flying |
 | --- | --- | --- |
 | The way in | Crescent 20 all the way to Penn Station | Atlanta to LaGuardia |
-| Costs | Nothing to buy — it is the same ticket as Washington | Four round-trip fares |
+| Costs | Two roomettes, and a longer Crescent than Washington | Four round-trip fares out of Atlanta |
 | Arrives | A little before 7 pm, so the first evening is gone | Around lunchtime |
 | Leaves | Just after 2 pm, so the last day is gone | That evening |
 | The week | Six usable days | Eight |
 
-All fourteen asks fit either way — the difference is the slack, not the list.
+All fifteen asks fit either way — the difference is the slack, not the list.
+
+Neither way is free and the page does not pretend otherwise: New York is four
+hours past Washington on the same train, so the sleeper fare goes up with the
+distance. Which of the two actually costs less is a question of real fares on
+real dates, and nothing here guesses at it.
+
+### askVersion lives in the shared document
+
+A board sitting on the worker does not know the ask has grown. Each device used
+to fold new outings into its own copy, then the next pull handed the stale copy
+straight back — so an outing added after a board was last saved would sit on the
+bench for ever. The version now rides in the per-city `trip/shared` document, and
+whoever loads next repairs the boards once and publishes the result.
 
 Switching redraws the first and last days of the board and moves anything
 standing in a slot the journey now eats. Checks names the trade rather than

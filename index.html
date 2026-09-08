@@ -266,6 +266,8 @@ span.who{cursor:default}
 .chip .meta{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.11em;
   text-transform:uppercase;color:var(--ink-3);margin-top:5px;display:flex;flex-wrap:wrap;gap:3px 11px}
 .chip .why{font-size:14.5px;color:var(--ink-2);margin-top:7px;line-height:1.45}
+.chip .stops{font-family:var(--f-mono);font-size:10px;letter-spacing:.05em;
+  color:var(--ink-3);margin-top:7px;line-height:1.55}
 .chip .rmv{position:absolute;top:5px;right:5px;border:0;background:none;color:var(--ink-3);
   cursor:pointer;font-family:var(--f-mono);font-size:15px;line-height:1;padding:2px 5px;border-radius:2px}
 .chip .rmv:hover{color:var(--stop-ink);background:var(--stop-soft)}
@@ -1136,11 +1138,11 @@ var CITIES = {
     id:"train", label:"Train",
     route:"Amtrak Crescent 20 & 19 · Anniston, Alabama ⇆ New York Penn Station",
     sub:"Into Penn Station, a little before 7 pm Sunday",
-    deckTail:"On the train there is no ticket to buy, and it costs two evenings: in after dark on the Sunday, out again just after two on the last day.",
+    deckTail:"The train is two roomettes on a longer Crescent than the Washington one — four hours further up the line, so a dearer ticket, not a free one — and it costs two evenings on top: in after dark on the Sunday, out again just after two on the last day.",
     depart:{at:"2026-11-28T20:04:00-06:00", big:"Sat Nov 28", small:"board at Anniston, 8:04 pm"},
     departHours:0,
     check:{level:"ok", t:"On the train, both end days belong to Amtrak",
-      s:"In a little before seven on the Sunday and back out just after two on the last day, so the first evening and the whole last day are the railroad's. Nothing to book and nothing to pay for the getting there, which is the trade. Switch to Fly above and the board hands both of them back."},
+      s:"In a little before seven on the Sunday and back out just after two on the last day, so the first evening and the whole last day are the railroad's. And it is not the cheap option just because it is the familiar one — New York is four hours past Washington and the sleeper fare goes up with the distance. Switch to Fly above and the board hands both days back; which way actually costs less is a question nobody has priced yet."},
     structural:function(day, slot){
       if (day.kind === "arrival") return slot === "day"
         ? {name:"Still on the Crescent", load:"lo", note:"Four hours north of Washington", ll:NYC_BASE_LL}
@@ -1156,7 +1158,7 @@ var CITIES = {
       "<tr><td>Crescent&nbsp;19 south</td><td>New York Penn</td><td>Anniston, AL</td><td class='m'>Out just after 2 pm &middot; home late morning</td></tr>",
      notes:function(){ return [
       "New York is where the Crescent actually ends, four hours past Washington, so nobody changes trains and nobody drags a bag across a platform. The same two roomettes, the same beds folding down, dinner in the room. And it walks you out into Penn Station, which is four blocks from the hotel.",
-      "What it costs is time rather than money: in a little before seven on the Sunday and back out just after two on the last day. That is the first evening and most of the last day gone, and the board holds those slots shut so nothing gets quietly scheduled into them.",
+      "What it costs is time as well as money: in a little before seven on the Sunday and back out just after two on the last day. That is the first evening and most of the last day gone, and the board holds those slots shut so nothing gets quietly scheduled into them. The money is a real ticket too — it is Amtrak, and it is a longer ride than the Washington one.",
       "Nineteen hours each way is four more than Washington in both directions, which is two more evenings of Uno than the other version of this trip. The rest of the games stay in the bag until the last night."
      ]; },
      packing:
@@ -1168,7 +1170,7 @@ var CITIES = {
     id:"plane", label:"Fly",
     route:"Atlanta Hartsfield ⇆ New York LaGuardia · the same eight days, flown",
     sub:"Into LaGuardia around lunchtime Sunday",
-    deckTail:"Flying costs four round-trip fares the train does not, and buys back an evening at each end.",
+    deckTail:"Flying buys back an evening at each end. Four fares out of Atlanta against two roomettes on a longer Crescent — close enough that somebody has to price both before anybody argues about it.",
     depart:{at:"2026-11-29T09:00:00-05:00", big:"Sun Nov 29", small:"out of Atlanta in the morning"},
     departHours:4,
     check:{level:"ok", t:"Flying hands back both end days",
@@ -1189,7 +1191,7 @@ var CITIES = {
       "<tr><td>Northbound</td><td>Atlanta Hartsfield</td><td>New York LaGuardia</td><td class='m'>Sun morning &middot; ~2 hr 20 in the air, in around lunchtime</td></tr>" +
       "<tr><td>Southbound</td><td>New York LaGuardia</td><td>Atlanta Hartsfield</td><td class='m'>Sun evening &middot; home the same night</td></tr>",
      notes:function(){ return [
-      "This is the version that costs money to get to. Four round-trip fares out of Atlanta is the whole argument against it, and it is a real one — the train version of this same week has no ticket to buy at all. What the money buys is two evenings: in Midtown by mid-afternoon on the Sunday instead of after dark, and the last day ours right up until the flight home instead of losing it to a two o'clock departure.",
+      "Four round-trip fares out of Atlanta is the argument against this one — but it is an argument about how much, not about whether, because the train is not free either. The Crescent to New York is four hours further than the Crescent to Washington and two roomettes are priced accordingly. Neither of these is a cheap way to move four people, and until somebody prices both on the actual dates this page cannot tell you which wins. What flying definitely buys is two evenings: in Midtown by mid-afternoon on the Sunday instead of after dark, and the last day ours right up to the flight home instead of losing it to a two o'clock departure.",
       "Getting to Hartsfield is the part people forget. Bags, security and the drive in are most of a morning, so the first day is an airport day whatever the flight time says — the board holds that slot shut and schedules nothing into it.",
       "Home base is Herald Square either way, in the middle of Midtown: the Empire State Building is two blocks, Bryant Park is four, and one train runs straight down to the World Trade Center without a change. No rental car — nobody is driving in Manhattan. The subway is $2.90 a head and beats an UberXL nearly everywhere below the park, but the board still prices every hop as a car at about " + UBER_MPH + " mph, which is what Midtown traffic does to one. The fares on the board are the ceiling; anything the subway takes comes in under it.",
       "The games still come. Uno earns its place before the trip even starts — a gate at six in the morning is exactly what it is for. The rest stay in the bag until the last night."
@@ -1393,7 +1395,7 @@ function save(which){
     if (!db) return;
     db.doc(Pc(ck, "boards/" + key)).set({placements:s.boards[key] || {}, by:me, at:Date.now()}).catch(noop);
     db.doc(Pc(ck, "trip/shared")).set({config:state.config, wx:s.wx, resv:s.resv,
-      planFrom:s.planFrom, travel:s.travel, at:Date.now()}).catch(noop);
+      planFrom:s.planFrom, travel:s.travel, askVersion:s.askVersion, at:Date.now()}).catch(noop);
   }, 350);
 }
 function saveBallot(){
@@ -1428,6 +1430,9 @@ function docFor(path, d){
     if (d.wx) s.wx = d.wx;
     if (d.resv) s.resv = d.resv;
     if (d.planFrom) s.planFrom = d.planFrom;
+    /* Absent means it was written before the ask carried a version, which
+       is exactly the case that needs repairing. */
+    s.askVersion = (d.askVersion === undefined) ? 0 : d.askVersion;
     if (d.travel && CITIES[q.c] && CITIES[q.c].travelOrder.indexOf(d.travel) > -1){
       s.travel = d.travel;
       if (q.c === city) useWay(s.travel);
@@ -1441,7 +1446,8 @@ function bodyFor(path){
     var who = q.p.slice(6);
     return {order: s.ballots[who] || [], must: s.musts[who] || null};
   }
-  var body = {wx:s.wx, resv:s.resv, planFrom:s.planFrom, travel:s.travel};
+  var body = {wx:s.wx, resv:s.resv, planFrom:s.planFrom, travel:s.travel,
+              askVersion:s.askVersion};
   if (q.c === "dc") body.config = state.config;
   return body;
 }
@@ -1475,7 +1481,7 @@ function syncPull(){
         changed = true;
       });
       firstPull = false;
-      if (changed){ localSave(); renderAll(); }
+      if (changed){ repairAfterPull(); localSave(); renderAll(); }
       if (!syncOn){ syncOn = true; setSync("live","live for the family"); }
       seed.forEach(function(path){ syncPush(path); });
       /* Anything that failed to send while the connection was gone. */
@@ -1525,6 +1531,27 @@ function syncPush(path){
       setSync("local","offline — saved here, will sync");
     });
 }
+/* A board written against an older ask comes back from the worker missing
+   whatever has been added since. Fold the new outings in, mark the shared
+   document with the version they were folded in at, and publish — so this
+   happens once for the family rather than once per device per load, and so
+   nobody sits there wondering why the thing they asked for is on the bench. */
+function repairAfterPull(){
+  var back = city, touched = [];
+  CITY_KEYS.forEach(function(k){
+    if (Sof(k).askVersion === CITIES[k].askVersion) return;
+    setCity(k); applyWay();
+    seedCity();
+    touched.push(k);
+  });
+  setCity(back); applyWay();
+  if (!touched.length || !SYNC_URL) return;
+  touched.forEach(function(k){
+    BOARD_KEYS.forEach(function(b){ syncPush(Pc(k, "boards/" + b)); });
+    syncPush(Pc(k, "trip/shared"));
+  });
+}
+
 function startSync(){
   if (!SYNC_URL) { setSync("local","this device only"); return; }
   setSync("", "connecting");
@@ -2037,6 +2064,11 @@ function chip(u, opts){
   m.appendChild(el("span", null, hrs(u.ideal)));
   if (u.bundle) m.appendChild(el("span", null, u.members.length + " stops"));
   c.appendChild(m);
+  /* A bundle is several real places travelling under one name. Say which
+     ones, or the board quietly hides the thing somebody actually asked
+     for — One World is not obviously inside "Ground Zero after dark". */
+  if (u.members.length > 1)
+    c.appendChild(el("p","stops", u.members.map(function(id){ return byId[id].name; }).join("  ·  ")));
   if (opts.why) c.appendChild(el("p","why", u.why));
   if (opts.flags && opts.flags.length){
     var f = el("div","flags");
@@ -2947,7 +2979,7 @@ function saveAll(){
     db.doc(Pc(ck, "boards/" + k)).set({placements:s.boards[k] || {}, by:me, at:Date.now()}).catch(noop);
   });
   db.doc(Pc(ck, "trip/shared")).set({config:state.config, wx:s.wx, resv:s.resv,
-    planFrom:s.planFrom, travel:s.travel, at:Date.now()}).catch(noop);
+    planFrom:s.planFrom, travel:s.travel, askVersion:s.askVersion, at:Date.now()}).catch(noop);
 }
 function setWay(k){
   if (!C.travel[k] || S().travel === k) return;
@@ -3167,6 +3199,13 @@ function fallbackDownload(text, name){
    already been arranged by hand. Returns what it changed, so only the
    city actually on screen has to say anything about it. */
 function seedCity(){
+  /* An outing that no longer exists sits in a saved board for ever: nothing
+     renders it, but it still counts in "N of M placed" and still gets sent
+     to everybody else. Sweep it. */
+  BOARD_KEYS.forEach(function(k){
+    var b = pl(k);
+    Object.keys(b).forEach(function(id){ if (!unitById[id]) delete b[id]; });
+  });
   if (!Object.keys(pl("sam")).length){
     var seeded = askPlan();
     Object.keys(seeded).forEach(function(id){ pl("sam")[id] = seeded[id]; });
@@ -3201,6 +3240,7 @@ function seedCity(){
   });
   if (!S().ballots["sam"]) S().ballots["sam"] = normalizeBallot(wantUnits(true));
   if (!Object.keys(pl("family")).length) autoFillInto(pl("family"));
+  S().askVersion = ASK_VERSION;
   return msg.join("; ");
 }
 
