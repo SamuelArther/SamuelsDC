@@ -5,10 +5,17 @@
  * a handful of small JSON documents. No accounts, no login: the URL is the
  * secret, exactly like the share links this replaces.
  *
- * Documents:
+ * Documents, one set per city. Washington keeps the unprefixed names it
+ * has always had; every other city hangs off its own prefix.
+ *
  *   boards/family  boards/bart  boards/jess  boards/sam  boards/nanny
  *   votes/bart     votes/jess   votes/sam    votes/nanny
  *   trip/shared
+ *   nyc/boards/*   nyc/votes/*  nyc/trip/shared
+ *
+ * `trip/shared` carries the dates for the whole trip plus Washington's
+ * weather switches, bookings and how-we-get-there; the per-city documents
+ * carry only their own.
  *
  * GET  /doc/<path>          -> { version, at, by, data }   (404-safe: version 0)
  * GET  /all                 -> { docs: { path: {version, at, by, data} } }
@@ -22,7 +29,15 @@
  *        Pass version -1 to force.
  */
 
-const DOCS = /^(boards\/(family|bart|jess|sam|nanny)|votes\/(bart|jess|sam|nanny)|trip\/shared)$/;
+const CITY = "(nyc)";
+const DOCS = new RegExp(
+  `^(${CITY}/)?(boards/(family|bart|jess|sam|nanny)|votes/(bart|jess|sam|nanny)|trip/shared)$`
+);
+const NAMES = [
+  "boards/family", "boards/bart", "boards/jess", "boards/sam", "boards/nanny",
+  "votes/bart", "votes/jess", "votes/sam", "votes/nanny",
+  "trip/shared",
+].flatMap((n) => [n, `nyc/${n}`]);
 const MAX_BYTES = 128 * 1024;
 
 const CORS = {
@@ -57,16 +72,11 @@ export default {
     const path = url.pathname.replace(/^\/+|\/+$/g, "");
 
     if (path === "" || path === "health") {
-      return json({ ok: true, service: "crescent-dispatch", docs: 10 });
+      return json({ ok: true, service: "crescent-dispatch", docs: NAMES.length });
     }
 
     if (path === "all" && request.method === "GET") {
-      const names = [
-        "boards/family", "boards/bart", "boards/jess", "boards/sam", "boards/nanny",
-        "votes/bart", "votes/jess", "votes/sam", "votes/nanny",
-        "trip/shared",
-      ];
-      const entries = await Promise.all(names.map(async (n) => [n, await readDoc(env, n)]));
+      const entries = await Promise.all(NAMES.map(async (n) => [n, await readDoc(env, n)]));
       return json({ docs: Object.fromEntries(entries) });
     }
 

@@ -111,6 +111,31 @@ h1.title em{font-style:italic;font-weight:400;color:var(--orange-ink)}
 .dot.live{background:var(--ok)}
 .dot.local{background:var(--gold)}
 
+/* ── Cities ─────────────────────────────────────────────────────────────
+   Two trips on the same eight days. The city strip sits above everything
+   else because it changes what every tab below it is talking about.
+   ─────────────────────────────────────────────────────────────────────── */
+.cities{background:var(--surface-2);border-bottom:1px solid var(--rule)}
+.cities .wrap{display:flex;gap:8px;align-items:center;overflow-x:auto;
+  padding-top:9px;padding-bottom:9px}
+.cities .label{flex:none;margin-right:4px}
+.cities button{background:transparent;border:1px solid var(--rule);border-radius:2px;
+  padding:6px 15px;cursor:pointer;font-family:var(--f-disp);font-weight:600;
+  font-size:15px;color:var(--ink-2);white-space:nowrap}
+.cities button:hover{border-color:var(--ink-3);color:var(--ink)}
+.cities button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);
+  color:var(--paper)}
+.cities .sep{flex:none;width:1px;height:22px;background:var(--rule);margin:0 6px}
+.cities .way{display:flex;gap:6px;flex:none}
+.cities .way[hidden]{display:none}
+.cities .way button{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;
+  text-transform:uppercase;font-weight:400;padding:6px 12px}
+.cities .way button[aria-pressed="true"]{background:var(--orange);border-color:var(--orange);
+  color:var(--on-orange)}
+.cities .sub{margin-left:auto;flex:none;font-family:var(--f-mono);font-size:10px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+@media (max-width:640px){ .cities .sub{display:none} }
+
 /* ── Tabs ───────────────────────────────────────────────────────────── */
 .tabs{background:var(--surface);border-bottom:1px solid var(--rule)}
 .tabs .wrap{display:flex;gap:0;overflow-x:auto}
@@ -447,7 +472,7 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
 
 /* ── Print: the fridge copy ─────────────────────────────────────────── */
 @media print{
-  .mast .clock,.crewbar,.tabs,.side,.whosplan,footer,.toast,.wx,.daypick{display:none!important}
+  .mast .clock,.crewbar,.cities,.tabs,.side,.whosplan,footer,.toast,.wx,.daypick{display:none!important}
   body{background:#fff;color:#000;font-size:11pt}
   .mast{border-bottom:2px solid #000}
   .board{grid-template-columns:1fr}
@@ -462,23 +487,31 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
 
 <header class="mast">
   <div class="wrap">
-    <p class="route">Amtrak Crescent 20 &amp; 19 &nbsp;&middot;&nbsp; Anniston, Alabama &#8646; Washington Union</p>
+    <p class="route" id="routeline"></p>
     <h1 class="title">Crescent <em>Dispatch</em></h1>
-    <p class="deck">The twenty-one things I want to do in Washington, and the week that makes all
-      twenty-one fit. Not a wish list &mdash; a real schedule, budgeted in hours with the UberXL rides
-      counted, that survives the Sunday closures and does not flinch at a cold December evening — half of this
-      list is better in the cold anyway. Everyone else can build
-      theirs beside it and we'll compare.</p>
+    <p class="deck" id="deckline"></p>
     <div class="rules-row"><hr><span class="mark">&#9670;</span><hr></div>
     <div class="clock" aria-label="Time until boarding">
       <div><b id="cd-d">&mdash;</b><span>days</span></div>
       <div><b id="cd-h">&mdash;</b><span>hrs</span></div>
       <div><b id="cd-m">&mdash;</b><span>min</span></div>
       <div><b id="cd-s">&mdash;</b><span>sec</span></div>
-      <div class="depart"><b>Sat Nov 28</b><span>board at Anniston, 8:04&thinsp;pm</span></div>
+      <div class="depart"><b id="departbig">&mdash;</b><span id="departsmall"></span></div>
     </div>
   </div>
 </header>
+
+<nav class="cities">
+  <div class="wrap" role="group" aria-label="Which trip" id="citylist">
+    <span class="label">Trip</span>
+    <button data-city="dc" aria-pressed="true">Washington</button>
+    <button data-city="nyc" aria-pressed="false">New York</button>
+    <span class="sep" id="waysep" aria-hidden="true"></span>
+    <span class="label" id="waylabel">How</span>
+    <span class="way" id="waypick" role="group" aria-label="How we get there"></span>
+    <span class="sub" id="citysub"></span>
+  </div>
+</nav>
 
 <div class="crewbar">
   <div class="wrap">
@@ -507,10 +540,8 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
     <section class="panel" id="p-ask">
       <div class="verdict" id="verdict"></div>
       <div class="secthead">
-        <h2>Twenty-one things, in the order I want them</h2>
-        <p>This is the trip I am asking for. Everything below is the arithmetic that says it works &mdash;
-          which day each one lands on, how long it takes, and what the ride there costs. We are dressed for the cold, so it barely
-          counts against a plan here — rain and wind are the only weather that moves anything.</p>
+        <h2 id="askhead"></h2>
+        <p id="askdeck"></p>
       </div>
       <div class="asklist" id="asklist"></div>
       <div id="asknote" style="margin-top:20px"></div>
@@ -583,12 +614,7 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
           </div>
           <div class="card">
             <header><h3>How the distances work</h3></header>
-            <p class="hint">Straight-line miles from the hotel at L'Enfant Plaza, which is why the
-              Mall museums are a stroll and the Cathedral is a ride. Every hop is costed as an
-              UberXL &mdash; about 18&nbsp;mph door to door, plus a few minutes standing on a corner
-              with your hands in your pockets. The scheduler keeps a day's stops near each other
-              where it can, and Checks says something when a day turns into a lot of riding. None of
-              it is a rule. It just means nobody is surprised at nine at night.</p>
+            <p class="hint" id="mapnote"></p>
           </div>
         </aside>
       </div>
@@ -598,8 +624,7 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
       <div class="rank-grid">
         <div class="card">
           <header><h3>Your ballot</h3><span class="n" id="rankwho"></span></header>
-          <p class="hint">Drag to reorder, or use the arrows. Your top four are what a shortened trip
-            keeps; your top thirteen are what the board protects. The star is your one must-do &mdash;
+          <p class="hint" id="rankhint">Drag to reorder, or use the arrows. The star is your one must-do &mdash;
             whatever you star gets placed before anything else, even if the rest of the family
             outvotes you.</p>
           <div class="btnrow" style="margin-top:11px">
@@ -611,9 +636,7 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
         <div class="card">
           <header><h3>The tally</h3><span class="n" id="tallyn"></span></header>
           <div class="tablewrap"><table class="tally" id="tally"></table></div>
-          <p class="hint" style="margin-top:12px">Points are Borda: first place on a ballot is worth
-            18, last is worth 1. Highlighted rows are the ones the family splits hardest on &mdash;
-            those are the conversations worth having at dinner, not on the board.</p>
+          <p class="hint" style="margin-top:12px" id="tallyhint"></p>
           <div class="btnrow" style="margin-top:11px">
             <button class="btn" id="useconsensus">Plan from the tally</button>
           </div>
@@ -624,8 +647,7 @@ footer p{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);letter-sp
     <section class="panel" id="p-roster" hidden>
       <div class="secthead">
         <h2>Everything on the table</h2>
-        <p>Twenty-five places, with the facts that actually decide a schedule rather than the ones
-          that sell a brochure.</p>
+        <p id="rosterdeck"></p>
       </div>
       <div class="roster" id="roster"></div>
     </section>
@@ -660,9 +682,9 @@ var MEM  = {rain:"poor",      cold:"acceptable", wind:"poor",      heat:"good"};
 var OUT  = {rain:"poor",      cold:"good",       wind:"acceptable", heat:"good"};
 var FED  = {wd:[0], hol:["thanksgiving","christmas","newyear"]};
 var SMI  = {wd:[],  hol:["christmas"]};
-var BASE_LL = [38.8845,-77.0255];          /* the hotel, needed by the catalog below */
+var DC_BASE_LL = [38.8845,-77.0255];       /* the hotel, needed by the catalog below */
 
-var VENUES = [
+var DC_VENUES = [
  {id:"us-capitol",name:"U.S. Capitol",seed:1,tier:"protected",period:"day",load:"hi",env:"mixed",min:2.5,ideal:4,resv:"recommended",w:{rain:"good",cold:"good",wind:"good",heat:"good"},bundle:"capitol-hill",closed:FED,ll:[38.8899,-77.0091],
   why:"Inside, under the dome, on a real tour. Book through a member of Congress or the visitor center."},
  {id:"national-archives",name:"National Archives",seed:2,tier:"protected",period:"day",load:"lo",env:"indoor",min:1.5,ideal:2.5,resv:"recommended",w:IN,bundle:null,closed:{wd:[],hol:["thanksgiving","christmas"]},ll:[38.8929,-77.0229],
@@ -715,17 +737,17 @@ var VENUES = [
   why:"Paid, off the Mall, and the one Samuel will still be talking about in January."},
  {id:"national-mall",name:"The National Mall",seed:26,tier:"high",period:"day",load:"mid",env:"outdoor",min:1,ideal:2.5,resv:"none",w:{rain:"poor",cold:"acceptable",wind:"poor",heat:"acceptable"},bundle:null,ll:[38.8899,-77.0231],
   why:"The lawn itself: two miles of it, Capitol steps to the Lincoln Memorial, Monument in the middle and the museums down both sides."},
- {id:"mine-turtle",name:"Mine Turtle at the hotel",seed:27,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:BASE_LL,lastNight:true,
+ {id:"mine-turtle",name:"Mine Turtle at the hotel",seed:27,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:DC_BASE_LL,lastNight:true,
   why:"Truth or dare with a turtle that explodes. Two to six players, so all four of us plus whoever wanders over. Last night, in the room, bags already packed."},
- {id:"muffin-time",name:"Muffin Time at the hotel",seed:28,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:BASE_LL,lastNight:true,
+ {id:"muffin-time",name:"Muffin Time at the hotel",seed:28,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:DC_BASE_LL,lastNight:true,
   why:"Two hundred cards of chaos where one card flips the whole game. Two to eight players, so nobody sits out. The other half of the last night."},
- {id:"uno",name:"Uno",seed:29,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:BASE_LL,lastNight:true,
+ {id:"uno",name:"Uno",seed:29,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:DC_BASE_LL,lastNight:true,
   why:"Weighs nothing, everybody already knows it, and Nanny can play it without a rules explanation. Also the best thing to have in a sleeper car for fifteen hours."},
- {id:"monopoly-deal",name:"Monopoly Deal",seed:30,tier:"bonus",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:BASE_LL,lastNight:true,
+ {id:"monopoly-deal",name:"Monopoly Deal",seed:30,tier:"bonus",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:DC_BASE_LL,lastNight:true,
   why:"Monopoly that fits in a pocket and ends in fifteen minutes instead of three hours. All the dealing and stealing, none of the sitting there bankrupt at midnight."}
 ];
 
-var BUNDLES = {
+var DC_BUNDLES = {
  "capitol-hill":{name:"Capitol Hill",core:["us-capitol","library-of-congress"],
    why:"Tour under the dome in the morning, then across the street to the most beautiful room in the country."},
  "main-memorial-loop":{name:"The memorial loop",core:["wwii-memorial","vietnam-memorial","lincoln-memorial","korean-memorial"],
@@ -741,7 +763,7 @@ var BUNDLES = {
    that carries other stops with it — noted, because a plan that pretends
    the Capitol comes alone is a plan that runs out of afternoon.
    ─────────────────────────────────────────────────────────────────────── */
-var WANTS = [
+var DC_WANTS = [
  {ask:"The Tomb of the Unknown Soldier", unit:"arlington", short:true,
   why:"Guarded every minute of every day since 1937, through hurricanes and everything else. The guard changes on the hour in winter, the ceremony runs about fifteen minutes, and it is the reason I am going to Arlington at all.",
   rides:"Two hours: security, three quarters of a mile uphill, the ceremony, and back down. Not Kennedy's flame, not Arlington House, not the rest of the cemetery — those are a different, longer day and I am not asking for it. Blue Line straight from the hotel, no change."},
@@ -808,14 +830,14 @@ var WANTS = [
 ];
 
 /* Wanted if the week has room, cut first if it does not. */
-var MAYBES = [
+var DC_MAYBES = [
  {ask:"The National Gallery of Art", unit:"national-gallery",
   why:"West building for the old masters, East for the strange ones, and the tunnel between them.",
   rides:"Right on the Mall, so it costs a slot but almost no travel. Nice to have, not a must."}
 ];
 
 /* Off the list on purpose. Stated here so nobody quietly adds them back. */
-var NOPES = [
+var DC_NOPES = [
  {name:"National Museum of Natural History", why:"Not this trip."},
  {name:"African American History & Culture", why:"Not this trip."},
  {name:"International Spy Museum", why:"Not this trip."},
@@ -825,7 +847,7 @@ var NOPES = [
 
 /* Removed from the ask after a plan may already have been saved. Kept
    separate from NOPES because a cut is a different thing from a never. */
-var CUT_UNITS = ["air-space"];
+var DC_CUT_UNITS = ["air-space"];
 
 var CREW = [
  {id:"bart",  name:"Bart",  role:"Dispatcher — owns dates and nights"},
@@ -834,7 +856,6 @@ var CREW = [
  {id:"nanny", name:"Nanny", role:"Full stakeholder"}
 ];
 var BOARD_KEYS = ["family","bart","jess","sam","nanny"];
-var BASE = {name:"L'Enfant Plaza base", ll:BASE_LL};
 var TRIP = {start:"2026-11-29", nights:7, board:"2026-11-28T20:04:00-06:00", backAtWork:"2026-12-10"};
 
 /* Game night is bought before we leave, so it is not a trip cost.
@@ -852,9 +873,8 @@ function gamesTotal(){ return GAMES_COST.subtotal + gamesTax() + GAMES_COST.ship
 var TIERN = {protected:0, high:1, medium:2, bonus:3};
 var FITN  = {poor:0, acceptable:1, good:2, excellent:3};
 var FITS  = {poor:-6, acceptable:-2, good:0, excellent:1};
-var BUNDLE_LOAD = {"capitol-hill":"hi","main-memorial-loop":"hi","christmas-washington":"mid","tidal-basin-loop":"mid"};
+var DC_BUNDLE_LOAD = {"capitol-hill":"hi","main-memorial-loop":"hi","christmas-washington":"mid","tidal-basin-loop":"mid"};
 
-var byId = {}; VENUES.forEach(function(v){ byId[v.id] = v; });
 
 function worstWeather(vs){
   var out = {};
@@ -881,7 +901,7 @@ function distMi(a, b){
 }
 function walkMin(mi){ return Math.round(mi / 2.8 * 60); }
 
-var UNITS = (function(){
+function buildUnits(){
   var out = [], seen = {};
   Object.keys(BUNDLES).forEach(function(bid){
     var b = BUNDLES[bid], ms = b.core.map(function(i){ return byId[i]; });
@@ -908,10 +928,319 @@ var UNITS = (function(){
   });
   out.sort(function(a,b){ return a.seed - b.seed; });
   return out;
-})();
-var unitById = {}; UNITS.forEach(function(u){ unitById[u.id] = u; });
-var SEEDED = UNITS.map(function(u){ return u.id; });
-var MUST_SEE = 13, FINAL_FOUR = 4, FAR_MI = 2.5;
+}
+
+/* ══ New York ═══════════════════════════════════════════════════════════
+   The same eight days and the same train. The Crescent does not stop at
+   Washington — it ends at Penn Station, about four hours further north —
+   so this is the identical week aimed at a different city. Samuel's New
+   York list is four places and the games, and the shortness is the point.
+   ═══════════════════════════════════════════════════════════════════════ */
+var NYC_BASE_LL = [40.7497,-73.9880];      /* the hotel, Herald Square: Penn Station
+                                                  one way in, LaGuardia the other */
+
+var NYC_VENUES = [
+ {id:"911-memorial",name:"The 9/11 Memorial",seed:1,tier:"protected",period:"day",load:"mid",env:"outdoor",min:.75,ideal:1.25,resv:"none",w:MEM,bundle:"ground-zero",ll:[40.7115,-74.0134],
+  why:"Two pools sunk into the footprints of the towers, with every name cut clean through the bronze around the rim. Free, open, and the water never stops."},
+ {id:"911-museum",name:"The 9/11 Memorial Museum",seed:2,tier:"protected",period:"day",load:"hi",env:"indoor",min:2,ideal:3,resv:"required",w:IN,bundle:"ground-zero",closed:{wd:[],hol:["christmas"]},ll:[40.7112,-74.0138],
+  why:"Seventy feet down at the bedrock, with the slurry wall still holding the river out and the last column standing where they left it. Timed tickets, booked ahead."},
+ {id:"empire-state",name:"Empire State Building",seed:3,tier:"protected",period:"night",load:"mid",env:"mixed",min:1.5,ideal:2.5,resv:"recommended",w:{rain:"poor",cold:"good",wind:"poor",heat:"good"},bundle:null,ll:[40.7484,-73.9857],
+  why:"The 86th floor is outdoors and open to the wind, with the whole grid lit underneath. The 102nd is behind glass and costs extra. Two blocks from the hotel, so it is the cheapest big thing on the list to get to."},
+ {id:"central-park",name:"Central Park",seed:4,tier:"protected",period:"day",load:"mid",env:"outdoor",min:1.5,ideal:3.5,resv:"none",w:{rain:"poor",cold:"good",wind:"acceptable",heat:"good"},bundle:null,ll:[40.7739,-73.9713],
+  why:"In at the south end and north through it: the elm tunnel of the Mall, Bethesda Terrace and the fountain, the boat pond, Bow Bridge. Eight hundred and forty acres, and we are seeing maybe a fifth."},
+ {id:"rockefeller-tree",name:"The Rockefeller Center Tree",seed:5,tier:"protected",period:"night",load:"mid",env:"outdoor",min:.5,ideal:1,resv:"none",w:OUT,bundle:"christmas-midtown",ll:[40.7587,-73.9787],
+  why:"Seventy-odd feet of Norway spruce over the rink, strung with lights, with the crystal star on top. Ten minutes of looking and half an hour of getting to the front."},
+ {id:"fifth-ave-windows",name:"The Fifth Avenue windows",seed:6,tier:"high",period:"night",load:"lo",env:"outdoor",min:.5,ideal:1.25,resv:"none",w:OUT,bundle:"christmas-midtown",ll:[40.7580,-73.9776],
+  why:"Saks doing its light show across the street on the hour, then the windows north up Fifth. Free, outdoors, and it is the walk between the tree and the subway anyway."},
+ {id:"times-square",name:"Times Square",seed:7,tier:"bonus",period:"night",load:"lo",env:"outdoor",min:.5,ideal:1,resv:"none",w:OUT,bundle:null,ll:[40.7580,-73.9855],
+  why:"Ten minutes of standing in the middle of it being shouted at by a building. Everybody says it is a tourist trap and everybody goes anyway."},
+ {id:"staten-island-ferry",name:"The Staten Island Ferry",seed:8,tier:"bonus",period:"day",load:"lo",env:"mixed",min:1,ideal:1.5,resv:"none",w:{rain:"poor",cold:"acceptable",wind:"poor",heat:"good"},bundle:null,ll:[40.7016,-74.0133],
+  why:"Free, every half hour, and it passes the Statue of Liberty going out and coming back. The cheapest good thing in the city, and it starts a ten-minute walk from the memorial."},
+ {id:"grand-central",name:"Grand Central Terminal",seed:9,tier:"bonus",period:"day",load:"lo",env:"indoor",min:.5,ideal:1.25,resv:"none",w:IN,bundle:null,ll:[40.7527,-73.9772],
+  why:"The main concourse, the green ceiling with the constellations painted backwards, and the whispering gallery downstairs outside the Oyster Bar."},
+ {id:"bryant-park",name:"Bryant Park Winter Village",seed:10,tier:"bonus",period:"night",load:"lo",env:"outdoor",min:1,ideal:2,resv:"none",w:OUT,bundle:null,ll:[40.7536,-73.9832],
+  why:"Stalls, a rink that is free if you bring your own skates, and hot chocolate. Four blocks from the hotel, so it costs nothing to get to and nothing to leave."},
+ {id:"mine-turtle",name:"Mine Turtle at the hotel",seed:11,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:NYC_BASE_LL,lastNight:true,
+  why:"Truth or dare with a turtle that explodes. Two to six players, so all four of us plus whoever wanders over. Last night, in the room, bags already packed."},
+ {id:"muffin-time",name:"Muffin Time at the hotel",seed:12,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:1.5,resv:"none",w:IN,bundle:null,ll:NYC_BASE_LL,lastNight:true,
+  why:"Two hundred cards of chaos where one card flips the whole game. Two to eight players, so nobody sits out. The other half of the last night."},
+ {id:"uno",name:"Uno",seed:13,tier:"medium",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:NYC_BASE_LL,lastNight:true,
+  why:"Weighs nothing, everybody already knows it, and Nanny can play it without a rules explanation. Also the right thing to have in a pocket whichever way we go — nineteen hours in a sleeper car or a morning spent in two airports."},
+ {id:"monopoly-deal",name:"Monopoly Deal",seed:14,tier:"bonus",period:"night",load:"lo",env:"indoor",min:.5,ideal:.75,resv:"none",w:IN,bundle:null,ll:NYC_BASE_LL,lastNight:true,
+  why:"Monopoly that fits in a pocket and ends in fifteen minutes instead of three hours. All the dealing and stealing, none of the sitting there bankrupt at midnight."}
+];
+
+var NYC_BUNDLES = {
+ "ground-zero":{name:"Ground Zero",core:["911-memorial","911-museum"],
+   why:"The pools first, outside, in the daylight — then down to the bedrock. In that order, and not the other way around."},
+ "christmas-midtown":{name:"Christmas in Midtown",core:["rockefeller-tree","fifth-ave-windows"],preferDow:6,
+   why:"The tree, then Saks doing its light show across the street, then the windows north up Fifth. One walk, all of it lit."}
+};
+var NYC_BUNDLE_LOAD = {"ground-zero":"hi","christmas-midtown":"mid"};
+
+var NYC_WANTS = [
+ {ask:"The 9/11 Memorial", unit:"ground-zero",
+  why:"The two pools in the footprints of the towers, and every name cut through the bronze around them. I have only ever seen it in photographs and the photographs do not tell you how big the holes are.",
+  rides:"Comes with the museum underneath it — seventy feet down at the bedrock, timed tickets, about three hours. Pools first in the daylight, then down."},
+ {ask:"The Empire State Building", unit:"empire-state",
+  why:"The 86th floor, outside, at night, with the grid lit all the way to the water in both directions.",
+  rides:"Two blocks from the hotel, which makes it the only big thing on this list that costs nothing to reach. Timed tickets are worth having; the 102nd floor is not."},
+ {ask:"Central Park", unit:"central-park",
+  why:"The elm tunnel, Bethesda Terrace and the fountain, the boat pond, Bow Bridge. A park the size of a town, in the middle of the loudest place in the country, in December.",
+  rides:"Half a day if we let it be one, and one train goes straight up the west side to it. Dress for it — there is nowhere indoors in the middle of a park."},
+ {ask:"The Rockefeller Center Christmas tree", unit:"christmas-midtown",
+  why:"The tree. The actual one. Seventy feet of it over the rink with the star on top, which is the single most Christmas thing in America, and I would like to stand under it.",
+  rides:"Comes with the Fifth Avenue windows on the same walk — Saks does its light show across the street on the hour and the windows run north from there. One outing, two stops, and all of it free."},
+ {ask:"Mine Turtle, last night at the hotel", unit:"mine-turtle",
+  why:"Truth or dare where the loser presses the turtle's button and hopes it does not go off. 2 to 6 players, about 20 minutes a round — so realistically two hours, because nobody stops after one round.",
+  rides:"Pinned to the last night in the hotel and it will not schedule anywhere else. Bags packed, shoes off, nothing to walk to."},
+ {ask:"Muffin Time, same night", unit:"muffin-time",
+  why:"Two hundred cards, 2 to 8 players, and a single card can flip the whole thing on its head. Twenty minutes on the box, which is a lie in the same way it is a lie for every good card game.",
+  rides:"Also pinned to the last night. The board budgets three hours of the evening for the pair of them."},
+ {ask:"Uno", unit:"uno",
+  why:"Everyone already knows it, nobody needs the rules read out, and Nanny is in on the first hand. It also lives in a pocket, which matters at hour eleven of a sleeper car and at a gate at six in the morning equally.",
+  rides:"Last night with the rest of them — but this is the one that comes out on the way there too, whichever way that turns out to be."},
+ {ask:"Monopoly Deal", unit:"monopoly-deal",
+  why:"Monopoly's good part with none of its bad part. Fifteen minutes a game instead of three hours, and it fits in a jacket pocket.",
+  rides:"The same four games either way. They are bought before we leave, so game night costs exactly the same whichever city we go to and however we get there."}
+];
+
+var NYC_MAYBES = [
+ {ask:"The Staten Island Ferry", unit:"staten-island-ferry",
+  why:"Free, every half hour, and it goes right past the Statue of Liberty on the way out and again on the way back.",
+  rides:"A ten-minute walk from the memorial, so it stacks onto that day for almost nothing."},
+ {ask:"Grand Central Terminal", unit:"grand-central",
+  why:"The concourse, the green ceiling with the constellations painted backwards, and the whispering gallery by the Oyster Bar.",
+  rides:"Indoors, warm, half an hour, and it is on the way to nearly everything else."},
+ {ask:"Bryant Park Winter Village", unit:"bryant-park",
+  why:"Stalls, cocoa, a rink, and an hour of the trip spent not looking up at anything.",
+  rides:"Four blocks from the hotel. Costs nothing to get to and nothing to leave early."},
+ {ask:"Times Square", unit:"times-square",
+  why:"Ten minutes of being shouted at by a building. It is a tourist trap and I would still like to have stood in it.",
+  rides:"Between the tree and the hotel, so it is a detour and not a trip."}
+];
+
+var NYC_NOPES = [
+ {name:"A Broadway show", why:"Four tickets is more than the rest of the week costs. Not this trip."},
+ {name:"The Statue of Liberty crown", why:"Books out months ahead and eats a whole day. The ferry goes past it for free."},
+ {name:"The Metropolitan Museum of Art", why:"A full day on its own, and this week does not have a spare one."},
+ {name:"Classic Monopoly", why:"Three hours minimum, on the night the bags are already packed. Monopoly Deal is on the list instead."}
+];
+
+/* ══ The two cities ═════════════════════════════════════════════════════
+   Everything in here is city-shaped: the catalogue, the hotel, what the
+   train does at each end, and the copy that names real places. Everything
+   below it — the scheduler, the checks, the ballots, the board — does not
+   know or care which city is selected.
+   ═══════════════════════════════════════════════════════════════════════ */
+var CITIES = {
+ dc: {
+  key:"dc", slug:"washington", name:"Washington",
+  base:{name:"L'Enfant Plaza", ll:DC_BASE_LL},
+  venues:DC_VENUES, bundles:DC_BUNDLES, bundleLoad:DC_BUNDLE_LOAD,
+  wants:DC_WANTS, maybes:DC_MAYBES, nopes:DC_NOPES, cutUnits:DC_CUT_UNITS,
+  mustSee:13, askVersion:12,
+  uber:{base:7.50, perMile:2.60, mph:18, waitMin:6},
+  axis:["us-capitol","lincoln-memorial"],
+  travelOrder:["train"],
+  travel:{
+   train:{
+    id:"train", label:"Train",
+    route:"Amtrak Crescent 20 & 19 · Anniston, Alabama ⇆ Washington Union",
+    sub:"Into Washington Union, about 2 pm Sunday",
+    deckTail:"",
+    depart:{at:"2026-11-28T20:04:00-06:00", big:"Sat Nov 28", small:"board at Anniston, 8:04 pm"},
+    departHours:4,
+    check:null,
+    structural:function(day, slot){
+      if (day.kind === "arrival") return slot === "day"
+        ? {name:"Arrive, hotel, food", load:"lo", note:"Union Station about 2:12 pm", ll:DC_BASE_LL}
+        : {name:"The Capitol, illuminated", load:"mid", note:"Three blocks from the station", ll:[38.8899,-77.0091]};
+      if (day.kind === "departure" && slot === "night")
+        return {name:"Southbound sleeper", load:"lo", note:"Crescent 19 departs 6:30 pm", ll:[38.8977,-77.0064]};
+      return null;
+    },
+    logi:{
+     head:"The train",
+     rows:
+      "<tr><td>Crescent&nbsp;20 north</td><td>Anniston, AL</td><td>Washington Union</td><td class='m'>Board Sat 8:04 pm &middot; in ~2:12 pm</td></tr>" +
+      "<tr><td>Crescent&nbsp;19 south</td><td>Washington Union</td><td>Anniston, AL</td><td class='m'>Out 6:30 pm &middot; home ~10:30 am CT</td></tr>",
+     notes:function(){ return [
+      "Two roomettes across the hall. Beds fold down, dinner comes to the room, and Anniston lets us leave at a civilized hour instead of waiting up in Atlanta. Home base is aimed at L'Enfant Plaza: walking distance to Air and Space, Natural History and the Monument, one seat on the Metro to Arlington.",
+      "No rental car, either way. The Crescent is the ride up and the ride home, and inside the city it is Metro when that is simplest and an UberXL whenever it is not. Four of us fit in one with room for coats, which matters more than it sounds like it does at nine at night in December. Every leg on the board is costed at about " + UBER_MPH + " mph plus a few minutes standing on a corner, which is why a Cathedral-and-Georgetown day reads as expensive and a day on the Mall reads as nearly free.",
+      "Fifteen hours each way in a sleeper car is a lot of hours. Uno lives in a pocket and comes out somewhere around Atlanta going up and again in the Carolinas coming home; the rest of the games stay in the bag until the last night."
+     ]; },
+     packing:
+      "<tr><td>Photo ID for everyone</td><td>Capitol and Archives security, and Amtrak at Anniston.</td></tr>" +
+      "<tr><td>Printed tickets, once</td><td>Union Station Wi-Fi is a rumor. Print the timed passes.</td></tr>"
+    }
+   }
+  },
+  copy:{
+   deck:"The twenty-one things I want to do in Washington, and the week that makes all twenty-one fit. Not a wish list — a real schedule, budgeted in hours with the UberXL rides counted, that survives the Sunday closures and does not flinch at a cold December evening — half of this list is better in the cold anyway. Everyone else can build theirs beside it and we'll compare.",
+   askDeck:"This is the trip I am asking for. Everything below is the arithmetic that says it works — which day each one lands on, how long it takes, and what the ride there costs. We are dressed for the cold, so it barely counts against a plan here — rain and wind are the only weather that moves anything.",
+   fitTail:"Nothing scheduled on a day it is shut, and the Capitol lands midweek because it shuts on Sundays.",
+   togetherNote:"Some of these arrive together: the Wall comes with the whole memorial night, Jefferson with the Tidal Basin loop, the White House with the Christmas tree, and the Capitol with the Library of Congress across the street. Days can hold more than one outing — the board budgets each one in hours, including the Uber time between stops.",
+   bookingNote:"Timed passes for the Monument drop 30 days out.",
+   fareNote:"",
+   mapNote:"Straight-line miles from the hotel at L'Enfant Plaza, which is why the Mall museums are a stroll and the Cathedral is a ride. Every hop is costed as an UberXL — about 18 mph door to door, plus a few minutes standing on a corner with your hands in your pockets. The scheduler keeps a day's stops near each other where it can, and Checks says something when a day turns into a lot of riding. None of it is a rule. It just means nobody is surprised at nine at night.",
+   artI:"We are coming from Alabama in December to see a city that is better in the cold. Lincoln lit from below, the Wall at dusk, the tree on the Ellipse, Dr. King over the black water — the cold is not in the way of that, it is part of it. So we bring the real gloves and the layers and we do not bail out fifteen minutes in because somebody's hands got chilly. The UberXL is the ride home at the end of a good night, not an escape hatch from the middle of one. If it runs long for Nanny, that is a different thing and we call it early for her — but nobody is cutting the memorial loop short on my account.",
+   artIIIHead:"No rental car. We call an UberXL.",
+   artIII:"The Crescent gets us there and home again, and nobody is parking in this city. Metro when it happens to be easy, an UberXL when the distance is real — the Cathedral is not a walk from the Mall and pretending otherwise costs an hour. That is about miles, not about being cold. Every hop on the board is already priced in minutes, so a museum across town costs a ride, not an argument."
+  },
+  packing:
+   "<tr><td>Layers, not one big coat</td><td>Museums run hot and the Mall runs cold; you want to shed and re-add all day.</td></tr>" +
+   "<tr><td>Real gloves and a hat</td><td>The memorial loop is an hour outdoors after dark and we are not cutting it short.</td></tr>" +
+   "<tr><td>Broken-in shoes</td><td>An Arlington day runs about five miles, most of it uphill.</td></tr>" +
+   "<tr><td>A day bag that closes</td><td>Every museum on the Mall runs bag check at the door.</td></tr>" +
+   "<tr><td>Battery pack</td><td>Cold eats phones, and the tickets are on the phones.</td></tr>" +
+   "<tr><td>The games</td><td>Mine Turtle, Muffin Time, Monopoly Deal and Uno all fit in one bag. The turtle takes AAAs — check them at home, not at the hotel.</td></tr>"
+ },
+
+ nyc: {
+  key:"nyc", slug:"new-york", name:"New York",
+  base:{name:"Midtown", ll:NYC_BASE_LL},
+  venues:NYC_VENUES, bundles:NYC_BUNDLES, bundleLoad:NYC_BUNDLE_LOAD,
+  wants:NYC_WANTS, maybes:NYC_MAYBES, nopes:NYC_NOPES, cutUnits:[],
+  mustSee:8, askVersion:1,
+  uber:{base:9.00, perMile:3.10, mph:11, waitMin:5},
+  axis:["central-park","911-memorial"],
+  /* Undecided on purpose. The two ways in shape the week differently
+     enough that the board should be able to show both. */
+  travelOrder:["train","plane"],
+  travel:{
+   train:{
+    id:"train", label:"Train",
+    route:"Amtrak Crescent 20 & 19 · Anniston, Alabama ⇆ New York Penn Station",
+    sub:"Into Penn Station, a little before 7 pm Sunday",
+    deckTail:"On the train there is no ticket to buy, and it costs two evenings: in after dark on the Sunday, out again just after two on the last day.",
+    depart:{at:"2026-11-28T20:04:00-06:00", big:"Sat Nov 28", small:"board at Anniston, 8:04 pm"},
+    departHours:0,
+    check:{level:"ok", t:"On the train, both end days belong to Amtrak",
+      s:"In a little before seven on the Sunday and back out just after two on the last day, so the first evening and the whole last day are the railroad's. Nothing to book and nothing to pay for the getting there, which is the trade. Switch to Fly above and the board hands both of them back."},
+    structural:function(day, slot){
+      if (day.kind === "arrival") return slot === "day"
+        ? {name:"Still on the Crescent", load:"lo", note:"Four hours north of Washington", ll:NYC_BASE_LL}
+        : {name:"Penn Station, hotel, food", load:"lo", note:"In a little before 7 pm", ll:NYC_BASE_LL};
+      if (day.kind === "departure" && slot === "day")
+        return {name:"Southbound Crescent 19", load:"lo", note:"Out of Penn Station just after 2 pm", ll:NYC_BASE_LL};
+      return null;
+    },
+    logi:{
+     head:"The train",
+     rows:
+      "<tr><td>Crescent&nbsp;20 north</td><td>Anniston, AL</td><td>New York Penn</td><td class='m'>Board Sat 8:04 pm &middot; in a little before 7 pm Sun</td></tr>" +
+      "<tr><td>Crescent&nbsp;19 south</td><td>New York Penn</td><td>Anniston, AL</td><td class='m'>Out just after 2 pm &middot; home late morning</td></tr>",
+     notes:function(){ return [
+      "New York is where the Crescent actually ends, four hours past Washington, so nobody changes trains and nobody drags a bag across a platform. The same two roomettes, the same beds folding down, dinner in the room. And it walks you out into Penn Station, which is four blocks from the hotel.",
+      "What it costs is time rather than money: in a little before seven on the Sunday and back out just after two on the last day. That is the first evening and most of the last day gone, and the board holds those slots shut so nothing gets quietly scheduled into them.",
+      "Nineteen hours each way is four more than Washington in both directions, which is two more evenings of Uno than the other version of this trip. The rest of the games stay in the bag until the last night."
+     ]; },
+     packing:
+      "<tr><td>Photo ID for everyone</td><td>Amtrak at Anniston, then bag check at the memorial museum and the Empire State.</td></tr>" +
+      "<tr><td>Printed tickets, once</td><td>Penn Station Wi-Fi is a rumor. Print the timed passes.</td></tr>"
+    }
+   },
+   plane:{
+    id:"plane", label:"Fly",
+    route:"Atlanta Hartsfield ⇆ New York LaGuardia · the same eight days, flown",
+    sub:"Into LaGuardia around lunchtime Sunday",
+    deckTail:"Flying costs four round-trip fares the train does not, and buys back an evening at each end.",
+    depart:{at:"2026-11-29T09:00:00-05:00", big:"Sun Nov 29", small:"out of Atlanta in the morning"},
+    departHours:4,
+    check:{level:"ok", t:"Flying hands back both end days",
+      s:"In around lunchtime and out in the evening, so the first night and the last afternoon are ours — that is two more outings than the train version of the same week. It is also four round-trip fares out of Atlanta, which is the whole argument against it and a fair one."},
+    structural:function(day, slot){
+      /* In around lunchtime, checked in by mid-afternoon, out that night.
+         The last day is a real half day and then LaGuardia. */
+      if (day.kind === "arrival" && slot === "day")
+        return {name:"Fly up, LaGuardia, hotel", load:"lo",
+                note:"Atlanta to New York, about 2 hr 20 in the air", ll:NYC_BASE_LL};
+      if (day.kind === "departure" && slot === "night")
+        return {name:"Fly home", load:"lo", note:"Out of LaGuardia in the evening", ll:NYC_BASE_LL};
+      return null;
+    },
+    logi:{
+     head:"The flights",
+     rows:
+      "<tr><td>Northbound</td><td>Atlanta Hartsfield</td><td>New York LaGuardia</td><td class='m'>Sun morning &middot; ~2 hr 20 in the air, in around lunchtime</td></tr>" +
+      "<tr><td>Southbound</td><td>New York LaGuardia</td><td>Atlanta Hartsfield</td><td class='m'>Sun evening &middot; home the same night</td></tr>",
+     notes:function(){ return [
+      "This is the version that costs money to get to. Four round-trip fares out of Atlanta is the whole argument against it, and it is a real one — the train version of this same week has no ticket to buy at all. What the money buys is two evenings: in Midtown by mid-afternoon on the Sunday instead of after dark, and the last day ours right up until the flight home instead of losing it to a two o'clock departure.",
+      "Getting to Hartsfield is the part people forget. Bags, security and the drive in are most of a morning, so the first day is an airport day whatever the flight time says — the board holds that slot shut and schedules nothing into it.",
+      "Home base is Herald Square either way, in the middle of Midtown: the Empire State Building is two blocks, Bryant Park is four, and one train runs straight down to the World Trade Center without a change. No rental car — nobody is driving in Manhattan. The subway is $2.90 a head and beats an UberXL nearly everywhere below the park, but the board still prices every hop as a car at about " + UBER_MPH + " mph, which is what Midtown traffic does to one. The fares on the board are the ceiling; anything the subway takes comes in under it.",
+      "The games still come. Uno earns its place before the trip even starts — a gate at six in the morning is exactly what it is for. The rest stay in the bag until the last night."
+     ]; },
+     packing:
+      "<tr><td>One bag each that fits the sizer</td><td>Four checked bags is four more fees and forty more minutes at LaGuardia. Eight days goes in a carry-on or it does not come.</td></tr>" +
+      "<tr><td>Photo ID for everyone</td><td>TSA at Hartsfield, then bag check at the memorial museum and the Empire State.</td></tr>" +
+      "<tr><td>Battery pack in the cabin bag</td><td>Cold eats phones and the boarding passes are on them. It is not allowed in a checked bag anyway.</td></tr>"
+    }
+   }
+  },
+  copy:{
+   deck:"The eight things I want to do in New York, on the same eight days as Washington. Four places and the four games — short on purpose.",
+   askDeck:"Four places and the games, and that is the whole ask. Everything below is the same arithmetic — which day it lands on, how long it takes, what it costs to get there — run against a city where nothing on this list shuts in the first week of December. How we get there is still open, and the strip at the top of the page will show you what each way does to the week.",
+   fitTail:"Nothing on this list closes the week we are there, so the only thing deciding the order is what is better after dark.",
+   togetherNote:"Two of these arrive together: the 9/11 Memorial comes with the museum underneath it, and the tree comes with the Fifth Avenue windows on the same walk. Days can hold more than one outing — the board budgets each one in hours, including the time between stops.",
+   bookingNote:"The 9/11 Museum and the Empire State observatory are the two that want timed tickets ahead of the day.",
+   fareNote:" In real life most of these are a subway ride — $2.90 a head, tapped with the card already in your pocket — so the figure above is the ceiling and not the bill.",
+   mapNote:"Straight-line miles from the hotel at Herald Square, which flatters Manhattan a little: the grid makes you walk two sides of a triangle. Every hop is costed as an UberXL at about 11 mph, because that is what Midtown does to a car at five o'clock. The subway beats it nearly everywhere below the park and costs $2.90. The map is here to tell you when something is genuinely far, not to talk you into a car.",
+   artI:"We are coming from Alabama in December to see a city that is better in the cold. The tree lit on Fifth, the 86th floor in the wind, the pools running in the dark — the cold is not in the way of that, it is part of it. So we bring the real gloves and the layers and we do not bail out fifteen minutes in because somebody's hands got chilly. If it runs long for Nanny, that is a different thing and we call it early for her — but nobody is cutting the tree short on my account.",
+   artIIIHead:"No rental car. We take the subway.",
+   artIII:"However we get into the city, nobody is driving inside it. The subway is the answer almost everywhere below the park: $2.90, tap the card already in your pocket, and it is faster than a car at five o'clock. An UberXL is for late, cold, or four people carrying things. Every hop on the board is priced as a car anyway, so the number you are looking at is the worst case and not the plan."
+  },
+  packing:
+   "<tr><td>Layers, not one big coat</td><td>The museum runs hot and the 86th floor runs very cold; you want to shed and re-add all day.</td></tr>" +
+   "<tr><td>Real gloves and a hat</td><td>The observatory is open to the wind and the tree is an hour of standing still outdoors.</td></tr>" +
+   "<tr><td>Broken-in shoes</td><td>Central Park end to end is two and a half miles and the subway stairs are the rest of it.</td></tr>" +
+   "<tr><td>A tap-to-pay card each</td><td>Every turnstile takes it. That card is the MetroCard now, and it stops charging after twelve rides in a week.</td></tr>" +
+   "<tr><td>The games</td><td>Mine Turtle, Muffin Time, Monopoly Deal and Uno all fit in one bag. The turtle takes AAAs — check them at home, not at the hotel.</td></tr>"
+ }
+};
+var CITY_KEYS
+ = ["dc","nyc"];
+
+/* Everything the rest of the file reads as a global. setCity swaps the
+   whole catalogue at once, so no renderer below has to know a second
+   city exists. */
+var city, C, M, VENUES, BUNDLES, BUNDLE_LOAD, WANTS, MAYBES, NOPES, CUT_UNITS,
+    BASE, BASE_LL, byId, UNITS, unitById, SEEDED, MUST_SEE, ASK_VERSION,
+    DEPART_HOURS, UBER, UBER_MPH, UBER_WAIT_MIN;
+
+function setCity(k){
+  if (!CITIES[k]) k = "dc";
+  city = k; C = CITIES[k];
+  VENUES = C.venues; BUNDLES = C.bundles; BUNDLE_LOAD = C.bundleLoad;
+  WANTS = C.wants; MAYBES = C.maybes; NOPES = C.nopes; CUT_UNITS = C.cutUnits;
+  BASE = C.base; BASE_LL = C.base.ll;
+  MUST_SEE = C.mustSee; ASK_VERSION = C.askVersion;
+  UBER = C.uber; UBER_MPH = C.uber.mph; UBER_WAIT_MIN = C.uber.waitMin;
+  byId = {}; VENUES.forEach(function(v){ byId[v.id] = v; });
+  UNITS = buildUnits();
+  unitById = {}; UNITS.forEach(function(u){ unitById[u.id] = u; });
+  SEEDED = UNITS.map(function(u){ return u.id; });
+  /* A ballot draft and a picked chip belong to the catalogue they came
+     from. Dropping them here means no caller can forget to. */
+  draft = null; picked = null;
+  useWay(null);
+  try{ localStorage.setItem("cd.city", k); }catch(e){}
+}
+
+/* How we get there. It decides what the first and last days of the week
+   look like, so it is a planning fact and not a preference: the board
+   holds shut whatever the journey eats. */
+function useWay(k){
+  var order = C.travelOrder;
+  if (order.indexOf(k) < 0) k = order[0];
+  M = C.travel[k];
+  DEPART_HOURS = M.departHours;
+  return k;
+}
+function applyWay(){ S().travel = useWay(S().travel); }
+function savedCity(){ try{ return localStorage.getItem("cd.city") || "dc"; }catch(e){ return "dc"; } }
+setCity(savedCity());
+var FINAL_FOUR = 4, FAR_MI = 2.5;
 
 /* ── Dates ──────────────────────────────────────────────────────────── */
 var DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -949,11 +1278,35 @@ function closedOn(u, day){
 }
 
 /* ── State ──────────────────────────────────────────────────────────── */
-var state = {
-  config:{start:TRIP.start, nights:TRIP.nights},
-  boards:{family:{}, bart:{}, jess:{}, sam:{}, nanny:{}},
-  wx:{}, resv:{}, ballots:{}, musts:{}, planFrom:"seed"
-};
+var state = {config:{start:TRIP.start, nights:TRIP.nights}, cities:{}};
+
+/* One city's half of the state. Boards, ballots, weather switches and
+   bookings are per city. The dates are not: it is the same week and the
+   same train either way, so config stays at the top. */
+function Sof(k){
+  if (!state.cities) state.cities = {};
+  var s = state.cities[k] || (state.cities[k] = {});
+  if (!s.boards) s.boards = {};
+  BOARD_KEYS.forEach(function(b){ if (!s.boards[b]) s.boards[b] = {}; });
+  if (!s.wx) s.wx = {};
+  if (!s.resv) s.resv = {};
+  if (!s.ballots) s.ballots = {};
+  if (!s.musts) s.musts = {};
+  if (!s.planFrom) s.planFrom = "seed";
+  if (!s.travel) s.travel = CITIES[k] ? CITIES[k].travelOrder[0] : "train";
+  return s;
+}
+function S(){ return Sof(city); }
+
+/* Sync document paths. Washington keeps the ones the worker has always
+   had, so nothing already saved up there moves; New York hangs off a
+   prefix beside them. */
+function Pc(k, p){ return k === "dc" ? p : k + "/" + p; }
+function P(p){ return Pc(city, p); }
+function pathCity(path){
+  var i = path.indexOf("/"), head = i < 0 ? "" : path.slice(0, i);
+  return CITIES[head] ? {c:head, p:path.slice(i+1)} : {c:"dc", p:path};
+}
 /* Shared state. Empty string = this device only; set to the worker's URL
    and all five plans go live for the whole family. See worker/deploy.sh. */
 var SYNC_URL = "https://crescent-dispatch.samuel-arther.workers.dev";
@@ -968,10 +1321,10 @@ function crewOf(id){ return CREW.filter(function(p){ return p.id === id; })[0]; 
 function role(){ var c = crewOf(me); return c ? c.role : ""; }
 function isDispatcher(){ return me === "bart"; }
 function boardName(k){ return k === "family" ? "The family plan" : crewOf(k).name + "'s plan"; }
-function pl(k){ if (!state.boards[k]) state.boards[k] = {}; return state.boards[k]; }
+function pl(k){ if (!S().boards[k]) S().boards[k] = {}; return S().boards[k]; }
 function cur(){ return pl(viewing); }
 function canEdit(){ return viewing === "family" || viewing === me; }
-function wxFor(d){ return state.wx[d.iso] || {cold:true, wind:false, rain:false}; }
+function wxFor(d){ return S().wx[d.iso] || {cold:true, wind:false, rain:false}; }
 
 /* ── Persistence ────────────────────────────────────────────────────── */
 var saveTimer = null;
@@ -981,28 +1334,51 @@ function localLoad(){
   try{
     var raw = localStorage.getItem("cd.state");
     if (raw){ var s = JSON.parse(raw); for (var k in s) if (s[k] != null) state[k] = s[k]; }
-    if (!state.boards) state.boards = {family:{}, bart:{}, jess:{}, sam:{}, nanny:{}};
-    if (!state.musts) state.musts = {};
   }catch(e){}
+  if (!state.config) state.config = {start:TRIP.start, nights:TRIP.nights};
+  if (!state.cities) state.cities = {};
+  /* A save written before New York existed is Washington's, all of it. */
+  if (state.boards || state.ballots || state.wx || state.resv || state.musts){
+    var dc = Sof("dc");
+    if (state.boards) BOARD_KEYS.forEach(function(b){
+      if (state.boards[b] && Object.keys(state.boards[b]).length) dc.boards[b] = state.boards[b];
+    });
+    if (state.wx) dc.wx = state.wx;
+    if (state.resv) dc.resv = state.resv;
+    if (state.ballots) dc.ballots = state.ballots;
+    if (state.musts) dc.musts = state.musts;
+    if (state.planFrom) dc.planFrom = state.planFrom;
+    if (state.askVersion != null) dc.askVersion = state.askVersion;
+    delete state.boards; delete state.wx; delete state.resv;
+    delete state.ballots; delete state.musts; delete state.planFrom; delete state.askVersion;
+  }
+  Sof("dc"); Sof("nyc");
 }
 function save(which){
   localSave();
-  var key = which || viewing;
+  var key = which || viewing, ck = city;
   clearTimeout(saveTimer);
   saveTimer = setTimeout(function(){
-    if (SYNC_URL){ syncPush("boards/" + key); syncPush("trip/shared"); }
+    var s = Sof(ck);
+    if (SYNC_URL){
+      syncPush(Pc(ck, "boards/" + key));
+      syncPush(Pc(ck, "trip/shared"));
+      /* The dates belong to the trip and not to a city, so they always go
+         back to the document that has always held them. */
+      if (ck !== "dc") syncPush("trip/shared");
+    }
     if (!db) return;
-    db.doc("boards/" + key).set({placements:pl(key), by:me, at:Date.now()}).catch(noop);
-    db.doc("trip/shared").set({config:state.config, wx:state.wx, resv:state.resv,
-      planFrom:state.planFrom, at:Date.now()}).catch(noop);
+    db.doc(Pc(ck, "boards/" + key)).set({placements:s.boards[key] || {}, by:me, at:Date.now()}).catch(noop);
+    db.doc(Pc(ck, "trip/shared")).set({config:state.config, wx:s.wx, resv:s.resv,
+      planFrom:s.planFrom, travel:s.travel, at:Date.now()}).catch(noop);
   }, 350);
 }
 function saveBallot(){
   localSave();
-  if (SYNC_URL) syncPush("votes/" + me);
+  if (SYNC_URL) syncPush(P("votes/" + me));
   if (!db) return;
-  db.doc("votes/" + me).set({order:draft ? draft.slice() : (state.ballots[me] || SEEDED).slice(),
-    must:state.musts[me] || null, at:Date.now()}).catch(noop);
+  db.doc(P("votes/" + me)).set({order:draft ? draft.slice() : (S().ballots[me] || SEEDED).slice(),
+    must:S().musts[me] || null, at:Date.now()}).catch(noop);
 }
 function setSync(kind, msg){
   var d = document.getElementById("syncdot");
@@ -1018,33 +1394,42 @@ function setSync(kind, msg){
    not need a socket, and polling survives a phone going to sleep.
    ─────────────────────────────────────────────────────────────────────── */
 function docFor(path, d){
-  if (path.indexOf("boards/") === 0) state.boards[path.slice(7)] = d.placements || {};
-  else if (path.indexOf("votes/") === 0){
-    var who = path.slice(6);
-    if (Array.isArray(d.order)) state.ballots[who] = d.order.slice();
-    if (d.must !== undefined) state.musts[who] = d.must;
-  } else if (path === "trip/shared"){
-    if (d.config) state.config = d.config;
-    if (d.wx) state.wx = d.wx;
-    if (d.resv) state.resv = d.resv;
-    if (d.planFrom) state.planFrom = d.planFrom;
+  var q = pathCity(path), s = Sof(q.c);
+  if (q.p.indexOf("boards/") === 0) s.boards[q.p.slice(7)] = d.placements || {};
+  else if (q.p.indexOf("votes/") === 0){
+    var who = q.p.slice(6);
+    if (Array.isArray(d.order)) s.ballots[who] = d.order.slice();
+    if (d.must !== undefined) s.musts[who] = d.must;
+  } else if (q.p === "trip/shared"){
+    if (d.config && q.c === "dc") state.config = d.config;
+    if (d.wx) s.wx = d.wx;
+    if (d.resv) s.resv = d.resv;
+    if (d.planFrom) s.planFrom = d.planFrom;
+    if (d.travel && CITIES[q.c] && CITIES[q.c].travelOrder.indexOf(d.travel) > -1){
+      s.travel = d.travel;
+      if (q.c === city) useWay(s.travel);
+    }
   }
 }
 function bodyFor(path){
-  if (path.indexOf("boards/") === 0) return {placements: pl(path.slice(7))};
-  if (path.indexOf("votes/") === 0){
-    var who = path.slice(6);
-    return {order: state.ballots[who] || [], must: state.musts[who] || null};
+  var q = pathCity(path), s = Sof(q.c);
+  if (q.p.indexOf("boards/") === 0) return {placements: s.boards[q.p.slice(7)] || {}};
+  if (q.p.indexOf("votes/") === 0){
+    var who = q.p.slice(6);
+    return {order: s.ballots[who] || [], must: s.musts[who] || null};
   }
-  return {config:state.config, wx:state.wx, resv:state.resv, planFrom:state.planFrom};
+  var body = {wx:s.wx, resv:s.resv, planFrom:s.planFrom, travel:s.travel};
+  if (q.c === "dc") body.config = state.config;
+  return body;
 }
 /* Is there anything here worth uploading for this document? An empty local
    board must never be published, or it would wipe whoever fills theirs in
    next. */
 function hasLocalContent(path){
-  if (path.indexOf("boards/") === 0) return Object.keys(pl(path.slice(7))).length > 0;
-  if (path.indexOf("votes/") === 0) return !!state.ballots[path.slice(6)];
-  return path === "trip/shared";
+  var q = pathCity(path), s = Sof(q.c);
+  if (q.p.indexOf("boards/") === 0) return Object.keys(s.boards[q.p.slice(7)] || {}).length > 0;
+  if (q.p.indexOf("votes/") === 0) return !!s.ballots[q.p.slice(6)];
+  return q.p === "trip/shared";
 }
 var firstPull = true;
 function syncPull(){
@@ -1131,14 +1516,14 @@ function startSync(){
 /* ── Scheduler ──────────────────────────────────────────────────────── */
 function planningOrder(){
   var base;
-  if (state.planFrom === "tally"){
+  if (S().planFrom === "tally"){
     var t = tally();
     base = t.voters > 0 ? t.rows.map(function(r){ return r.id; }) : SEEDED.slice();
   } else base = SEEDED.slice();
   /* A starred must-do outranks the tally. That is the whole point of a veto. */
   var starred = [];
   CREW.forEach(function(p){
-    var m = state.musts[p.id];
+    var m = S().musts[p.id];
     if (m && unitById[m] && starred.indexOf(m) < 0) starred.push(m);
   });
   if (!starred.length) return base;
@@ -1154,21 +1539,13 @@ function weatherFit(u, cond){
   var vals = active.map(function(k){ return FITS[u.w[k]] * COND_WEIGHT[k]; });
   return Math.min.apply(null, vals);
 }
-function structuralAt(day, slot){
-  if (day.kind === "arrival") return slot === "day"
-    ? {name:"Arrive, hotel, food", load:"lo", note:"Union Station about 2:12 pm", ll:BASE.ll}
-    : {name:"The Capitol, illuminated", load:"mid", note:"Three blocks from the station", ll:[38.8899,-77.0091]};
-  if (day.kind === "departure" && slot === "night")
-    return {name:"Southbound sleeper", load:"lo", note:"Crescent 19 departs 6:30 pm", ll:[38.8977,-77.0064]};
-  return null;
-}
+function structuralAt(day, slot){ return M.structural(day, slot); }
 /* ── Hours, not slots ───────────────────────────────────────────────────
    A day is not "one thing"; it is a budget. Daytime runs about 10 to 5,
    the evening about 5:30 to 9:30, and everything between stops is an Uber
    ride — no rental car, so travel is a fare and a wait, not a parking hunt.
    ─────────────────────────────────────────────────────────────────────── */
-var DAY_HOURS = 7, NIGHT_HOURS = 4, DEPART_HOURS = 4;
-var UBER_MPH = 18, UBER_WAIT_MIN = 6;
+var DAY_HOURS = 7, NIGHT_HOURS = 4;
 
 function budgetFor(day, slot){
   /* The last night is the one evening with nothing to get up for: the
@@ -1244,7 +1621,6 @@ function splitsIn(board, day, slot){
    staying together: one XL with four people in it beats two cars every
    time. Rough DC numbers — the point is the comparison, not the cent.
    ─────────────────────────────────────────────────────────────────────── */
-var UBER = {base:7.50, perMile:2.60};
 function fareForLegs(legs){
   var t = 0;
   legs.forEach(function(d){ if (d > 0.05) t += UBER.base + UBER.perMile * d; });
@@ -1385,7 +1761,7 @@ function autoFill(){
   save(); renderAll();
   toast(viewing === "sam"
     ? "Your plan rebuilt from your list — nothing from the no list."
-    : boardName(viewing) + " filled from " + (state.planFrom === "tally" ? "the family tally" : "the seeded order") + ".");
+    : boardName(viewing) + " filled from " + (S().planFrom === "tally" ? "the family tally" : "the seeded order") + ".");
 }
 
 /* The ask, as scheduler input. Musts first, maybes last so they cut first. */
@@ -1417,8 +1793,6 @@ function excludedIds(){
 }
 function isExcluded(id){ return excludedIds().indexOf(id) > -1; }
 
-/* Bump when WANTS/MAYBES change, so saved plans pick up the new outings. */
-var ASK_VERSION = 12;
 /* Drop anything no longer in the catalog, append anything new, keep the order. */
 function normalizeBallot(arr){
   var seen = {}, out = [];
@@ -1513,7 +1887,7 @@ function checks(){
       s:unplaced.map(function(i){ return unitById[i].name; }).join(", ") + ". Add a night, or cut something below it."});
 
   CREW.forEach(function(p){
-    var m = state.musts[p.id];
+    var m = S().musts[p.id];
     if (m && unitById[m] && !board[m])
       out.push({level:"stop", t:p.name + "'s must-do is not on this plan",
         s:unitById[m].name + " was starred as a must-do. A plan without it is not going to survive dinner."});
@@ -1524,12 +1898,12 @@ function checks(){
     if (!unitById[uid]) return;
     unitById[uid].members.forEach(function(vid){
       var v = byId[vid];
-      if (v.resv !== "none" && !state.resv[vid]) needs.push(v.name);
+      if (v.resv !== "none" && !S().resv[vid]) needs.push(v.name);
     });
   });
   if (needs.length)
     out.push({level:"warn", t:needs.length + " " + (needs.length === 1 ? "booking" : "bookings") + " still open",
-      s:needs.join(", ") + ". Timed passes for the Monument drop 30 days out."});
+      s:needs.join(", ") + ". " + C.copy.bookingNote});
 
   var home = addDays(parseISO(state.config.start), state.config.nights + 1);
   var buffer = Math.round((parseISO(TRIP.backAtWork) - home) / 86400000);
@@ -1540,6 +1914,21 @@ function checks(){
 
   if (!out.length) out.push({level:"ok", t:"This plan holds",
     s:"No closures, no double-Bigs, no long hops, every must-see thing placed, every booking accounted for."});
+  /* An empty day is not a problem. It is still a fact, and this is the
+     panel where facts about the week go. */
+  var idle = days.filter(function(d){
+    return ["day","night"].every(function(s){
+      return !structuralAt(d, s) && budgetFor(d, s) && !occupantsAt(board, d, s).length;
+    });
+  });
+  if (idle.length >= 2)
+    out.push({level:"ok", t:idle.length + " days of this week have nothing on them",
+      s:idle.map(fmt).join(", ") + ". That is what a " + words(WANTS.length) +
+        "-thing list does to " + state.config.nights + " nights. Nothing is wrong with it — " +
+        "but either the list grows or the trip gets shorter, and the nights slider will tell " +
+        "you what a shorter one costs before anybody lets go of it."});
+  /* Not a problem — a price. It belongs on the page that names prices. */
+  if (M.check) out.push(M.check);
   return out;
 }
 
@@ -1549,7 +1938,7 @@ function tally(){
   ids.forEach(function(i){ pts[i] = 0; pos[i] = {}; });
   var voters = 0;
   CREW.forEach(function(p){
-    var b = state.ballots[p.id];
+    var b = S().ballots[p.id];
     if (!b || b.length !== N) return;
     voters++;
     b.forEach(function(id, i){ if (pts[id] == null) return; pts[id] += (N - i); pos[id][p.id] = i + 1; });
@@ -1573,6 +1962,17 @@ function svgEl(tag, attrs){
 }
 function loadWord(l){ return l === "hi" ? "Big" : l === "mid" ? "Real" : "Easy"; }
 function hrs(n){ return (Math.round(n*10)/10) + " hr"; }
+/* Twenty-one things reads better than 21 things, and both cities count
+   their own. */
+function words(n){
+  var ones = ["zero","one","two","three","four","five","six","seven","eight","nine","ten",
+    "eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen"];
+  var tens = ["","","twenty","thirty","forty","fifty"];
+  if (n < 20) return ones[n];
+  if (n < 60) return tens[Math.floor(n/10)] + (n % 10 ? "-" + ones[n % 10] : "");
+  return String(n);
+}
+function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
 
 function chip(u, opts){
   opts = opts || {};
@@ -1754,7 +2154,7 @@ function renderBoard(){
       b.addEventListener("click", function(){
         var w = Object.assign({}, wxFor(day));
         w[k[0]] = !w[k[0]];
-        state.wx[day.iso] = w; save(); renderAll();
+        S().wx[day.iso] = w; save(); renderAll();
       });
       wxb.appendChild(b);
     });
@@ -1800,9 +2200,9 @@ function renderBoard(){
           var flags = [];
           if (closedOn(x.u, day)) flags.push({k:"", t:"closed"});
           if (weatherFit(x.u, wxFor(day)) <= -6) flags.push({k:"warn", t:"weather"});
-          if (x.u.members.filter(function(v){ return byId[v].resv !== "none" && !state.resv[v]; }).length)
+          if (x.u.members.filter(function(v){ return byId[v].resv !== "none" && !S().resv[v]; }).length)
             flags.push({k:"warn", t:"needs booking"});
-          CREW.forEach(function(p){ if (state.musts[p.id] === x.u.id) flags.push({k:"must", t:p.name + "'s must-do"}); });
+          CREW.forEach(function(p){ if (S().musts[p.id] === x.u.id) flags.push({k:"must", t:p.name + "'s must-do"}); });
           if (!flags.length) flags.push({k:"ok", t:"clear"});
           box.appendChild(chip(x.u, {remove:true, flags:flags, editable:editable,
             slotPos:idx, slotLen:list.length, placement:x.p, day:day, slot:slot}));
@@ -1851,7 +2251,7 @@ function renderBoard(){
   var benched = order.filter(function(id){ return !board[id]; });
   benched.forEach(function(id){
     var flags = [], rank = order.indexOf(id) + 1;
-    CREW.forEach(function(p){ if (state.musts[p.id] === id) flags.push({k:"must", t:p.name + "'s must-do"}); });
+    CREW.forEach(function(p){ if (S().musts[p.id] === id) flags.push({k:"must", t:p.name + "'s must-do"}); });
     if (viewing === "sam" && isExcluded(id)) flags.push({k:"", t:"not this trip"});
     else if (must.indexOf(id) > -1) flags.push({k:"", t:"must-see #" + rank});
     else flags.push({k:"warn", t:"#" + rank + " overall"});
@@ -1877,11 +2277,12 @@ function renderBoard(){
 
   document.getElementById("planhint").textContent =
     boardName(viewing) + " — " + Object.keys(board).length + " of " + UNITS.length +
-    " outings placed, planning from " + (state.planFrom === "tally" ? "the family tally" : "the seeded order") +
+    " outings placed, planning from " + (S().planFrom === "tally" ? "the family tally" : "the seeded order") +
     (editable ? ". Drag a chip, or tap it and tap a slot." : ". Read only — copy it to your own plan to change it.");
   document.getElementById("farehint").textContent =
     "About " + money(weekFare(board)) + " of UberXL across the week, at roughly " +
-    money(UBER.base) + " a pickup plus " + money(UBER.perMile) + " a mile. One car for four beats two cars for two, every time.";
+    money(UBER.base) + " a pickup plus " + money(UBER.perMile) +
+    " a mile. One car for four beats two cars for two, every time." + C.copy.fareNote;
 
   document.getElementById("autofill").disabled = !editable;
   document.getElementById("clearboard").disabled = !editable;
@@ -1903,13 +2304,22 @@ function nightsPreview(n){
 }
 
 /* ── The ask ────────────────────────────────────────────────────────── */
+/* Name the nice-to-haves that made it, and the ones that did not. */
+function maybeLine(placedAt){
+  if (!MAYBES.length) return "";
+  var out = MAYBES.filter(function(w){ return !placedAt[w.unit]; }).map(function(w){ return w.ask; });
+  if (!out.length) return MAYBES.length === 1
+    ? " " + MAYBES[0].ask + " fits too."
+    : " The maybes fit too: " + MAYBES.map(function(w){ return w.ask; }).join(", ") + ".";
+  return " " + out.join(", ") + (out.length === 1 ? " is the one that did not fit."
+                                                  : " are the ones that did not fit.");
+}
 function renderAsk(){
   var board = pl("sam"), days = frameDays();
   var placedAt = {};
   Object.keys(board).forEach(function(uid){ placedAt[uid] = board[uid]; });
 
   var fits = WANTS.filter(function(w){ return placedAt[w.unit]; }).length;
-  var maybeIn = MAYBES.filter(function(w){ return placedAt[w.unit]; }).length;
   var all = fits === WANTS.length;
   var v = document.getElementById("verdict");
   v.textContent = "";
@@ -1932,9 +2342,7 @@ function renderAsk(){
     });
     line = stops + " outings across " + state.config.nights + " nights — "
       + (Math.round(hoursBooked) + " hours booked out of about " + Math.round(capacity) + " available, ")
-      + Math.round(mi) + " miles of UberXL all week. Nothing scheduled on a day it is shut, "
-      + "and the Capitol lands midweek because it shuts on Sundays."
-      + (maybeIn ? " The National Gallery fits too." : " The National Gallery is the one that did not fit.");
+      + Math.round(mi) + " miles of UberXL all week. " + C.copy.fitTail + maybeLine(placedAt);
   } else {
     line = "Short by: " + WANTS.filter(function(w){ return !placedAt[w.unit]; })
       .map(function(w){ return w.ask; }).join(", ") + ". Add a night, or shorten a visit — every chip on the board has a full/short toggle.";
@@ -2006,16 +2414,13 @@ function renderAsk(){
     if (!placedAt[uid]) return;
     unitById[uid].members.forEach(function(vid){
       var vv = byId[vid];
-      if (vv.resv !== "none" && !state.resv[vid]) bookings.push(vv.name);
+      if (vv.resv !== "none" && !S().resv[vid]) bookings.push(vv.name);
     });
   });
   if (bookings.length)
     note.appendChild(el("p","hint","Still to book for this list: " + bookings.join(", ") + "."));
   note.appendChild(el("p","hint","The four games run " + money(gamesTotal()) + " delivered — " + money(GAMES_COST.subtotal) + " plus " + money(gamesTax()) + " Georgia sales tax, free Prime shipping. Bought before we leave, so none of it comes out of the trip."));
-  note.appendChild(el("p","hint","Some of these arrive together: the Wall comes with the whole memorial night, "
-    + "Jefferson with the Tidal Basin loop, the White House with the Christmas tree, and the Capitol with the "
-    + "Library of Congress across the street. Days can hold more than one outing — the board budgets each one "
-    + "in hours, including the Uber time between stops."));
+  note.appendChild(el("p","hint", C.copy.togetherNote));
 }
 
 /* ── Compare ────────────────────────────────────────────────────────── */
@@ -2091,7 +2496,7 @@ function renderMap(){
   runOrder.forEach(function(x){ x.u.members.forEach(function(m){ hot[m] = true; }); });
 
   /* Project lat/lng to metres so the drawing keeps its real aspect ratio. */
-  var k = Math.cos(38.8845 * Math.PI/180);
+  var k = Math.cos(BASE.ll[0] * Math.PI/180);
   function mx(ll){ return ll[1] * 111320 * k; }
   function my(ll){ return -ll[0] * 110540; }
   var pts = VENUES.map(function(v){ return v.ll; }).concat([BASE.ll]);
@@ -2108,10 +2513,12 @@ function renderMap(){
   for (gx = 0; gx <= W + 1; gx += W/6) s.appendChild(svgEl("line", {"class":"grid", x1:gx, y1:0, x2:gx, y2:H}));
   for (gy = 0; gy <= H + 1; gy += H/5) s.appendChild(svgEl("line", {"class":"grid", x1:0, y1:gy, x2:W, y2:gy}));
 
-  /* The Mall: Capitol to Lincoln, the axis everything else hangs off. */
-  s.appendChild(svgEl("line", {"class":"mall",
-    x1:px(byId["us-capitol"].ll), y1:py(byId["us-capitol"].ll),
-    x2:px(byId["lincoln-memorial"].ll), y2:py(byId["lincoln-memorial"].ll)}));
+  /* The city's long axis — the Mall in Washington, the length of Manhattan
+     in New York — so everything else on the map has something to hang off. */
+  if (C.axis && byId[C.axis[0]] && byId[C.axis[1]])
+    s.appendChild(svgEl("line", {"class":"mall",
+      x1:px(byId[C.axis[0]].ll), y1:py(byId[C.axis[0]].ll),
+      x2:px(byId[C.axis[1]].ll), y2:py(byId[C.axis[1]].ll)}));
 
   var stops = [BASE.ll].concat(runOrder.map(function(x){ return x.u.ll; })).concat([BASE.ll]);
   if (stops.length > 2){
@@ -2133,7 +2540,7 @@ function renderMap(){
   });
   s.appendChild(svgEl("circle", {"class":"base", cx:px(BASE.ll), cy:py(BASE.ll), r:6}));
   var bt = svgEl("text", {x:px(BASE.ll) + 11, y:py(BASE.ll) + 3.5});
-  bt.textContent = "Base — L'Enfant Plaza";
+  bt.textContent = "Base — " + BASE.name;
   s.appendChild(bt);
 
   var halfMi = 804.7 / (maxX - minX) * W, sy = H - 22, sx = 26;
@@ -2168,7 +2575,7 @@ function renderMap(){
   runOrder.forEach(function(x, i){
     leg(i === 0 ? "From the hotel" : "Then", x.u.name, distMi(stops[i], stops[i+1]));
   });
-  leg("Home", "Back to L'Enfant Plaza", distMi(stops[stops.length-2], stops[stops.length-1]));
+  leg("Home", "Back to " + BASE.name, distMi(stops[stops.length-2], stops[stops.length-1]));
   t2.appendChild(tb2);
   var w2 = el("div","tablewrap"); w2.appendChild(t2);
   info.appendChild(w2);
@@ -2179,7 +2586,7 @@ function renderMap(){
 /* ── Ranking ────────────────────────────────────────────────────────── */
 function renderRank(){
   document.getElementById("rankwho").textContent = crewOf(me).name;
-  if (!draft) draft = (state.ballots[me] || SEEDED).slice();
+  if (!draft) draft = (S().ballots[me] || SEEDED).slice();
   var list = document.getElementById("ranklist");
   list.textContent = "";
 
@@ -2198,9 +2605,9 @@ function renderRank(){
     var star = el("button","starbtn","★");
     star.title = "Make this your one must-do";
     star.setAttribute("aria-label","Star " + u.name + " as your must-do");
-    star.setAttribute("aria-pressed", state.musts[me] === id ? "true" : "false");
+    star.setAttribute("aria-pressed", S().musts[me] === id ? "true" : "false");
     star.addEventListener("click", function(){
-      state.musts[me] = (state.musts[me] === id) ? null : id;
+      S().musts[me] = (S().musts[me] === id) ? null : id;
       saveBallot(); renderAll();
     });
     row.appendChild(star);
@@ -2279,17 +2686,14 @@ function renderLogi(){
   function head(txt){ var h = el("header"); h.appendChild(el("h3", null, txt)); return h; }
 
   var trains = el("div","card");
-  trains.appendChild(head("The train"));
+  trains.appendChild(head(M.logi.head));
   var tw = el("div","tablewrap"), tt = el("table","tt");
   tt.innerHTML =
-    "<thead><tr><th>Train</th><th>From</th><th>To</th><th>When</th></tr></thead><tbody>" +
-    "<tr><td>Crescent&nbsp;20 north</td><td>Anniston, AL</td><td>Washington Union</td><td class='m'>Board Sat 8:04 pm &middot; in ~2:12 pm</td></tr>" +
-    "<tr><td>Crescent&nbsp;19 south</td><td>Washington Union</td><td>Anniston, AL</td><td class='m'>Out 6:30 pm &middot; home ~10:30 am CT</td></tr>" +
+    "<thead><tr><th>Leg</th><th>From</th><th>To</th><th>When</th></tr></thead><tbody>" +
+    M.logi.rows +
     "</tbody>";
   tw.appendChild(tt); trains.appendChild(tw);
-  trains.appendChild(el("p","hint","Two roomettes across the hall. Beds fold down, dinner comes to the room, and Anniston lets us leave at a civilized hour instead of waiting up in Atlanta. Home base is aimed at L'Enfant Plaza: walking distance to Air and Space, Natural History and the Monument, one seat on the Metro to Arlington."));
-  trains.appendChild(el("p","hint","No rental car, either way. The Crescent is the ride up and the ride home, and inside the city it is Metro when that is simplest and an UberXL whenever it is not. Four of us fit in one with room for coats, which matters more than it sounds like it does at nine at night in December. Every leg on the board is costed at about " + UBER_MPH + " mph plus a few minutes standing on a corner, which is why a Cathedral-and-Georgetown day reads as expensive and a day on the Mall reads as nearly free."));
-  trains.appendChild(el("p","hint","Fifteen hours each way in a sleeper car is a lot of hours. Uno lives in a pocket and comes out somewhere around Atlanta going up and again in the Carolinas coming home; the rest of the games stay in the bag until the last night."));
+  M.logi.notes().forEach(function(n){ trains.appendChild(el("p","hint", n)); });
   g.appendChild(trains);
 
   var rcard = el("div","card");
@@ -2297,12 +2701,12 @@ function renderLogi(){
   var board = cur();
   VENUES.filter(function(v){ return v.resv !== "none"; }).forEach(function(v){
     var onPlan = Object.keys(board).some(function(uid){ return unitById[uid] && unitById[uid].members.indexOf(v.id) > -1; });
-    var row = el("div","resv" + (state.resv[v.id] ? " done" : ""));
+    var row = el("div","resv" + (S().resv[v.id] ? " done" : ""));
     var cb = document.createElement("input");
-    cb.type = "checkbox"; cb.checked = !!state.resv[v.id];
+    cb.type = "checkbox"; cb.checked = !!S().resv[v.id];
     cb.setAttribute("aria-label","Booked: " + v.name);
     cb.addEventListener("change", function(){
-      if (cb.checked) state.resv[v.id] = true; else delete state.resv[v.id];
+      if (cb.checked) S().resv[v.id] = true; else delete S().resv[v.id];
       save(); renderAll();
     });
     row.appendChild(cb);
@@ -2321,12 +2725,10 @@ function renderLogi(){
   var rules = el("div","card");
   rules.appendChild(head("House rules"));
   var rl = el("div","rules");
-  [["Art. I","We dress for it and we stay.",
-    "We are coming from Alabama in December to see a city that is better in the cold. Lincoln lit from below, the Wall at dusk, the tree on the Ellipse, Dr. King over the black water — the cold is not in the way of that, it is part of it. So we bring the real gloves and the layers and we do not bail out fifteen minutes in because somebody's hands got chilly. The UberXL is the ride home at the end of a good night, not an escape hatch from the middle of one. If it runs long for Nanny, that is a different thing and we call it early for her — but nobody is cutting the memorial loop short on my account."],
+  [["Art. I","We dress for it and we stay.", C.copy.artI],
    ["Art. II","Stack the day, but count the hours.",
     "More than one thing a day is the whole point — that is why we are on a train and not a schedule. A day is a budget: about seven hours of daylight and four after dark, and the board counts the riding as well as the looking. When it says a day is full, what it means is that we would be walking back in the dark, hungry, wishing we had stopped an hour ago."],
-   ["Art. III","No rental car. We call an UberXL.",
-    "The Crescent gets us there and home again, and nobody is parking in this city. Metro when it happens to be easy, an UberXL when the distance is real — the Cathedral is not a walk from the Mall and pretending otherwise costs an hour. That is about miles, not about being cold. Every hop on the board is already priced in minutes, so a museum across town costs a ride, not an argument."],
+   ["Art. III", C.copy.artIIIHead, C.copy.artIII],
    ["Art. III½","Four in one car is the cheapest thing we do.",
     "Uber charges per vehicle, not per head. One XL with all four of us in it is one fare; the same trip split two ways is two fares, and the second one buys nothing but the ability to be in different buildings. That is the real argument for staying together, and it is a better argument than any of the sentimental ones. The board prices every split so the cost of separating is a number on the page and not a feeling."],
    ["Art. IV","Together by default, split when it is obviously better.",
@@ -2371,17 +2773,56 @@ function renderLogi(){
   var tw2 = el("div","tablewrap"), t2 = el("table","tt");
   t2.innerHTML =
     "<thead><tr><th>Item</th><th>Why</th></tr></thead><tbody>" +
-    "<tr><td>Layers, not one big coat</td><td>Museums run hot and the Mall runs cold; you want to shed and re-add all day.</td></tr>" +
-    "<tr><td>Real gloves and a hat</td><td>The memorial loop is an hour outdoors after dark and we are not cutting it short.</td></tr>" +
-    "<tr><td>Broken-in shoes</td><td>An Arlington day runs about five miles, most of it uphill.</td></tr>" +
-    "<tr><td>Photo ID for everyone</td><td>Capitol and Archives security, and Amtrak at Anniston.</td></tr>" +
-    "<tr><td>A day bag that closes</td><td>Every museum on the Mall runs bag check at the door.</td></tr>" +
-    "<tr><td>Battery pack</td><td>Cold eats phones, and the tickets are on the phones.</td></tr>" +
-    "<tr><td>Printed tickets, once</td><td>Union Station Wi-Fi is a rumor. Print the timed passes.</td></tr>" +
-    "<tr><td>The games</td><td>Mine Turtle, Muffin Time, Monopoly Deal and Uno all fit in one bag. The turtle takes AAAs — check them at home, not at the hotel.</td></tr>" +
+    C.packing + M.logi.packing +
     "</tbody>";
   tw2.appendChild(t2); pack.appendChild(tw2);
   g.appendChild(pack);
+}
+
+/* The two ways into New York, offered side by side. Washington has one
+   way in, so it says nothing. */
+function renderWay(){
+  var sep = document.getElementById("waysep"), lab = document.getElementById("waylabel"),
+      box = document.getElementById("waypick"), many = C.travelOrder.length > 1;
+  box.textContent = "";
+  sep.hidden = !many; lab.hidden = !many; box.hidden = !many;
+  if (!many) return;
+  C.travelOrder.forEach(function(k){
+    var t = C.travel[k], b = el("button", null, t.label);
+    b.setAttribute("aria-pressed", k === S().travel ? "true" : "false");
+    b.title = t.sub;
+    b.addEventListener("click", function(){ setWay(k); });
+    box.appendChild(b);
+  });
+}
+
+/* Every line on the page that says a real place out loud. */
+function renderChrome(){
+  document.getElementById("routeline").textContent = M.route;
+  document.getElementById("deckline").textContent  = C.copy.deck + (M.deckTail ? " " + M.deckTail : "");
+  document.getElementById("citysub").textContent   = M.sub;
+  document.getElementById("departbig").textContent   = M.depart.big;
+  document.getElementById("departsmall").textContent = M.depart.small;
+  renderWay();
+  Array.prototype.forEach.call(document.querySelectorAll("#citylist button[data-city]"), function(b){
+    b.setAttribute("aria-pressed", b.dataset.city === city ? "true" : "false");
+  });
+  document.getElementById("askhead").textContent =
+    cap(words(WANTS.length)) + " things, in the order I want them";
+  document.getElementById("askdeck").textContent = C.copy.askDeck;
+  document.getElementById("rosterdeck").textContent =
+    cap(words(VENUES.length)) + " places, with the facts that actually decide a schedule " +
+    "rather than the ones that sell a brochure.";
+  document.getElementById("mapnote").textContent = C.copy.mapNote;
+  document.getElementById("rankhint").textContent =
+    "Drag to reorder, or use the arrows. Your top " + words(FINAL_FOUR) +
+    " are what a shortened trip keeps; your top " + words(MUST_SEE) +
+    " are what the board protects. The star is your one must-do — whatever you star gets " +
+    "placed before anything else, even if the rest of the family outvotes you.";
+  document.getElementById("tallyhint").textContent =
+    "Points are Borda: first place on a ballot is worth " + SEEDED.length +
+    ", last is worth 1. Highlighted rows are the ones the family splits hardest on — " +
+    "those are the conversations worth having at dinner, not on the board.";
 }
 
 function renderCrew(){
@@ -2399,7 +2840,7 @@ function renderCrew(){
   });
   document.getElementById("rolelabel").textContent = role();
 }
-function renderAll(){ renderCrew(); renderAsk(); renderBoard(); renderCompare(); renderMap(); renderRank(); renderRoster(); renderLogi(); }
+function renderAll(){ renderChrome(); renderCrew(); renderAsk(); renderBoard(); renderCompare(); renderMap(); renderRank(); renderRoster(); renderLogi(); }
 
 /* ── Interaction ────────────────────────────────────────────────────── */
 var dragId = null;
@@ -2428,6 +2869,50 @@ function reorder(uid, dir){
   list.splice(to, 0, list.splice(at, 1)[0]);
   list.forEach(function(x, i){ board[x.id].i = i; });
   save(); renderAll();
+}
+/* Changing how we get there changes which slots the journey eats. Anything
+   standing in one of them comes off the boards rather than sitting there
+   invisible underneath a train. */
+function reconcileStructural(){
+  var days = frameDays(), moved = [];
+  BOARD_KEYS.forEach(function(bk){
+    var b = pl(bk);
+    Object.keys(b).forEach(function(id){
+      var day = days[b[id].d];
+      if (!day) return;
+      if (structuralAt(day, b[id].slot) || !budgetFor(day, b[id].slot)){
+        if (bk === viewing && unitById[id]) moved.push(unitById[id].name);
+        delete b[id];
+      }
+    });
+  });
+  reindex();
+  return moved;
+}
+/* One decision, five boards: push all of them rather than the one on screen. */
+function saveAll(){
+  localSave();
+  var ck = city, s = Sof(ck);
+  if (SYNC_URL){
+    BOARD_KEYS.forEach(function(k){ syncPush(Pc(ck, "boards/" + k)); });
+    syncPush(Pc(ck, "trip/shared"));
+  }
+  if (!db) return;
+  BOARD_KEYS.forEach(function(k){
+    db.doc(Pc(ck, "boards/" + k)).set({placements:s.boards[k] || {}, by:me, at:Date.now()}).catch(noop);
+  });
+  db.doc(Pc(ck, "trip/shared")).set({config:state.config, wx:s.wx, resv:s.resv,
+    planFrom:s.planFrom, travel:s.travel, at:Date.now()}).catch(noop);
+}
+function setWay(k){
+  if (!C.travel[k] || S().travel === k) return;
+  S().travel = useWay(k);
+  var moved = reconcileStructural();
+  picked = null;
+  saveAll(); renderAll();
+  toast(moved.length
+    ? M.label + ": " + moved.join(", ") + " came off the board — that slot belongs to the journey now."
+    : M.label + " it is. The first and last days redrawn.");
 }
 function place(uid, dayIdx, slot){
   if (!canEdit()) return;
@@ -2466,6 +2951,16 @@ document.getElementById("tablist").addEventListener("click", function(ev){
     document.getElementById("p-" + t).hidden = (t !== b.dataset.tab);
   });
 });
+/* The city strip. Everything below it is rebuilt from the other
+   catalogue; nothing is saved or sent, because nothing changed. */
+document.getElementById("citylist").addEventListener("click", function(ev){
+  var b = ev.target.closest("button[data-city]");
+  if (!b || b.dataset.city === city) return;
+  setCity(b.dataset.city); applyWay();
+  picked = null; draft = null; mapDay = 1;
+  renderAll();
+  toast(C.name + " — same eight days, same four of us.");
+});
 document.getElementById("autofill").addEventListener("click", autoFill);
 document.getElementById("clearboard").addEventListener("click", function(){
   if (!canEdit()) return;
@@ -2489,21 +2984,21 @@ document.getElementById("nights").addEventListener("change", function(){
   save(); renderAll();
 });
 document.getElementById("submitballot").addEventListener("click", function(){
-  state.ballots[me] = draft.slice();
+  S().ballots[me] = draft.slice();
   saveBallot(); renderAll();
   toast("Ballot in. " + tally().voters + " of 4 counted.");
 });
 document.getElementById("resetballot").addEventListener("click", function(){ draft = SEEDED.slice(); renderRank(); });
 document.getElementById("useconsensus").addEventListener("click", function(){
   if (!tally().voters){ toast("No ballots in yet — nothing to plan from."); return; }
-  state.planFrom = "tally"; autoFill();
+  S().planFrom = "tally"; autoFill();
 });
 
 /* ── Share link: how plans travel when there is no server ───────────── */
 function encodeState(){
-  var payload = {v:1, who:me, n:state.config.nights, s:state.config.start,
-    b:{}, w:state.wx, r:Object.keys(state.resv), m:state.musts[me] || null,
-    o:state.ballots[me] || null};
+  var payload = {v:1, c:city, who:me, n:state.config.nights, s:state.config.start,
+    b:{}, w:S().wx, r:Object.keys(S().resv), m:S().musts[me] || null,
+    o:S().ballots[me] || null};
   var src = pl(me);
   Object.keys(src).forEach(function(k){
     var p = src[k];
@@ -2516,6 +3011,8 @@ function applyShared(str){
   try{
     var p = JSON.parse(atob(str.replace(/-/g,"+").replace(/_/g,"/")));
     if (!p || p.v !== 1 || !crewOf(p.who)) return false;
+    /* A link from the other city switches to it before anything lands. */
+    if (p.c && CITIES[p.c] && p.c !== city){ setCity(p.c); applyWay(); }
     var dst = pl(p.who), k;
     for (k in dst) delete dst[k];
     Object.keys(p.b || {}).forEach(function(id){
@@ -2527,10 +3024,10 @@ function applyShared(str){
     });
     if (p.n) state.config.nights = p.n;
     if (p.s) state.config.start = p.s;
-    if (p.w) state.wx = p.w;
-    (p.r || []).forEach(function(v){ state.resv[v] = true; });
-    if (p.m) state.musts[p.who] = p.m;
-    if (Array.isArray(p.o)) state.ballots[p.who] = p.o;
+    if (p.w) S().wx = p.w;
+    (p.r || []).forEach(function(v){ S().resv[v] = true; });
+    if (p.m) S().musts[p.who] = p.m;
+    if (Array.isArray(p.o)) S().ballots[p.who] = p.o;
     viewing = p.who;
     localSave();
     return crewOf(p.who).name;
@@ -2590,7 +3087,7 @@ function buildICS(){
   return L.join("\r\n");
 }
 document.getElementById("ics").addEventListener("click", function(){
-  var text = buildICS(), name = "washington-" + viewing + ".ics";
+  var text = buildICS(), name = C.slug + "-" + viewing + ".ics";
   if (window.claude && window.claude.use){
     window.claude.use("downloads").then(function(d){
       if (!d) return fallbackDownload(text, name);
@@ -2610,7 +3107,7 @@ function fallbackDownload(text, name){
 
 /* ── Countdown ──────────────────────────────────────────────────────── */
 (function tick(){
-  var t = new Date(TRIP.board) - new Date();
+  var t = new Date(M.depart.at) - new Date();
   var f = ["cd-d","cd-h","cd-m","cd-s"];
   if (t <= 0){ f.forEach(function(i){ document.getElementById(i).textContent = "0"; }); return; }
   var s = Math.floor(t/1000);
@@ -2620,67 +3117,79 @@ function fallbackDownload(text, name){
 })();
 
 /* ── Boot ───────────────────────────────────────────────────────────── */
+/* Lay one city out from Samuel's ask, and fold in anything the ask has
+   grown since this browser last saw it — without disturbing whatever has
+   already been arranged by hand. Returns what it changed, so only the
+   city actually on screen has to say anything about it. */
+function seedCity(){
+  if (!Object.keys(pl("sam")).length){
+    var seeded = askPlan();
+    Object.keys(seeded).forEach(function(id){ pl("sam")[id] = seeded[id]; });
+    S().askVersion = ASK_VERSION;
+  }
+  var msg = [];
+  if (S().askVersion !== ASK_VERSION){
+    var added = [], shortened = [], dropped = [];
+    /* Something cut from the ask comes off the plan too, or the cut is
+       only a cut on the page it is written on. */
+    excludedIds().forEach(function(id){
+      if (pl("sam")[id]){ delete pl("sam")[id]; dropped.push(unitById[id].name); }
+    });
+    wantUnits(true).forEach(function(id){
+      if (!pl("sam")[id] && addBest(pl("sam"), id)) added.push(unitById[id].name);
+      /* A length asked for on purpose beats whatever was scheduled before. */
+      if (pl("sam")[id] && prefersShort(id) && !pl("sam")[id].short){
+        pl("sam")[id].short = true;
+        shortened.push(unitById[id].name + " to " + hrs(unitById[id].min));
+      }
+    });
+    S().askVersion = ASK_VERSION;
+    if (dropped.length) msg.push("dropped " + dropped.join(", "));
+    if (added.length) msg.push("added " + added.join(", "));
+    if (shortened.length) msg.push("shortened " + shortened.join(", "));
+  }
+  /* A ballot from an older catalog is missing the newer outings — repair it
+     rather than silently dropping the vote for being the wrong length. */
+  CREW.forEach(function(p){
+    var b = S().ballots[p.id];
+    if (b) S().ballots[p.id] = normalizeBallot(b);
+  });
+  if (!S().ballots["sam"]) S().ballots["sam"] = normalizeBallot(wantUnits(true));
+  if (!Object.keys(pl("family")).length) autoFillInto(pl("family"));
+  return msg.join("; ");
+}
+
 localLoad();
 var sharedFrom = null;
 if (location.hash.indexOf("#plan=") === 0) sharedFrom = applyShared(location.hash.slice(6));
-/* Samuel's plan is the ask, laid out. Seeded once; his to change after that. */
-if (!Object.keys(pl("sam")).length){
-  var seeded = askPlan();
-  Object.keys(seeded).forEach(function(id){ pl("sam")[id] = seeded[id]; });
-  state.askVersion = ASK_VERSION;
-}
-/* The ask grew since this browser last saw it: fold the new outings in
-   without disturbing anything already arranged by hand. */
-if (state.askVersion !== ASK_VERSION){
-  var added = [], shortened = [], dropped = [];
-  /* Something cut from the ask comes off the plan too, or the cut is
-     only a cut on the page it is written on. */
-  excludedIds().forEach(function(id){
-    if (pl("sam")[id]){ delete pl("sam")[id]; dropped.push(unitById[id].name); }
-  });
-  wantUnits(true).forEach(function(id){
-    if (!pl("sam")[id] && addBest(pl("sam"), id)) added.push(unitById[id].name);
-    /* A length asked for on purpose beats whatever was scheduled before. */
-    if (pl("sam")[id] && prefersShort(id) && !pl("sam")[id].short){
-      pl("sam")[id].short = true;
-      shortened.push(unitById[id].name + " to " + hrs(unitById[id].min));
-    }
-  });
-  state.askVersion = ASK_VERSION;
-  localSave();
-  var msg = [];
-  if (dropped.length) msg.push("dropped " + dropped.join(", "));
-  if (added.length) msg.push("added " + added.join(", "));
-  if (shortened.length) msg.push("shortened " + shortened.join(", "));
-  if (msg.length) setTimeout(function(){ toast("Your plan: " + msg.join("; ") + "."); }, 900);
-}
-/* A ballot from an older catalog is missing the newer outings — repair it
-   rather than silently dropping the vote for being the wrong length. */
-CREW.forEach(function(p){
-  var b = state.ballots[p.id];
-  if (!b) return;
-  state.ballots[p.id] = normalizeBallot(b);
+
+/* Both cities get laid out at boot, so switching to the other one lands
+   on a real week instead of an empty board. */
+var startCity = city, seedMsg = "";
+CITY_KEYS.forEach(function(k){
+  setCity(k); applyWay();
+  var m = seedCity();
+  if (k === startCity) seedMsg = m;
 });
-if (!state.ballots["sam"]){
-  var want = wantUnits(true);
-  state.ballots["sam"] = normalizeBallot(want);
-}
-if (!Object.keys(pl("family")).length) autoFillInto(pl("family"));
+setCity(startCity); applyWay();
+localSave();
+
 if (me === "sam" && !sharedFrom) viewing = "sam";
 renderAll();
+if (seedMsg) setTimeout(function(){ toast("Your plan: " + seedMsg + "."); }, 900);
 if (sharedFrom) toast("Opened " + sharedFrom + "'s shared plan.");
 
 var unwatchBallot = null;
 function watchBallot(){
   if (unwatchBallot) unwatchBallot();
-  unwatchBallot = db.doc("votes/" + me).onSnapshot(function(snap){
+  unwatchBallot = db.doc(P("votes/" + me)).onSnapshot(function(snap){
     if (!snap.exists) return;
     var d = snap.data();
     if (Array.isArray(d.order)){
-      state.ballots[me] = d.order.slice();
+      S().ballots[me] = d.order.slice();
       if (!draft) draft = d.order.slice();
     }
-    if (d.must !== undefined) state.musts[me] = d.must;
+    if (d.must !== undefined) S().musts[me] = d.must;
     renderRank();
   }, noop);
 }
@@ -2691,28 +3200,28 @@ if (!SYNC_URL && window.claude && window.claude.use){
     db = store;
     setSync("live","live for the family");
     BOARD_KEYS.forEach(function(k){
-      db.doc("boards/" + k).onSnapshot(function(snap){
+      db.doc(P("boards/" + k)).onSnapshot(function(snap){
         if (!snap.exists || snap.metadata.hasPendingWrites) return;
         var d = snap.data();
-        if (d.placements) state.boards[k] = d.placements;
+        if (d.placements) S().boards[k] = d.placements;
         localSave(); renderAsk(); renderBoard(); renderCompare(); renderMap();
       }, noop);
     });
-    db.doc("trip/shared").onSnapshot(function(snap){
+    db.doc(P("trip/shared")).onSnapshot(function(snap){
       if (!snap.exists || snap.metadata.hasPendingWrites) return;
       var d = snap.data();
       if (d.config) state.config = d.config;
-      if (d.wx) state.wx = d.wx;
-      if (d.resv) state.resv = d.resv;
-      if (d.planFrom) state.planFrom = d.planFrom;
+      if (d.wx) S().wx = d.wx;
+      if (d.resv) S().resv = d.resv;
+      if (d.planFrom) S().planFrom = d.planFrom;
       localSave(); renderAll();
     }, noop);
     CREW.forEach(function(p){
-      db.doc("votes/" + p.id).onSnapshot(function(snap){
+      db.doc(P("votes/" + p.id)).onSnapshot(function(snap){
         if (!snap.exists) return;
         var d = snap.data();
-        if (Array.isArray(d.order)) state.ballots[p.id] = d.order.slice();
-        if (d.must !== undefined) state.musts[p.id] = d.must;
+        if (Array.isArray(d.order)) S().ballots[p.id] = d.order.slice();
+        if (d.must !== undefined) S().musts[p.id] = d.must;
         renderRank(); renderBoard();
       }, noop);
     });
